@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  postgres-user:
+    image: postgres:17-alpine
+    container_name: postgres-user-db
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: user_admin
+      POSTGRES_PASSWORD: user_password123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-user-data:/var/lib/postgresql/data
+      - ./init-user.sql:/docker-entrypoint-initdb.d/init-user.sql
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  postgres-student:
+    image: postgres:17-alpine
+    container_name: postgres-student-db
+    environment:
+      POSTGRES_DB: student_db
+      POSTGRES_USER: student_admin
+      POSTGRES_PASSWORD: student_password123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-student-data:/var/lib/postgresql/data
+      - ./init-student.sql:/docker-entrypoint-initdb.d/init-student.sql
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - app-network
+    depends_on:
+      - postgres-user
+      - postgres-student
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-user-data:
+  postgres-student-data:
+  pgadmin-data:
