@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "students", schema = "student_schema")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,10 +28,6 @@ public class Student {
 
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
-
-
-    @OneToOne(mappedBy = "user")
-    private Student student;
 
     @PrePersist
     protected void onCreate() {

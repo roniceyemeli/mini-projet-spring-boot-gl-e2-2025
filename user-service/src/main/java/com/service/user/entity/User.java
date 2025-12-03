@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "users", schema = "user_schema")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,8 +18,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(nullable = false)
     private String fullName;
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
     private String signUpDate;
     private String signUpFrom;
@@ -31,10 +37,6 @@ public class User {
 
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
-
-    @OneToOne
-    @JoinColumn(name = "userId", unique = true)
-    private User user;
 
     @PrePersist
     protected void onCreate() {
