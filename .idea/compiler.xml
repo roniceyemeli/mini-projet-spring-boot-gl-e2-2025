@@ -29,8 +29,8 @@
         </processorPath>
         <module name="event" />
         <module name="community" />
-        <module name="user" />
         <module name="school" />
+        <module name="user" />
       </profile>
     </annotationProcessing>
   </component>

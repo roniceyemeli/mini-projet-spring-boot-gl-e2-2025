@@ -47,7 +47,7 @@ public class ServiceRole implements IServiceRole {
         existingRole.setDescription(role.getDescription());
         existingRole.setPermissions(role.getPermissions());
         existingRole.setIsDefault(role.getIsDefault());
-        existingRole.setUpdatedAt(LocalDateTime.now());
+//        existingRole.setUpdatedAt(LocalDateTime.now());
 
         return roleRepository.save(existingRole);
     }

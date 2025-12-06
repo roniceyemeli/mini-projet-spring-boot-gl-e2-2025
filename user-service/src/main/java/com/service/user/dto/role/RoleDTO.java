@@ -1,4 +1,4 @@
-package com.service.school.dto;
+package com.service.user.dto.role;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,5 +1,6 @@
-package com.service.user.utils;
+package com.service.user.config;
 
+import com.service.user.dto.role.RoleDTO;
 import com.service.user.entity.Role;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

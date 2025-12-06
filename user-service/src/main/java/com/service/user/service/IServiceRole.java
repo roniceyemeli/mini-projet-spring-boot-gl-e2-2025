@@ -8,9 +8,9 @@ public interface IServiceRole {
 
     // CRUD Operations
     public Role createRole(Role role);
-    public Role updateRole(Integer id, Role role);
-    public void deleteRole(Integer id);
-    public Role getRoleById(Integer id);
+    public Role updateRole(Long id, Role role);
+    public void deleteRole(Long id);
+    public Role getRoleById(Long id);
     public Role getRoleByName(String name);
     public List<Role> getAllRoles();
 
@@ -20,11 +20,11 @@ public interface IServiceRole {
     public boolean roleExists(String name);
 
     // Permission Management
-    public Role addPermission(Integer roleId, String permission);
-    public Role removePermission(Integer roleId, String permission);
-    public boolean hasPermission(Integer roleId, String permission);
+    public Role addPermission(Long roleId, String permission);
+    public Role removePermission(Long roleId, String permission);
+    public boolean hasPermission(Long roleId, String permission);
 
     // Default Role Management
-    public Role setAsDefault(Integer roleId);
-    public Role removeAsDefault(Integer roleId);
+    public Role setAsDefault(Long roleId);
+    public Role removeAsDefault(Long roleId);
 }
