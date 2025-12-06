@@ -46,7 +46,41 @@ services:
       - "5434:5432"
     volumes:
       - postgres-event-data:/var/lib/postgresql/data
-    #      - ./init-student.sql:/docker-entrypoint-initdb.d/init-student.sql
+    #      - ./init-event.sql:/docker-entrypoint-initdb.d/init-student.sql
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  postgres-school:
+    image: postgres:17-alpine
+    container_name: postgres-school-db
+    environment:
+      POSTGRES_DB: school_db
+      POSTGRES_USER: school_admin
+      POSTGRES_PASSWORD: school_password123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres-school-data:/var/lib/postgresql/data
+    #      - ./init-school.sql:/docker-entrypoint-initdb.d/init-student.sql
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  postgres-community:
+    image: postgres:17-alpine
+    container_name: postgres-community-db
+    environment:
+      POSTGRES_DB: community_db
+      POSTGRES_USER: community_admin
+      POSTGRES_PASSWORD: community_password123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres-community-data:/var/lib/postgresql/data
+    #      - ./init-school.sql:/docker-entrypoint-initdb.d/init-student.sql
     networks:
       - app-network
     restart: unless-stopped
@@ -89,4 +123,6 @@ volumes:
   postgres-user-data:
   postgres-student-data:
   postgres-event-data:
+  postgres-school-data:
+  postgres-community-data:
   pgadmin-data:
