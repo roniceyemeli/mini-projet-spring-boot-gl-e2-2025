@@ -38,8 +38,6 @@ public class ServiceCommunity implements IServiceCommunity {
 
         // Initialize collections
 //        community.setStudents(new java.util.HashSet<>());
-//        community.setEvents(new java.util.HashSet<>());
-
         return communityRepository.save(community);
     }
 
@@ -131,32 +129,6 @@ public class ServiceCommunity implements IServiceCommunity {
                 .stream()
                 .limit(limit)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public Community incrementMemberCount(Integer communityId) {
-        Community community = getCommunityById(communityId);
-        community.setMemberCount(community.getMemberCount() + 1);
-        community.setUpdatedAt(LocalDateTime.now());
-        return communityRepository.save(community);
-    }
-
-    @Override
-    public Community decrementMemberCount(Integer communityId) {
-        Community community = getCommunityById(communityId);
-        int newCount = community.getMemberCount() - 1;
-        if (newCount < 0) newCount = 0;
-        community.setMemberCount(newCount);
-        community.setUpdatedAt(LocalDateTime.now());
-        return communityRepository.save(community);
-    }
-
-    @Override
-    public Community updateMemberCount(Integer communityId, Integer memberCount) {
-        Community community = getCommunityById(communityId);
-        community.setMemberCount(memberCount);
-        community.setUpdatedAt(LocalDateTime.now());
-        return communityRepository.save(community);
     }
 
     @Override

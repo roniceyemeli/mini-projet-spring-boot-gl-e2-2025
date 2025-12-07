@@ -11,13 +11,9 @@ public interface CommunityRepository extends JpaRepository<Community, Integer> {
 
     Optional<Community> findBySlug(String slug);
 
-    Optional<Community> findByTitle(String title);
-
     List<Community> findByIsActiveTrue();
 
     List<Community> findByIsActive(Boolean isActive);
-
-    List<Community> findByMemberCountGreaterThan(Integer minMembers);
 
     @Query("SELECT c FROM Community c WHERE " +
             "LOWER(c.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +

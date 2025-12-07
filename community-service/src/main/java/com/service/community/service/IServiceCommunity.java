@@ -21,11 +21,6 @@ public interface IServiceCommunity {
     List<Community> getCommunitiesByStatus(Boolean isActive);
     List<Community> getTopCommunitiesByMembers(Integer limit);
 
-    // Membership Management
-    Community incrementMemberCount(Integer communityId);
-    Community decrementMemberCount(Integer communityId);
-    Community updateMemberCount(Integer communityId, Integer memberCount);
-
     // Status Management
     Community activateCommunity(Integer communityId);
     Community deactivateCommunity(Integer communityId);

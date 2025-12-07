@@ -39,5 +39,5 @@ public class CommunityDTO {
     private Integer memberCount;
     private Boolean isActive;
     private String logoUrl;
-    private Integer createdBy;
+    private Long createdBy;
 }

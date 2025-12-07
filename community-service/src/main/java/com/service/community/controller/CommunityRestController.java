@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/communities")
+@RequestMapping("/communities")
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
 public class CommunityRestController {
