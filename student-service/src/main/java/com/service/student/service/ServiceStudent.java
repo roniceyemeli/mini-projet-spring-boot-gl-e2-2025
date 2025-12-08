@@ -1,10 +1,16 @@
 package com.service.student.service;
 
-import com.service.student.dto.student.*;
+import com.service.student.config.UserServiceClient;
+import com.service.student.dto.request.AcademicUpdateDTO;
+import com.service.student.dto.request.CreateStudentDTO;
+import com.service.student.dto.request.UpdateStudentDTO;
+import com.service.student.dto.response.StudentDTO;
+import com.service.student.dto.response.StudentResponseDTO;
 import com.service.student.entity.Student;
 import com.service.student.enums.EnrollmentStatus;
 import com.service.student.repository.StudentRepository;
-import com.service.user.client.UserServiceClient;
+
+
 import com.service.user.dto.user.UserMinimalDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

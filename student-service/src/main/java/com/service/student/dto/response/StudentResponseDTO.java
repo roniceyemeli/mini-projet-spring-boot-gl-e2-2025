@@ -1,5 +1,14 @@
 package com.service.student.dto.response;
 
+import com.service.student.enums.EnrollmentStatus;
+import com.service.user.dto.user.UserMinimalDTO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

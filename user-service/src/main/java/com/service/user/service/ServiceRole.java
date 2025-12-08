@@ -302,11 +302,11 @@ public class ServiceRole implements IServiceRole {
 
         // Create default roles if they don't exist
         String[][] defaultRoles = {
-                {"ADMIN", "System Administrator", "ALL", true, true},
-                {"USER", "Regular User", "USER_READ,USER_UPDATE", true, false},
-                {"MODERATOR", "Content Moderator", "USER_READ,CONTENT_MANAGE", false, false},
-                {"STUDENT", "Student", "STUDENT_READ,STUDENT_UPDATE", false, false},
-                {"TEACHER", "Teacher", "TEACHER_READ,TEACHER_UPDATE,STUDENT_READ", false, false}
+                {"ADMIN", "System Administrator", "ALL", "true", "true"},
+                {"USER", "Regular User", "USER_READ,USER_UPDATE", "true", "false"},
+                {"MODERATOR", "Content Moderator", "USER_READ,CONTENT_MANAGE", "false", "false"},
+                {"STUDENT", "Student", "STUDENT_READ,STUDENT_UPDATE", "false", "false"},
+                {"TEACHER", "Teacher", "TEACHER_READ,TEACHER_UPDATE,STUDENT_READ", "false", "false"}
         };
 
         for (String[] roleData : defaultRoles) {

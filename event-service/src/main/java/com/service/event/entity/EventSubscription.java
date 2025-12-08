@@ -61,7 +61,7 @@ public class EventSubscription {
     @Column(name = "payment_reference", length = 100)
     private String paymentReference;
 
-    @Column(name = "amount_paid", precision = 10, scale = 2)
+    @Column(name = "amount_paid")
     private Double amountPaid;
 
     @Column(name = "notes", columnDefinition = "TEXT")

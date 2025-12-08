@@ -63,7 +63,7 @@ public class Event {
     @Column(name = "current_participants")
     private Integer currentParticipants = 0;
 
-    @Column(name = "registration_fee", precision = 10, scale = 2)
+    @Column(name = "registration_fee")
     private BigDecimal registrationFee = BigDecimal.ZERO;
 
     @Column(name = "organizer_id", nullable = false)
