@@ -20,7 +20,7 @@
         </processorPath>
         <module name="student" />
       </profile>
-      <profile name="Annotation profile for event-service" enabled="true">
+      <profile name="Annotation profile for school-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -29,8 +29,8 @@
         </processorPath>
         <module name="community" />
         <module name="event" />
-        <module name="school" />
         <module name="user" />
+        <module name="school" />
       </profile>
     </annotationProcessing>
   </component>
