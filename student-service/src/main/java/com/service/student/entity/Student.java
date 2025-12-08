@@ -109,7 +109,7 @@ public class Student {
     @Column(name = "academic_level", length = 50)
     private String academicLevel; // FRESHMAN, SOPHOMORE, JUNIOR, SENIOR, GRADUATE
 
-    @Column(name = "gpa", precision = 3, scale = 2)
+    @Column(name = "gpa", precision = 3)
     private Double gpa;
 
     @Column(name = "total_credits")
