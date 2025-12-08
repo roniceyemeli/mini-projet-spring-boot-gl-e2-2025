@@ -3,18 +3,13 @@ package com.service.user.dto.role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleDTO {
-    private Long id;
+public class UpdateRoleDTO {
     private String name;
     private String description;
     private String permissions;
     private Boolean isDefault;
-    private Boolean isSystem;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

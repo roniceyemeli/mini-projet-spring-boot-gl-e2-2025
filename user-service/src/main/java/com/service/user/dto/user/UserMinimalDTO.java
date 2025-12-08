@@ -7,13 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateUserDTO {
-
+public class UserMinimalDTO {
+    private Long id;
+    private String email;
     private String firstName;
     private String lastName;
-    private String phone;
-    private Long roleId;
-    private Long schoolId;
-    private Boolean isActive;
+    private String fullName;
     private String profilePicture;
 }
