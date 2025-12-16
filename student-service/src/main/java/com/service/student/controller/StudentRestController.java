@@ -23,7 +23,7 @@ public class StudentRestController {
 
     private final IServiceStudent studentService;
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<StudentDTO> createStudent(@Valid @RequestBody CreateStudentDTO studentDTO) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(studentService.createStudent(studentDTO));
@@ -39,7 +39,7 @@ public class StudentRestController {
         return ResponseEntity.ok(studentService.getStudentByUserId(userId));
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<StudentResponseDTO>> getAllStudents(
             @RequestParam(required = false) Long schoolId,
             @RequestParam(required = false) String program,

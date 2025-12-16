@@ -25,7 +25,7 @@ public class SchoolRestController {
     private final IServiceSchool schoolService;
     private final ModelMapper modelMapper;
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<SchoolResponseDTO> createSchool(@Valid @RequestBody SchoolDTO schoolDTO) {
         School school = modelMapper.map(schoolDTO, School.class);
         School createdSchool = schoolService.createSchool(school);
@@ -48,7 +48,7 @@ public class SchoolRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<SchoolResponseDTO>> getAllSchools(
             @RequestParam(required = false) SchoolType type,
             @RequestParam(required = false) SchoolStatus status,

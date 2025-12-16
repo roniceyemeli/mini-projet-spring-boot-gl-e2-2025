@@ -21,7 +21,7 @@ public class CommunityRestController {
     private final ServiceCommunity communityService;
     private final ModelMapper modelMapper;
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<CommunityDTO> createCommunity(@Valid @RequestBody CommunityDTO communityDTO) {
         Community community = modelMapper.map(communityDTO, Community.class);
         Community createdCommunity = communityService.createCommunity(community);
@@ -29,7 +29,7 @@ public class CommunityRestController {
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<CommunityDTO>> getAllCommunities() {
         List<Community> communities = communityService.getAllCommunities();
         List<CommunityDTO> communityDTOs = communities.stream()

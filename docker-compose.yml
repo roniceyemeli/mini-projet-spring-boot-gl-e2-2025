@@ -46,7 +46,7 @@ services:
       - "5434:5432"
     volumes:
       - postgres-event-data:/var/lib/postgresql/data
-          - ./init-event.sql:/docker-entrypoint-initdb.d/init-event.sql
+      - ./init-event.sql:/docker-entrypoint-initdb.d/init-event.sql
     networks:
       - app-network
     restart: unless-stopped
@@ -63,7 +63,7 @@ services:
       - "5435:5432"
     volumes:
       - postgres-school-data:/var/lib/postgresql/data
-          - ./init-school.sql:/docker-entrypoint-initdb.d/init-school.sql
+      - ./init-school.sql:/docker-entrypoint-initdb.d/init-school.sql
     networks:
       - app-network
     restart: unless-stopped
@@ -80,7 +80,7 @@ services:
       - "5436:5432"
     volumes:
       - postgres-community-data:/var/lib/postgresql/data
-          - ./init-community.sql:/docker-entrypoint-initdb.d/init-community.sql
+      - ./init-community.sql:/docker-entrypoint-initdb.d/init-community.sql
     networks:
       - app-network
     restart: unless-stopped
@@ -100,6 +100,9 @@ services:
     depends_on:
       - postgres-user
       - postgres-student
+      - postgres-school
+      - postgres-community
+      - postgres-event
 
   adminer:
     image: adminer:latest
@@ -113,6 +116,9 @@ services:
     depends_on:
       - postgres-user
       - postgres-student
+      - postgres-event
+      - postgres-community
+      - postgres-school
     restart: unless-stopped
 
 networks:
