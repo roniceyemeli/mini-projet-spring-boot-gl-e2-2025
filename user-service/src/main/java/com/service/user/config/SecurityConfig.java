@@ -33,24 +33,25 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/api/public/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/actuator/health"
-                        ).permitAll()
-
-                        // Role-based access
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/moderator/**").hasRole("MODERATOR")
-                        .requestMatchers("/api/teacher/**").hasRole("TEACHER")
-
-                        // Authenticated endpoints
-                        .requestMatchers("/api/**").authenticated()
-                        .anyRequest().authenticated()
+                                // Allow all requests for testing
+                                .anyRequest().permitAll()
+//                        // Public endpoints
+//                        .requestMatchers(
+//                                "/api/auth/**",
+//                                "/api/public/**",
+//                                "/v3/api-docs/**",
+//                                "/swagger-ui/**",
+//                                "/swagger-ui.html",
+//                                "/actuator/health"
+//                        ).permitAll()
+//
+//                        // Role-based access
+//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/moderator/**").hasRole("MODERATOR")
+//
+//                        // Authenticated endpoints
+//                        .requestMatchers("/api/**").authenticated()
+//                        .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

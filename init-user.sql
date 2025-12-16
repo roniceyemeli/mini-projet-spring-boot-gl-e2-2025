@@ -1,36 +1,95 @@
--- User database initialization
+-- Create schema
 CREATE SCHEMA IF NOT EXISTS user_schema;
 
--- Create users table for user module
-CREATE TABLE IF NOT EXISTS user_schema.users (
-                                                 id SERIAL PRIMARY KEY,
-                                                 full_name VARCHAR(255),
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    sign_up_date VARCHAR(50),
-    sign_up_from VARCHAR(50),
-    active BOOLEAN DEFAULT true,
-    account_type VARCHAR(50),
-    avatar TEXT,
-    userId INT UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+-- Switch to user_schema
+SET
+search_path TO user_schema;
 
--- Note: The self-referential relationship will be handled by application logic
--- If you want a foreign key constraint, uncomment and adjust:
--- ALTER TABLE user_schema.users
--- ADD CONSTRAINT fk_user_user FOREIGN KEY (user_id) REFERENCES user_schema.users(id);
+-- Drop tables if they exist (for clean initialization)
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
 
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_users_email ON user_schema.users(email);
-CREATE INDEX IF NOT EXISTS idx_users_active ON user_schema.users(active);
-CREATE INDEX IF NOT EXISTS idx_users_account_type ON user_schema.users(account_type);
+-- Create roles table
+CREATE TABLE roles
+(
+    id          BIGSERIAL PRIMARY KEY,
+    name        VARCHAR(50) NOT NULL UNIQUE,
+    description VARCHAR(255),
+    permissions TEXT,
+    is_default  BOOLEAN   DEFAULT FALSE,
+    is_system   BOOLEAN   DEFAULT FALSE,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
--- Insert sample data (optional)
-INSERT INTO user_schema.users
-(full_name, email, password, sign_up_date, sign_up_from, active, account_type, avatar)
-VALUES
-    ('Admin User', 'admin@example.com', '$2a$10$YourHashedPasswordHere', '2024-01-01', 'WEB', true, 'ADMIN', 'default-avatar.png'),
-    ('John Doe', 'john@example.com', '$2a$10$YourHashedPasswordHere', '2024-01-15', 'MOBILE', true, 'REGULAR', 'john-avatar.png')
-    ON CONFLICT (email) DO NOTHING;
+-- Create users table
+CREATE TABLE users
+(
+    id                 BIGSERIAL PRIMARY KEY,
+    email              VARCHAR(100) NOT NULL UNIQUE,
+    password           VARCHAR(255) NOT NULL,
+    first_name         VARCHAR(50)  NOT NULL,
+    last_name          VARCHAR(50)  NOT NULL,
+    phone              VARCHAR(20),
+    is_active          BOOLEAN   DEFAULT TRUE,
+    is_verified        BOOLEAN   DEFAULT FALSE,
+    verification_token VARCHAR(255),
+    reset_token        VARCHAR(255),
+    last_login         TIMESTAMP,
+    role_id            BIGINT       REFERENCES roles (id) ON DELETE SET NULL,
+    school_id          BIGINT,
+    profile_picture    VARCHAR(500),
+    created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default roles
+INSERT INTO roles (name, description, permissions, is_default, is_system)
+VALUES ('SUPER_ADMIN', 'Super Administrator with full system access', 'ALL_PERMISSIONS', FALSE, TRUE),
+       ('ADMIN', 'Administrator with management access', 'USER_MANAGE,ROLE_MANAGE,SYSTEM_VIEW', FALSE, TRUE),
+       ('MODERATOR', 'Moderator with moderation access', 'USER_VIEW,CONTENT_MODERATE', FALSE, FALSE),
+       ('TEACHER', 'Teacher role', 'STUDENT_MANAGE,GRADE_MANAGE,CONTENT_CREATE', FALSE, FALSE),
+       ('STUDENT', 'Student role', 'COURSE_VIEW,ASSIGNMENT_SUBMIT,PROFILE_EDIT', TRUE, FALSE),
+       ('PARENT', 'Parent role', 'STUDENT_VIEW,GRADE_VIEW,ATTENDANCE_VIEW', FALSE, FALSE),
+       ('STAFF', 'School staff', 'SCHOOL_INFO_VIEW,STUDENT_VIEW_BASIC', FALSE, FALSE);
+
+-- Insert test users (passwords are bcrypt encoded)
+-- Password for all test users: "Test@123"
+INSERT INTO users (email, password, first_name, last_name, phone, role_id, is_active, is_verified)
+VALUES ('superadmin@school.com', '$2a$12$EN2zVUWW71jQkKsRMuQ5ruNihdaI02HVCsspebKC8zy5Ipr3844cO', 'Super', 'Admin',
+        '+1234567890', 1, TRUE, TRUE),
+       ('admin@school.com', '$2a$12$EN2zVUWW71jQkKsRMuQ5ruNihdaI02HVCsspebKC8zy5Ipr3844cO', 'School', 'Administrator',
+        '+1234567891', 2, TRUE, TRUE),
+       ('teacher.john@school.com', '$2a$12$EN2zVUWW71jQkKsRMuQ5ruNihdaI02HVCsspebKC8zy5Ipr3844cO', 'John', 'Doe',
+        '+1234567892', 4, TRUE, TRUE),
+       ('student.alice@school.com', '$2a$12$EN2zVUWW71jQkKsRMuQ5ruNihdaI02HVCsspebKC8zy5Ipr3844cO', 'Alice', 'Smith',
+        '+1234567893', 5, TRUE, TRUE),
+       ('student.bob@school.com', '$2a$12$EN2zVUWW71jQkKsRMuQ5ruNihdaI02HVCsspebKC8zy5Ipr3844cO', 'Bob', 'Johnson',
+        '+1234567894', 5, TRUE, TRUE),
+       ('parent.miller@school.com', '$2a$12$EN2zVUWW71jQkKsRMuQ5ruNihdaI02HVCsspebKC8zy5Ipr3844cO', 'Sarah', 'Miller',
+        '+1234567895', 6, TRUE, TRUE);
+
+-- Create indexes for performance
+CREATE INDEX idx_users_email ON users (email);
+CREATE INDEX idx_users_role_id ON users (role_id);
+CREATE INDEX idx_users_school_id ON users (school_id);
+CREATE INDEX idx_users_is_active ON users (is_active);
+CREATE INDEX idx_roles_name ON roles (name);
+
+-- Grant privileges (adjust based on your user)
+GRANT
+ALL
+PRIVILEGES
+ON
+ALL
+TABLES IN SCHEMA user_schema TO user_admin;
+GRANT ALL PRIVILEGES ON ALL
+SEQUENCES IN SCHEMA user_schema TO user_admin;
+GRANT USAGE ON SCHEMA
+user_schema TO user_admin;
+
+-- Add comments to tables
+COMMENT
+ON TABLE roles IS 'Stores user roles and permissions';
+COMMENT
+ON TABLE users IS 'Stores user account information';

@@ -12,7 +12,7 @@ services:
       - "5437:5432"
     volumes:
       - postgres-user-data:/var/lib/postgresql/data
-    #      - ./init-user.sql:/docker-entrypoint-initdb.d/init-user.sql
+      - ./init-user.sql:/docker-entrypoint-initdb.d/init-user.sql
     networks:
       - app-network
     restart: unless-stopped
@@ -29,7 +29,7 @@ services:
       - "5433:5432"
     volumes:
       - postgres-student-data:/var/lib/postgresql/data
-    #      - ./init-student.sql:/docker-entrypoint-initdb.d/init-student.sql
+      - ./init-student.sql:/docker-entrypoint-initdb.d/init-student.sql
     networks:
       - app-network
     restart: unless-stopped
@@ -46,7 +46,7 @@ services:
       - "5434:5432"
     volumes:
       - postgres-event-data:/var/lib/postgresql/data
-    #      - ./init-event.sql:/docker-entrypoint-initdb.d/init-student.sql
+          - ./init-event.sql:/docker-entrypoint-initdb.d/init-event.sql
     networks:
       - app-network
     restart: unless-stopped
@@ -63,7 +63,7 @@ services:
       - "5435:5432"
     volumes:
       - postgres-school-data:/var/lib/postgresql/data
-    #      - ./init-school.sql:/docker-entrypoint-initdb.d/init-student.sql
+          - ./init-school.sql:/docker-entrypoint-initdb.d/init-school.sql
     networks:
       - app-network
     restart: unless-stopped
@@ -80,7 +80,7 @@ services:
       - "5436:5432"
     volumes:
       - postgres-community-data:/var/lib/postgresql/data
-    #      - ./init-school.sql:/docker-entrypoint-initdb.d/init-student.sql
+          - ./init-community.sql:/docker-entrypoint-initdb.d/init-community.sql
     networks:
       - app-network
     restart: unless-stopped
