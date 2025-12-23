@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,8 +24,11 @@ import java.util.UUID;
 public class Student {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    private UUID id;
+
 
     // Use UUID for cross-service references instead of foreign key
     @Column(name = "user_id", nullable = false, unique = true, length = 36)
@@ -351,4 +355,25 @@ public class Student {
     public boolean isAdvisorReferenceValid() {
         return advisorId!= null && "SYNCED".equals(advisorSyncStatus);
     }
+
+    public void recalculateAcademicLevel() {
+
+        // Graduated students keep their last academic level
+        if (Boolean.TRUE.equals(isGraduated)) {
+            return;
+        }
+
+        // Defensive defaults
+        if (completedCredits == null) {
+            completedCredits = 0;
+        }
+
+        if (totalCredits == null) {
+            totalCredits = 0;
+        }
+
+        // Recalculate based on completed credits
+        this.academicLevel = getCurrentAcademicLevel();
+    }
+
 }

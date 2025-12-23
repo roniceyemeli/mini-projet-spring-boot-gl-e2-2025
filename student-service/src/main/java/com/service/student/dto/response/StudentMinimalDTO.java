@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentMinimalDTO {
-    private Long id;
+    private UUID id;
     private UUID userId;
     private String studentCode;
     private String fullName;

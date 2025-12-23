@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentResponseDTO {
-    private Long id;
+    private UUID id;
     private UUID userId;
     private String studentCode;
     private String firstName;

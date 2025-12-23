@@ -13,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/students")
@@ -23,59 +25,69 @@ public class StudentRestController {
 
     private final IServiceStudent studentService;
 
-    @PostMapping("/add")
-    public ResponseEntity<StudentDTO> createStudent(@Valid @RequestBody CreateStudentDTO studentDTO) {
+    /* =======================
+       CREATE & READ
+       ======================= */
+
+    @PostMapping
+    public ResponseEntity<StudentDTO> createStudent(
+            @Valid @RequestBody CreateStudentDTO studentDTO) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(studentService.createStudent(studentDTO));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StudentResponseDTO> getStudentById(@PathVariable Long id) {
+    public ResponseEntity<StudentResponseDTO> getStudentById(
+            @PathVariable UUID id) {
         return ResponseEntity.ok(studentService.getStudentResponseById(id));
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<StudentDTO> getStudentByUserId(@PathVariable Long userId) {
+    public ResponseEntity<StudentDTO> getStudentByUserId(
+            @PathVariable UUID userId) {
         return ResponseEntity.ok(studentService.getStudentByUserId(userId));
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<StudentResponseDTO>> getAllStudents(
-            @RequestParam(required = false) Long schoolId,
+            @RequestParam(required = false) UUID schoolId,
             @RequestParam(required = false) String program,
             @RequestParam(required = false) String major,
             @RequestParam(required = false) EnrollmentStatus status,
             @RequestParam(required = false) String academicLevel,
             @RequestParam(required = false) Boolean international,
             @RequestParam(required = false) Boolean graduated,
-            @RequestParam(required = false) Long communityId,
-            @RequestParam(required = false) Long advisorId) {
+            @RequestParam(required = false) UUID communityId,
+            @RequestParam(required = false) UUID advisorId) {
 
-        List<StudentResponseDTO> students;
+        if (schoolId != null)
+            return ResponseEntity.ok(studentService.getStudentsBySchool(schoolId));
 
-        if (schoolId != null) {
-            students = studentService.getStudentsBySchool(schoolId);
-        } else if (program != null) {
-            students = studentService.getStudentsByProgram(program);
-        } else if (major != null) {
-            students = studentService.getStudentsByMajor(major);
-        } else if (status != null) {
-            students = studentService.getStudentsByEnrollmentStatus(status);
-        } else if (academicLevel != null) {
-            students = studentService.getStudentsByAcademicLevel(academicLevel);
-        } else if (international != null && international) {
-            students = studentService.getInternationalStudents();
-        } else if (graduated != null && graduated) {
-            students = studentService.getGraduatedStudents();
-        } else if (communityId != null) {
-            students = studentService.getStudentsByCommunity(communityId);
-        } else if (advisorId != null) {
-            students = studentService.getStudentsByAdvisor(advisorId);
-        } else {
-            students = studentService.getAllStudents();
-        }
+        if (program != null)
+            return ResponseEntity.ok(studentService.getStudentsByProgram(program));
 
-        return ResponseEntity.ok(students);
+        if (major != null)
+            return ResponseEntity.ok(studentService.getStudentsByMajor(major));
+
+        if (status != null)
+            return ResponseEntity.ok(studentService.getStudentsByEnrollmentStatus(status));
+
+        if (academicLevel != null)
+            return ResponseEntity.ok(studentService.getStudentsByAcademicLevel(academicLevel));
+
+        if (Boolean.TRUE.equals(international))
+            return ResponseEntity.ok(studentService.getInternationalStudents());
+
+        if (Boolean.TRUE.equals(graduated))
+            return ResponseEntity.ok(studentService.getGraduatedStudents());
+
+        if (communityId != null)
+            return ResponseEntity.ok(studentService.getStudentsByCommunity(communityId));
+
+        if (advisorId != null)
+            return ResponseEntity.ok(studentService.getStudentsByAdvisor(advisorId));
+
+        return ResponseEntity.ok(studentService.getAllStudents());
     }
 
     @GetMapping("/active")
@@ -84,80 +96,99 @@ public class StudentRestController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<StudentResponseDTO>> searchStudents(@RequestParam String keyword) {
+    public ResponseEntity<List<StudentResponseDTO>> searchStudents(
+            @RequestParam String keyword) {
         return ResponseEntity.ok(studentService.searchStudents(keyword));
     }
 
+    /* =======================
+       UPDATE & DELETE
+       ======================= */
+
     @PutMapping("/{id}")
     public ResponseEntity<StudentDTO> updateStudent(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateStudentDTO studentDTO) {
         return ResponseEntity.ok(studentService.updateStudent(id, studentDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable UUID id) {
         studentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/with-user")
-    public ResponseEntity<StudentResponseDTO> getStudentWithUserInfo(@PathVariable Long id) {
-        return ResponseEntity.ok(studentService.getStudentWithUserInfo(id));
-    }
+    /* =======================
+       STATUS & ACADEMICS
+       ======================= */
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<StudentDTO> changeEnrollmentStatus(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam EnrollmentStatus status) {
         return ResponseEntity.ok(studentService.changeEnrollmentStatus(id, status));
     }
 
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<StudentDTO> activateStudent(@PathVariable Long id) {
+    public ResponseEntity<StudentDTO> activateStudent(@PathVariable UUID id) {
         return ResponseEntity.ok(studentService.activateStudent(id));
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<StudentDTO> deactivateStudent(@PathVariable Long id) {
+    public ResponseEntity<StudentDTO> deactivateStudent(@PathVariable UUID id) {
         return ResponseEntity.ok(studentService.deactivateStudent(id));
     }
 
     @PatchMapping("/{id}/suspend")
-    public ResponseEntity<StudentDTO> suspendStudent(@PathVariable Long id) {
+    public ResponseEntity<StudentDTO> suspendStudent(@PathVariable UUID id) {
         return ResponseEntity.ok(studentService.suspendStudent(id));
     }
 
     @PatchMapping("/{id}/graduate")
-    public ResponseEntity<StudentDTO> graduateStudent(@PathVariable Long id) {
+    public ResponseEntity<StudentDTO> graduateStudent(@PathVariable UUID id) {
         return ResponseEntity.ok(studentService.graduateStudent(id));
     }
 
     @PatchMapping("/{id}/academic")
     public ResponseEntity<StudentDTO> updateAcademicInfo(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody AcademicUpdateDTO academicUpdate) {
         return ResponseEntity.ok(studentService.updateAcademicInfo(id, academicUpdate));
     }
 
     @PatchMapping("/{id}/add-credits")
     public ResponseEntity<StudentDTO> addCredits(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam Integer credits) {
         return ResponseEntity.ok(studentService.addCredits(id, credits));
     }
 
+    /* =======================
+       SYNC & VALIDATION
+       ======================= */
+
+    @GetMapping("/{id}/with-user")
+    public ResponseEntity<StudentResponseDTO> getStudentWithUserInfo(
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(studentService.getStudentWithUserInfo(id));
+    }
+
     @GetMapping("/{id}/sync-user")
-    public ResponseEntity<StudentDTO> syncWithUserService(@PathVariable Long id) {
+    public ResponseEntity<StudentDTO> syncWithUserService(
+            @PathVariable UUID id) {
         return ResponseEntity.ok(studentService.syncWithUserService(id));
     }
 
     @GetMapping("/{id}/validate-user/{userId}")
     public ResponseEntity<Boolean> validateStudentUser(
-            @PathVariable Long id,
-            @PathVariable Long userId) {
+            @PathVariable UUID id,
+            @PathVariable UUID userId) {
         return ResponseEntity.ok(studentService.validateStudentUser(id, userId));
     }
+
+    /* =======================
+       STATISTICS
+       ======================= */
 
     @GetMapping("/stats/total")
     public ResponseEntity<Long> getTotalStudentsCount() {
@@ -180,7 +211,7 @@ public class StudentRestController {
     }
 
     @GetMapping("/stats/gpa-average")
-    public ResponseEntity<Double> getAverageGPA() {
+    public ResponseEntity<BigDecimal> getAverageGPA() {
         return ResponseEntity.ok(studentService.getAverageGPA());
     }
 
@@ -208,6 +239,10 @@ public class StudentRestController {
     public ResponseEntity<List<Object[]>> getStudentsCountByAcademicLevel() {
         return ResponseEntity.ok(studentService.getStudentsCountByAcademicLevel());
     }
+
+    /* =======================
+       BULK OPERATIONS
+       ======================= */
 
     @PostMapping("/batch/graduate-eligible")
     public ResponseEntity<Void> graduateEligibleStudents() {

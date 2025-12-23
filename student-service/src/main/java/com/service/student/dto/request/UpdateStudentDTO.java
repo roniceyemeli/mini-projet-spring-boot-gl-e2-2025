@@ -55,5 +55,5 @@ public class UpdateStudentDTO {
     private Boolean isActive;
     private Boolean isGraduated;
     private String notes;
-    private Long updatedBy;
+    private UUID updatedBy;
 }

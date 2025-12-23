@@ -15,7 +15,6 @@ public class CreateStudentDTO {
 
     @NotNull(message = "User UUID is required")
     private UUID userId;
-
     private String studentCode;
     private String firstName;
     private String lastName;
@@ -59,5 +58,5 @@ public class CreateStudentDTO {
     private String emergencyContactAddress;
     private String emergencyContactEmail;
     private String notes;
-    private Long createdBy;
+    private UUID createdBy;
 }

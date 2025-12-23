@@ -6,12 +6,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@Component
-@FeignClient(name = "user-service", url = "${user.service.url}")
+import java.util.UUID;
+
+@FeignClient(name = "user-service")
 public interface UserServiceClient {
 
     @GetMapping("/api/users/{id}/minimal")
-    UserMinimalDTO getUserMinimalById(@PathVariable("id") Long id);
+    UserMinimalDTO getUserMinimalById(@PathVariable("id") UUID id);
 
     @GetMapping("/api/users/email/{email}/minimal")
     UserMinimalDTO getUserMinimalByEmail(@PathVariable("email") String email);
