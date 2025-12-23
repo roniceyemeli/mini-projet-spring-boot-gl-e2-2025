@@ -9,8 +9,10 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "students", schema = "student_schema")
@@ -24,8 +26,9 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false, unique = true)
-    private Long userId;
+    // Use UUID for cross-service references instead of foreign key
+    @Column(name = "user_id", nullable = false, unique = true, length = 36)
+    private UUID userUuid; // Changed from Long userId to UUID userUuid
 
     @Column(name = "student_code", unique = true, length = 50)
     private String studentCode;
@@ -43,7 +46,7 @@ public class Student {
     private LocalDate dateOfBirth;
 
     @Column(name = "gender", length = 20)
-    private String gender; // MALE, FEMALE, OTHER
+    private String gender;
 
     @Column(name = "nationality", length = 100)
     private String nationality;
@@ -78,17 +81,14 @@ public class Student {
     @Column(name = "emergency_phone", length = 20)
     private String emergencyPhone;
 
-    @Column(name = "email", length = 100)
-    private String email;
-
     @Column(name = "personal_email", length = 100)
     private String personalEmail;
 
     @Column(name = "school_id")
-    private Long schoolId;
+    private UUID schoolId; // Changed from Long schoolId to UUID
 
     @Column(name = "program", length = 100)
-    private String program; // e.g., "Computer Science", "Business Administration"
+    private String program;
 
     @Column(name = "major", length = 100)
     private String major;
@@ -107,10 +107,10 @@ public class Student {
     private EnrollmentStatus enrollmentStatus = EnrollmentStatus.ACTIVE;
 
     @Column(name = "academic_level", length = 50)
-    private String academicLevel; // FRESHMAN, SOPHOMORE, JUNIOR, SENIOR, GRADUATE
+    private String academicLevel;
 
-    @Column(name = "gpa", precision = 3)
-    private Double gpa;
+    @Column(name = "gpa", precision = 3, scale = 2)
+    private BigDecimal gpa;
 
     @Column(name = "total_credits")
     private Integer totalCredits = 0;
@@ -119,13 +119,13 @@ public class Student {
     private Integer completedCredits = 0;
 
     @Column(name = "community_id")
-    private Long communityId;
+    private UUID communityId; // Changed from Long
 
     @Column(name = "club_id")
-    private Long clubId;
+    private UUID clubId; // Changed from Long
 
     @Column(name = "advisor_id")
-    private Long advisorId;
+    private UUID advisorUuid; // Changed from Long advisorId
 
     @Column(name = "profile_picture", length = 500)
     private String profilePicture;
@@ -149,13 +149,13 @@ public class Student {
     private String visaStatus;
 
     @Column(name = "financial_aid_status", length = 50)
-    private String financialAidStatus; // NONE, PARTIAL, FULL
+    private String financialAidStatus;
 
     @Column(name = "scholarship_name", length = 200)
     private String scholarshipName;
 
     @Column(name = "disabilities", columnDefinition = "TEXT")
-    private String disabilities; // Comma-separated or JSON
+    private String disabilities;
 
     @Column(name = "special_needs", columnDefinition = "TEXT")
     private String specialNeeds;
@@ -201,57 +201,55 @@ public class Student {
     @Column(name = "updated_by")
     private Long updatedBy;
 
+    // Additional fields for eventual consistency
+    @Column(name = "user_sync_status", length = 20)
+    private String userSyncStatus = "PENDING"; // PENDING, SYNCED, FAILED
+
+    @Column(name = "advisor_sync_status", length = 20)
+    private String advisorSyncStatus = "PENDING";
+
+    @Column(name = "last_sync_attempt")
+    private LocalDateTime lastSyncAttempt;
+
     @PrePersist
     protected void onCreate() {
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
-        if (updatedAt == null) {
-            updatedAt = LocalDateTime.now();
-        }
-        if (enrollmentStatus == null) {
-            enrollmentStatus = EnrollmentStatus.ACTIVE;
-        }
-        if (isActive == null) {
-            isActive = true;
-        }
-        if (isGraduated == null) {
-            isGraduated = false;
-        }
-        if (isInternational == null) {
-            isInternational = false;
-        }
-        if (totalCredits == null) {
-            totalCredits = 0;
-        }
-        if (completedCredits == null) {
-            completedCredits = 0;
-        }
+        if (createdAt == null) createdAt = LocalDateTime.now();
+        if (updatedAt == null) updatedAt = LocalDateTime.now();
+        if (enrollmentStatus == null) enrollmentStatus = EnrollmentStatus.ACTIVE;
+        if (isActive == null) isActive = true;
+        if (isGraduated == null) isGraduated = false;
+        if (isInternational == null) isInternational = false;
+        if (totalCredits == null) totalCredits = 0;
+        if (completedCredits == null) completedCredits = 0;
+        if (userSyncStatus == null) userSyncStatus = "PENDING";
+        if (advisorSyncStatus == null) advisorSyncStatus = "PENDING";
 
-        // Generate student code if not provided
         if (studentCode == null || studentCode.trim().isEmpty()) {
             studentCode = generateStudentCode();
         }
 
-        // Generate full name if not provided
         if (fullName == null || fullName.trim().isEmpty()) {
             fullName = generateFullName();
         }
+
+        // Initialize academic level
+        updateAcademicLevel();
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
 
-        // Update full name if first or last name changed
         if (firstName != null || lastName != null) {
             fullName = generateFullName();
         }
 
-        // Update graduation status
         if (isGraduated && graduationDate == null) {
             graduationDate = LocalDate.now();
         }
+
+        // Update academic level if credits changed
+        updateAcademicLevel();
     }
 
     // Business logic methods
@@ -273,6 +271,7 @@ public class Student {
         this.isGraduated = true;
         this.graduationDate = LocalDate.now();
         this.enrollmentStatus = EnrollmentStatus.GRADUATED;
+        this.isActive = false;
     }
 
     public void suspend() {
@@ -293,9 +292,7 @@ public class Student {
     public void addCredits(Integer credits) {
         if (completedCredits == null) completedCredits = 0;
         completedCredits += credits;
-
-        // Recalculate GPA if needed
-        // This is a simplified version - in reality, GPA calculation is more complex
+        updateAcademicLevel();
     }
 
     public String getCurrentAcademicLevel() {
@@ -307,14 +304,15 @@ public class Student {
         else return "FRESHMAN";
     }
 
+    public void updateAcademicLevel() {
+        this.academicLevel = getCurrentAcademicLevel();
+    }
+
     private String generateStudentCode() {
-        // Format: YEAR-SCHOOLID-RANDOM (e.g., 2024-001-12345)
         String year = enrollmentYear != null ? enrollmentYear.toString() :
                 String.valueOf(LocalDate.now().getYear());
-        String schoolPrefix = schoolId != null ? String.format("%03d", schoolId) : "000";
         String random = String.format("%05d", (int)(Math.random() * 100000));
-
-        return year + "-" + schoolPrefix + "-" + random;
+        return year + "-STU-" + random;
     }
 
     private String generateFullName() {
@@ -322,5 +320,35 @@ public class Student {
         if (firstName == null) return lastName;
         if (lastName == null) return firstName;
         return firstName + " " + lastName;
+    }
+
+    // Helper method to mark sync status
+    public void markUserSynced() {
+        this.userSyncStatus = "SYNCED";
+        this.lastSyncAttempt = LocalDateTime.now();
+    }
+
+    public void markUserSyncFailed() {
+        this.userSyncStatus = "FAILED";
+        this.lastSyncAttempt = LocalDateTime.now();
+    }
+
+    public void markAdvisorSynced() {
+        this.advisorSyncStatus = "SYNCED";
+        this.lastSyncAttempt = LocalDateTime.now();
+    }
+
+    public void markAdvisorSyncFailed() {
+        this.advisorSyncStatus = "FAILED";
+        this.lastSyncAttempt = LocalDateTime.now();
+    }
+
+    // Check if user reference is valid (for eventual consistency)
+    public boolean isUserReferenceValid() {
+        return userUuid != null && "SYNCED".equals(userSyncStatus);
+    }
+
+    public boolean isAdvisorReferenceValid() {
+        return advisorUuid != null && "SYNCED".equals(advisorSyncStatus);
     }
 }
