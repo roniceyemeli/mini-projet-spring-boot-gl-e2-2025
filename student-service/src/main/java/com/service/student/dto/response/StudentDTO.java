@@ -4,15 +4,18 @@ import com.service.student.enums.EnrollmentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentDTO {
     private Long id;
-    private Long userId;
+    private UUID userId;
     private String studentCode;
     private String firstName;
     private String lastName;
@@ -30,9 +33,8 @@ public class StudentDTO {
     private String postalCode;
     private String phoneNumber;
     private String emergencyPhone;
-    private String email;
     private String personalEmail;
-    private Long schoolId;
+    private UUID schoolId;
     private String program;
     private String major;
     private String minor;
@@ -40,12 +42,12 @@ public class StudentDTO {
     private Integer expectedGraduationYear;
     private EnrollmentStatus enrollmentStatus;
     private String academicLevel;
-    private Double gpa;
+    private BigDecimal gpa;
     private Integer totalCredits;
     private Integer completedCredits;
-    private Long communityId;
-    private Long clubId;
-    private Long advisorId;
+    private UUID communityId;
+    private UUID clubId;
+    private UUID advisorId;
     private String profilePicture;
     private String resumeUrl;
     private String linkedinUrl;
@@ -70,4 +72,9 @@ public class StudentDTO {
     private LocalDateTime updatedAt;
     private Long createdBy;
     private Long updatedBy;
+
+    // Sync status fields
+    private String userSyncStatus;
+    private String advisorSyncStatus;
+    private LocalDateTime lastSyncAttempt;
 }

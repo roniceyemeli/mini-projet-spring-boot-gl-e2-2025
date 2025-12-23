@@ -1,21 +1,20 @@
 package com.service.student.dto.request;
 
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
-// Request DTOs
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateStudentDTO {
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
+    @NotNull(message = "User UUID is required")
+    private UUID userId;
 
     private String studentCode;
     private String firstName;
@@ -33,17 +32,16 @@ public class CreateStudentDTO {
     private String postalCode;
     private String phoneNumber;
     private String emergencyPhone;
-    private String email;
     private String personalEmail;
-    private Long schoolId;
+    private UUID schoolId;
     private String program;
     private String major;
     private String minor;
     private Integer enrollmentYear;
     private Integer expectedGraduationYear;
-    private Long communityId;
-    private Long clubId;
-    private Long advisorId;
+    private UUID communityId;
+    private UUID clubId;
+    private UUID advisorId;
     private String profilePicture;
     private String resumeUrl;
     private String linkedinUrl;

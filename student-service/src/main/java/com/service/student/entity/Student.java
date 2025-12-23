@@ -28,7 +28,7 @@ public class Student {
 
     // Use UUID for cross-service references instead of foreign key
     @Column(name = "user_id", nullable = false, unique = true, length = 36)
-    private UUID userUuid; // Changed from Long userId to UUID userUuid
+    private UUID userId; // Changed from Long userId to UUID userUuid
 
     @Column(name = "student_code", unique = true, length = 50)
     private String studentCode;
@@ -125,7 +125,7 @@ public class Student {
     private UUID clubId; // Changed from Long
 
     @Column(name = "advisor_id")
-    private UUID advisorUuid; // Changed from Long advisorId
+    private UUID advisorId; // Changed from Long advisorId
 
     @Column(name = "profile_picture", length = 500)
     private String profilePicture;
@@ -345,10 +345,10 @@ public class Student {
 
     // Check if user reference is valid (for eventual consistency)
     public boolean isUserReferenceValid() {
-        return userUuid != null && "SYNCED".equals(userSyncStatus);
+        return userId != null && "SYNCED".equals(userSyncStatus);
     }
 
     public boolean isAdvisorReferenceValid() {
-        return advisorUuid != null && "SYNCED".equals(advisorSyncStatus);
+        return advisorId!= null && "SYNCED".equals(advisorSyncStatus);
     }
 }

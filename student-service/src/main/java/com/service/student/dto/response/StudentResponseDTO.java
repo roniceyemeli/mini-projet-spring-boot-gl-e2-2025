@@ -6,15 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentResponseDTO {
     private Long id;
-    private Long userId;
+    private UUID userId;
     private String studentCode;
     private String firstName;
     private String lastName;
@@ -27,17 +29,17 @@ public class StudentResponseDTO {
     private String city;
     private String country;
     private String phoneNumber;
-    private String email;
-    private Long schoolId;
+    private String personalEmail;
+    private UUID schoolId;
     private String program;
     private String major;
     private EnrollmentStatus enrollmentStatus;
     private String academicLevel;
-    private Double gpa;
+    private BigDecimal gpa;
     private Integer completedCredits;
     private Integer totalCredits;
-    private Long communityId;
-    private Long advisorId;
+    private UUID communityId;
+    private UUID advisorId;
     private String profilePicture;
     private Boolean isInternational;
     private Boolean isActive;
@@ -52,4 +54,8 @@ public class StudentResponseDTO {
     private Integer yearsUntilGraduation;
     private Double creditsPercentage;
     private boolean eligibleForGraduation;
+
+    // Sync status indicators
+    private boolean userReferenceValid;
+    private boolean advisorReferenceValid;
 }

@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AcademicUpdateDTO {
-    private Double gpa;
+    private BigDecimal gpa;
     private Integer totalCredits;
     private Integer completedCredits;
     private String program;
