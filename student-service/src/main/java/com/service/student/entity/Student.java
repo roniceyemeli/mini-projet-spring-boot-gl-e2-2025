@@ -315,7 +315,7 @@ public class Student {
     private String generateStudentCode() {
         String year = enrollmentYear != null ? enrollmentYear.toString() :
                 String.valueOf(LocalDate.now().getYear());
-        String random = String.format("%05d", (int)(Math.random() * 100000));
+        String random = String.format("%05d", (int) (Math.random() * 100000));
         return year + "-STU-" + random;
     }
 
@@ -353,7 +353,7 @@ public class Student {
     }
 
     public boolean isAdvisorReferenceValid() {
-        return advisorId!= null && "SYNCED".equals(advisorSyncStatus);
+        return advisorId != null && "SYNCED".equals(advisorSyncStatus);
     }
 
     public void recalculateAcademicLevel() {
