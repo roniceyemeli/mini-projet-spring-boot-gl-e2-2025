@@ -8,17 +8,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
 
-    List<User> findByRoleId(Long roleId);
+    List<User> findByRoleId(UUID roleId);
 
-    List<User> findBySchoolId(Long schoolId);
+    List<User> findBySchoolId(UUID schoolId);
 
     List<User> findByIsActiveTrue();
 

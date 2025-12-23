@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -12,12 +13,12 @@ import java.time.LocalDateTime;
 public class AuthResponseDTO {
     private String token;
     private String type = "Bearer";
-    private Long userId;
+    private UUID userId;
     private String email;
     private String fullName;
     private String role;
     private String roleName;
-    private Long roleId;
-    private Long schoolId;
+    private UUID roleId;
+    private UUID schoolId;
     private LocalDateTime expiresAt;
 }

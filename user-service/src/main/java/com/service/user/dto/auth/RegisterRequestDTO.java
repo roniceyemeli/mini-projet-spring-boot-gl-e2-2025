@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,6 +29,6 @@ public class RegisterRequestDTO {
     private String lastName;
 
     private String phone;
-    private Long roleId;
-    private Long schoolId;
+    private UUID roleId;
+    private UUID schoolId;
 }

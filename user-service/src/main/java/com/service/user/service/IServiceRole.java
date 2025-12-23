@@ -1,19 +1,19 @@
 package com.service.user.service;
 
 import com.service.user.dto.role.*;
-import com.service.user.entity.Role;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IServiceRole {
 
     // CRUD Operations
     RoleDTO createRole(CreateRoleDTO createRoleDTO);
-    RoleDTO updateRole(Long id, UpdateRoleDTO updateRoleDTO);
-    void deleteRole(Long id);
-    RoleDTO getRoleById(Long id);
+    RoleDTO updateRole(UUID id, UpdateRoleDTO updateRoleDTO);
+    void deleteRole(UUID id);
+    RoleDTO getRoleById(UUID id);
     RoleDTO getRoleByName(String name);
-    RoleResponseDTO getRoleResponseById(Long id);
+    RoleResponseDTO getRoleResponseById(UUID id);
     List<RoleDTO> getAllRoles();
     List<RoleResponseDTO> getAllRoleResponses();
 
@@ -24,17 +24,17 @@ public interface IServiceRole {
     List<RoleResponseDTO> getRolesWithUserCount();
 
     // Permission Management
-    RoleDTO addPermission(Long roleId, String permission);
-    RoleDTO removePermission(Long roleId, String permission);
-    boolean hasPermission(Long roleId, String permission);
-    List<String> getRolePermissions(Long roleId);
+    RoleDTO addPermission(UUID roleId, String permission);
+    RoleDTO removePermission(UUID roleId, String permission);
+    boolean hasPermission(UUID roleId, String permission);
+    List<String> getRolePermissions(UUID roleId);
 
     // Default Role Management
-    RoleDTO setAsDefault(Long roleId);
-    RoleDTO removeAsDefault(Long roleId);
+    RoleDTO setAsDefault(UUID roleId);
+    RoleDTO removeAsDefault(UUID roleId);
 
     // Validation
-    boolean roleExists(Long roleId);
+    boolean roleExists(UUID roleId);
     boolean roleNameExists(String name);
 
     // Business Logic

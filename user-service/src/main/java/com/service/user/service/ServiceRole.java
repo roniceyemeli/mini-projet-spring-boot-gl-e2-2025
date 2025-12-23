@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -40,7 +41,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public RoleDTO getRoleById(Long id) {
+    public RoleDTO getRoleById(UUID id) {
         log.debug("Fetching role by ID: {}", id);
 
         Role role = roleRepository.findById(id)
@@ -50,7 +51,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public RoleResponseDTO getRoleResponseById(Long id) {
+    public RoleResponseDTO getRoleResponseById(UUID id) {
         log.debug("Fetching role response by ID: {}", id);
 
         Role role = roleRepository.findById(id)
@@ -85,7 +86,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public RoleDTO updateRole(Long id, UpdateRoleDTO updateRoleDTO) {
+    public RoleDTO updateRole(UUID id, UpdateRoleDTO updateRoleDTO) {
         log.info("Updating role with ID: {}", id);
 
         Role role = roleRepository.findById(id)
@@ -119,7 +120,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public void deleteRole(Long id) {
+    public void deleteRole(UUID id) {
         log.info("Deleting role with ID: {}", id);
 
         Role role = roleRepository.findById(id)
@@ -190,7 +191,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public RoleDTO addPermission(Long roleId, String permission) {
+    public RoleDTO addPermission(UUID roleId, String permission) {
         log.info("Adding permission '{}' to role ID: {}", permission, roleId);
 
         Role role = roleRepository.findById(roleId)
@@ -203,7 +204,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public RoleDTO removePermission(Long roleId, String permission) {
+    public RoleDTO removePermission(UUID roleId, String permission) {
         log.info("Removing permission '{}' from role ID: {}", permission, roleId);
 
         Role role = roleRepository.findById(roleId)
@@ -216,7 +217,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public boolean hasPermission(Long roleId, String permission) {
+    public boolean hasPermission(UUID roleId, String permission) {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
@@ -224,7 +225,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public List<String> getRolePermissions(Long roleId) {
+    public List<String> getRolePermissions(UUID roleId) {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
@@ -239,7 +240,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public RoleDTO setAsDefault(Long roleId) {
+    public RoleDTO setAsDefault(UUID roleId) {
         log.info("Setting role {} as default", roleId);
 
         Role role = roleRepository.findById(roleId)
@@ -258,7 +259,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public RoleDTO removeAsDefault(Long roleId) {
+    public RoleDTO removeAsDefault(UUID roleId) {
         log.info("Removing default status from role {}", roleId);
 
         Role role = roleRepository.findById(roleId)
@@ -271,7 +272,7 @@ public class ServiceRole implements IServiceRole {
     }
 
     @Override
-    public boolean roleExists(Long roleId) {
+    public boolean roleExists(UUID roleId) {
         return roleRepository.existsById(roleId);
     }
 

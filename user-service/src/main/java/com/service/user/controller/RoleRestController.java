@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/roles")
@@ -28,7 +29,7 @@ public class RoleRestController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RoleResponseDTO> getRoleById(@PathVariable Long id) {
+    public ResponseEntity<RoleResponseDTO> getRoleById(@PathVariable UUID id) {
         return ResponseEntity.ok(roleService.getRoleResponseById(id));
     }
 
@@ -65,14 +66,14 @@ public class RoleRestController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleDTO> updateRole(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateRoleDTO updateRoleDTO) {
         return ResponseEntity.ok(roleService.updateRole(id, updateRoleDTO));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRole(@PathVariable UUID id) {
         roleService.deleteRole(id);
         return ResponseEntity.noContent().build();
     }
@@ -80,7 +81,7 @@ public class RoleRestController {
     @PostMapping("/{id}/permissions")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleDTO> addPermission(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam String permission) {
         return ResponseEntity.ok(roleService.addPermission(id, permission));
     }
@@ -88,26 +89,26 @@ public class RoleRestController {
     @DeleteMapping("/{id}/permissions")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleDTO> removePermission(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam String permission) {
         return ResponseEntity.ok(roleService.removePermission(id, permission));
     }
 
     @GetMapping("/{id}/permissions")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<String>> getRolePermissions(@PathVariable Long id) {
+    public ResponseEntity<List<String>> getRolePermissions(@PathVariable UUID id) {
         return ResponseEntity.ok(roleService.getRolePermissions(id));
     }
 
     @PostMapping("/{id}/default")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RoleDTO> setAsDefault(@PathVariable Long id) {
+    public ResponseEntity<RoleDTO> setAsDefault(@PathVariable UUID id) {
         return ResponseEntity.ok(roleService.setAsDefault(id));
     }
 
     @DeleteMapping("/{id}/default")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RoleDTO> removeAsDefault(@PathVariable Long id) {
+    public ResponseEntity<RoleDTO> removeAsDefault(@PathVariable UUID id) {
         return ResponseEntity.ok(roleService.removeAsDefault(id));
     }
 

@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDTO {
-    private Long id;
+    private UUID id;
     private String email;
     private String firstName;
     private String lastName;
@@ -21,7 +22,6 @@ public class UserResponseDTO {
     private Boolean isVerified;
     private String profilePicture;
     private RoleDTO role;
-    private Long schoolId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime lastLogin;

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,7 +29,7 @@ public class UserRestController {
 
     @GetMapping("/{id}")
 //    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserResponseById(id));
     }
 
@@ -58,64 +59,64 @@ public class UserRestController {
 
     @GetMapping("/role/{roleId}")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponseDTO>> getUsersByRole(@PathVariable Long roleId) {
+    public ResponseEntity<List<UserResponseDTO>> getUsersByRole(@PathVariable UUID roleId) {
         return ResponseEntity.ok(userService.getUsersByRole(roleId));
     }
 
     @GetMapping("/school/{schoolId}")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponseDTO>> getUsersBySchool(@PathVariable Long schoolId) {
+    public ResponseEntity<List<UserResponseDTO>> getUsersBySchool(@PathVariable UUID schoolId) {
         return ResponseEntity.ok(userService.getUsersBySchool(schoolId));
     }
 
     @PutMapping("/{id}")
 //    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<UserDTO> updateUser(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateUserDTO updateUserDTO) {
         return ResponseEntity.ok(userService.updateUser(id, updateUserDTO));
     }
 
     @DeleteMapping("/{id}")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/profile")
 //    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
-    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Long id) {
+    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserProfile(id));
     }
 
     @PatchMapping("/{id}/activate")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDTO> activateUser(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> activateUser(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.activateUser(id));
     }
 
     @PatchMapping("/{id}/deactivate")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDTO> deactivateUser(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> deactivateUser(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.deactivateUser(id));
     }
 
     @PatchMapping("/{id}/verify")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDTO> verifyUser(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> verifyUser(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.verifyUser(id));
     }
 
     @GetMapping("/stats/total")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Long> getTotalUsersCount() {
+    public ResponseEntity<UUID> getTotalUsersCount() {
         return ResponseEntity.ok(userService.getTotalUsersCount());
     }
 
     @GetMapping("/stats/active")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Long> getActiveUsersCount() {
+    public ResponseEntity<UUID> getActiveUsersCount() {
         return ResponseEntity.ok(userService.getActiveUsersCount());
     }
 }

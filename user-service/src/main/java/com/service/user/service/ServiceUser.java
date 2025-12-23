@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -60,7 +61,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public UserDTO getUserById(Long id) {
+    public UserDTO getUserById(UUID id) {
         log.debug("Fetching user by ID: {}", id);
 
         User user = userRepository.findById(id)
@@ -80,7 +81,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public UserResponseDTO getUserResponseById(Long id) {
+    public UserResponseDTO getUserResponseById(UUID id) {
         log.debug("Fetching user response by ID: {}", id);
 
         User user = userRepository.findById(id)
@@ -106,7 +107,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
+    public UserDTO updateUser(UUID id, UpdateUserDTO updateUserDTO) {
         log.info("Updating user with ID: {}", id);
 
         User user = userRepository.findById(id)
@@ -127,9 +128,6 @@ public class ServiceUser implements IServiceUser {
                     .orElseThrow(() -> new RuntimeException("Role not found"));
             user.setRole(role);
         }
-        if (updateUserDTO.getSchoolId() != null) {
-            user.setSchoolId(updateUserDTO.getSchoolId());
-        }
         if (updateUserDTO.getIsActive() != null) {
             user.setIsActive(updateUserDTO.getIsActive());
         }
@@ -144,7 +142,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(UUID id) {
         log.info("Deleting user with ID: {}", id);
 
         User user = userRepository.findById(id)
@@ -158,7 +156,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public UserProfileDTO getUserProfile(Long userId) {
+    public UserProfileDTO getUserProfile(UUID userId) {
         log.debug("Fetching user profile for ID: {}", userId);
 
         User user = userRepository.findById(userId)
@@ -175,7 +173,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public UserDTO activateUser(Long userId) {
+    public UserDTO activateUser(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setIsActive(true);
@@ -184,7 +182,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public UserDTO deactivateUser(Long userId) {
+    public UserDTO deactivateUser(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setIsActive(false);
@@ -193,7 +191,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public UserDTO verifyUser(Long userId) {
+    public UserDTO verifyUser(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setIsVerified(true);
@@ -203,7 +201,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public UserDTO updateLastLogin(Long userId) {
+    public UserDTO updateLastLogin(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setLastLogin(LocalDateTime.now());
@@ -246,7 +244,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public List<UserResponseDTO> getUsersByRole(Long roleId) {
+    public List<UserResponseDTO> getUsersByRole(UUID roleId) {
         return userRepository.findByRoleId(roleId).stream()
                 .map(user -> {
                     UserResponseDTO dto = modelMapper.map(user, UserResponseDTO.class);
@@ -257,7 +255,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public List<UserResponseDTO> getUsersBySchool(Long schoolId) {
+    public List<UserResponseDTO> getUsersBySchool(UUID schoolId) {
         return userRepository.findBySchoolId(schoolId).stream()
                 .map(user -> {
                     UserResponseDTO dto = modelMapper.map(user, UserResponseDTO.class);
@@ -306,7 +304,7 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public boolean userExists(Long userId) {
+    public boolean userExists(UUID userId) {
         return userRepository.existsById(userId);
     }
 

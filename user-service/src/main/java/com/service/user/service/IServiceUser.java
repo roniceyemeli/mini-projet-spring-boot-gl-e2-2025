@@ -1,40 +1,40 @@
 package com.service.user.service;
 
 import com.service.user.dto.user.*;
-import com.service.user.entity.User;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IServiceUser {
 
     // CRUD Operations
     UserDTO createUser(CreateUserDTO createUserDTO);
-    UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO);
-    void deleteUser(Long id);
-    UserDTO getUserById(Long id);
+    UserDTO updateUser(UUID id, UpdateUserDTO updateUserDTO);
+    void deleteUser(UUID id);
+    UserDTO getUserById(UUID id);
     UserDTO getUserByEmail(String email);
-    UserResponseDTO getUserResponseById(Long id);
+    UserResponseDTO getUserResponseById(UUID id);
     List<UserResponseDTO> getAllUsers();
     List<UserMinimalDTO> getAllMinimalUsers();
 
     // Search & Filter
     List<UserResponseDTO> searchUsers(String keyword);
-    List<UserResponseDTO> getUsersByRole(Long roleId);
-    List<UserResponseDTO> getUsersBySchool(Long schoolId);
+    List<UserResponseDTO> getUsersByRole(UUID roleId);
+    List<UserResponseDTO> getUsersBySchool(UUID schoolId);
     List<UserResponseDTO> getActiveUsers();
     List<UserResponseDTO> getVerifiedUsers();
 
     // Profile & Extended Info
-    UserProfileDTO getUserProfile(Long userId);
+    UserProfileDTO getUserProfile(UUID userId);
 
     // User Management
-    UserDTO activateUser(Long userId);
-    UserDTO deactivateUser(Long userId);
-    UserDTO verifyUser(Long userId);
-    UserDTO updateLastLogin(Long userId);
+    UserDTO activateUser(UUID userId);
+    UserDTO deactivateUser(UUID userId);
+    UserDTO verifyUser(UUID userId);
+    UserDTO updateLastLogin(UUID userId);
 
     // Validation
-    boolean userExists(Long userId);
+    boolean userExists(UUID userId);
     boolean emailExists(String email);
 
     // Statistics
