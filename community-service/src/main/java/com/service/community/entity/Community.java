@@ -63,8 +63,8 @@ public class Community {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "created_by")
-    private Integer createdBy; // User ID who created the community
+    @Column(name = "created_by",columnDefinition = "uuid")
+    private UUID createdBy; // User ID who created the community
 
     @PrePersist
     protected void onCreate() {

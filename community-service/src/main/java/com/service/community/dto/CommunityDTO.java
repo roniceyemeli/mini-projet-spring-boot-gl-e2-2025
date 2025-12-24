@@ -8,12 +8,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommunityDTO {
-    private Integer id;
+    private UUID id;
 
     @NotBlank(message = "Community title is required")
     @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
@@ -39,5 +41,5 @@ public class CommunityDTO {
     private Integer memberCount;
     private Boolean isActive;
     private String logoUrl;
-    private Long createdBy;
+    private UUID createdBy;
 }
