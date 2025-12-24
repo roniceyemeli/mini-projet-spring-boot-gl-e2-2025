@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "schools", schema = "school_schema")
@@ -21,8 +23,10 @@ import java.time.LocalDateTime;
 public class School {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(nullable = false, length = 200)
     private String name;
@@ -165,18 +169,18 @@ public class School {
     private LocalDateTime verificationDate;
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "created_by")
-    private Long createdBy;
+    @Column(name = "created_by",columnDefinition = "uuid")
+    private UUID createdBy;
 
-    @Column(name = "updated_by")
-    private Long updatedBy;
+    @Column(name = "updated_by",columnDefinition = "uuid")
+    private UUID updatedBy;
 
     @PrePersist
     protected void onCreate() {

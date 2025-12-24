@@ -10,9 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long> {
+public interface EventRepository extends JpaRepository<Event, UUID> {
 
     Optional<Event> findBySlug(String slug);
 
@@ -22,7 +23,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByIsFeaturedTrueAndStatusAndCategory(EventStatus status, String category);
 
-    List<Event> findByOrganizerIdAndOrganizerType(Long organizerId, String organizerType);
+    List<Event> findByOrganizerIdAndOrganizerType(UUID organizerId, String organizerType);
 
     List<Event> findByCategory(String category);
 

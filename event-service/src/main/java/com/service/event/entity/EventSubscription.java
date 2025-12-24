@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "event_subscriptions", schema = "event_schema")
@@ -20,21 +22,23 @@ import java.time.LocalDateTime;
 public class EventSubscription {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    private UUID id;
 
-    @Column(name = "event_id", nullable = false)
-    private Long eventId;
+    @Column(name = "event_id",columnDefinition = "uuid",  nullable = false)
+    private UUID eventId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", insertable = false, updatable = false)
     private Event event;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "user_id", columnDefinition = "uuid",nullable = false)
+    private UUID userId;
 
-    @Column(name = "student_id", nullable = false)
-    private Long studentId;
+    @Column(name = "student_id",columnDefinition = "uuid", nullable = false)
+    private UUID studentId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -105,11 +109,11 @@ public class EventSubscription {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "created_by")
-    private Long createdBy;
+    @Column(name = "created_by",columnDefinition = "uuid")
+    private UUID createdBy;
 
-    @Column(name = "updated_by")
-    private Long updatedBy;
+    @Column(name = "updated_by",columnDefinition = "uuid")
+    private UUID updatedBy;
 
     @PrePersist
     protected void onCreate() {

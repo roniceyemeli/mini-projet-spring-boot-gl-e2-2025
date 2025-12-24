@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,18 +18,18 @@ import java.time.LocalDateTime;
 public class EventSubscriptionDTO {
 
     @NotNull(message = "Event ID is required")
-    private Long eventId;
+    private UUID eventId;
 
     @NotNull(message = "User ID is required")
-    private Long userId;
+    private UUID userId;
 
     @NotNull(message = "Student ID is required")
-    private Long studentId;
+    private UUID studentId;
 
     private SubscriptionStatus status;
     private String notes;
     private String paymentStatus;
     private String paymentReference;
     private Double amountPaid;
-    private Long createdBy;
+    private UUID createdBy;
 }

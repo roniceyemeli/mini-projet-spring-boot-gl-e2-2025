@@ -9,37 +9,38 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface EventSubscriptionRepository extends JpaRepository<EventSubscription, Long> {
+public interface EventSubscriptionRepository extends JpaRepository<EventSubscription, UUID> {
 
-    List<EventSubscription> findByEventId(Long eventId);
+    List<EventSubscription> findByEventId(UUID eventId);
 
-    List<EventSubscription> findByUserId(Long userId);
+    List<EventSubscription> findByUserId(UUID userId);
 
-    List<EventSubscription> findByStudentId(Long studentId);
+    List<EventSubscription> findByStudentId(UUID studentId);
 
     List<EventSubscription> findByStatus(SubscriptionStatus status);
 
-    List<EventSubscription> findByEventIdAndStatus(Long eventId, SubscriptionStatus status);
+    List<EventSubscription> findByEventIdAndStatus(UUID eventId, SubscriptionStatus status);
 
-    Optional<EventSubscription> findByEventIdAndUserId(Long eventId, Long userId);
+    Optional<EventSubscription> findByEventIdAndUserId(UUID eventId, UUID userId);
 
-    boolean existsByEventIdAndUserId(Long eventId, Long userId);
+    boolean existsByEventIdAndUserId(UUID eventId, UUID userId);
 
-    Long countByEventId(Long eventId);
+    Long countByEventId(UUID eventId);
 
-    Long countByEventIdAndStatus(Long eventId, SubscriptionStatus status);
+    Long countByEventIdAndStatus(UUID eventId, SubscriptionStatus status);
 
     List<EventSubscription> findByPaymentStatus(String paymentStatus);
 
-    List<EventSubscription> findByEventIdAndAttendedTrue(Long eventId);
+    List<EventSubscription> findByEventIdAndAttendedTrue(UUID eventId);
 
-    List<EventSubscription> findByEventIdAndFeedbackSubmittedTrue(Long eventId);
+    List<EventSubscription> findByEventIdAndFeedbackSubmittedTrue(UUID eventId);
 
-    List<EventSubscription> findByEventIdAndCertificateIssuedTrue(Long eventId);
+    List<EventSubscription> findByEventIdAndCertificateIssuedTrue(UUID eventId);
 
-    Optional<EventSubscription> findFirstByEventIdAndStatusOrderByCreatedAtAsc(Long eventId, SubscriptionStatus status);
+    Optional<EventSubscription> findFirstByEventIdAndStatusOrderByCreatedAtAsc(UUID eventId, SubscriptionStatus status);
 
     @Query("SELECT es FROM EventSubscription es WHERE es.status IN :statuses AND es.isActive = true")
     List<EventSubscription> findActiveSubscriptions(@Param("statuses") List<SubscriptionStatus> statuses);
@@ -72,5 +73,5 @@ public interface EventSubscriptionRepository extends JpaRepository<EventSubscrip
     List<Object[]> getSubscriptionStatsByStatus();
 
     @Query("SELECT AVG(es.rating) FROM EventSubscription es WHERE es.eventId = :eventId AND es.rating IS NOT NULL")
-    Double findAverageRatingByEventId(@Param("eventId") Long eventId);
+    Double findAverageRatingByEventId(@Param("eventId") UUID eventId);
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SchoolResponseDTO {
 
-    private Long id;
+    private UUID id;
     private String name;
     private String title;
     private String description;
@@ -64,8 +65,8 @@ public class SchoolResponseDTO {
     private LocalDateTime verificationDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long createdBy;
-    private Long updatedBy;
+    private UUID createdBy;
+    private UUID updatedBy;
 
     // Calculated fields
     private boolean operational;

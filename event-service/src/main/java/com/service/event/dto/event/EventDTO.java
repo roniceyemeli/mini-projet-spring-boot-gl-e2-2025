@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -45,7 +46,7 @@ public class EventDTO {
     private BigDecimal registrationFee;
 
     @NotNull(message = "Organizer ID is required")
-    private Long organizerId;
+    private UUID organizerId;
 
     private String organizerType;
     private String contactEmail;
@@ -59,6 +60,6 @@ public class EventDTO {
     private String tags;
     private Boolean isFeatured = false;
     private String visibility = "PUBLIC";
-    private Long createdBy;
-    private Long updatedBy;
+    private UUID createdBy;
+    private UUID updatedBy;
 }

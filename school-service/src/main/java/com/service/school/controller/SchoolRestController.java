@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,7 +35,7 @@ public class SchoolRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SchoolResponseDTO> getSchoolById(@PathVariable Long id) {
+    public ResponseEntity<SchoolResponseDTO> getSchoolById(@PathVariable UUID id) {
         School school = schoolService.getSchoolById(id);
         SchoolResponseDTO responseDTO = modelMapper.map(school, SchoolResponseDTO.class);
         return ResponseEntity.ok(responseDTO);
@@ -84,7 +85,7 @@ public class SchoolRestController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SchoolResponseDTO> updateSchool(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody SchoolDTO schoolDTO) {
         School school = modelMapper.map(schoolDTO, School.class);
         School updatedSchool = schoolService.updateSchool(id, school);
@@ -93,7 +94,7 @@ public class SchoolRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSchool(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSchool(@PathVariable UUID id) {
         schoolService.deleteSchool(id);
         return ResponseEntity.noContent().build();
     }
@@ -119,7 +120,7 @@ public class SchoolRestController {
 
     @PatchMapping("/{id}/feature")
     public ResponseEntity<SchoolResponseDTO> setFeaturedStatus(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam boolean featured) {
         School school = schoolService.setFeaturedStatus(id, featured);
         SchoolResponseDTO responseDTO = modelMapper.map(school, SchoolResponseDTO.class);
@@ -128,7 +129,7 @@ public class SchoolRestController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<SchoolResponseDTO> changeSchoolStatus(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam SchoolStatus status) {
         School school = schoolService.changeSchoolStatus(id, status);
         SchoolResponseDTO responseDTO = modelMapper.map(school, SchoolResponseDTO.class);
@@ -136,28 +137,28 @@ public class SchoolRestController {
     }
 
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<SchoolResponseDTO> activateSchool(@PathVariable Long id) {
+    public ResponseEntity<SchoolResponseDTO> activateSchool(@PathVariable UUID id) {
         School school = schoolService.activateSchool(id);
         SchoolResponseDTO responseDTO = modelMapper.map(school, SchoolResponseDTO.class);
         return ResponseEntity.ok(responseDTO);
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<SchoolResponseDTO> deactivateSchool(@PathVariable Long id) {
+    public ResponseEntity<SchoolResponseDTO> deactivateSchool(@PathVariable UUID id) {
         School school = schoolService.deactivateSchool(id);
         SchoolResponseDTO responseDTO = modelMapper.map(school, SchoolResponseDTO.class);
         return ResponseEntity.ok(responseDTO);
     }
 
     @PatchMapping("/{id}/verify")
-    public ResponseEntity<SchoolResponseDTO> verifySchool(@PathVariable Long id) {
+    public ResponseEntity<SchoolResponseDTO> verifySchool(@PathVariable UUID id) {
         School school = schoolService.verifySchool(id);
         SchoolResponseDTO responseDTO = modelMapper.map(school, SchoolResponseDTO.class);
         return ResponseEntity.ok(responseDTO);
     }
 
     @PatchMapping("/{id}/suspend")
-    public ResponseEntity<SchoolResponseDTO> suspendSchool(@PathVariable Long id) {
+    public ResponseEntity<SchoolResponseDTO> suspendSchool(@PathVariable UUID id) {
         School school = schoolService.suspendSchool(id);
         SchoolResponseDTO responseDTO = modelMapper.map(school, SchoolResponseDTO.class);
         return ResponseEntity.ok(responseDTO);
@@ -236,19 +237,19 @@ public class SchoolRestController {
     }
 
     @GetMapping("/{id}/can-admit")
-    public ResponseEntity<Boolean> canSchoolAdmitStudents(@PathVariable Long id) {
+    public ResponseEntity<Boolean> canSchoolAdmitStudents(@PathVariable UUID id) {
         boolean canAdmit = schoolService.canSchoolAdmitStudents(id);
         return ResponseEntity.ok(canAdmit);
     }
 
     @GetMapping("/{id}/is-accredited")
-    public ResponseEntity<Boolean> isSchoolAccredited(@PathVariable Long id) {
+    public ResponseEntity<Boolean> isSchoolAccredited(@PathVariable UUID id) {
         boolean isAccredited = schoolService.isSchoolAccredited(id);
         return ResponseEntity.ok(isAccredited);
     }
 
     @GetMapping("/{id}/is-operational")
-    public ResponseEntity<Boolean> isSchoolOperational(@PathVariable Long id) {
+    public ResponseEntity<Boolean> isSchoolOperational(@PathVariable UUID id) {
         boolean isOperational = schoolService.isSchoolOperational(id);
         return ResponseEntity.ok(isOperational);
     }

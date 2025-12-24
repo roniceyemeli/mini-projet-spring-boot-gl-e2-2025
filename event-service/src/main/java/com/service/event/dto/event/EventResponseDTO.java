@@ -17,7 +17,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class EventResponseDTO {
 
-    private Long id;
+    private UUID id;
     private String title;
     private String description;
     private String slug;
@@ -31,7 +31,7 @@ public class EventResponseDTO {
     private Integer maxParticipants;
     private Integer currentParticipants;
     private BigDecimal registrationFee;
-    private Long organizerId;
+    private UUID organizerId;
     private String organizerType;
     private String contactEmail;
     private String contactPhone;
@@ -46,8 +46,8 @@ public class EventResponseDTO {
     private String visibility;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long createdBy;
-    private Long updatedBy;
+    private UUID createdBy;
+    private UUID updatedBy;
 
     // Calculated fields
     private boolean registrationOpen;

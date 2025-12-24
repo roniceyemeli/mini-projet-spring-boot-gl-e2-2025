@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface IServiceEvent {
 
@@ -25,20 +26,20 @@ public interface IServiceEvent {
      * @param event Updated event data
      * @return Updated event
      */
-    Event updateEvent(Long id, Event event);
+    Event updateEvent(UUID id, Event event);
 
     /**
      * Delete an event by ID
      * @param id Event ID
      */
-    void deleteEvent(Long id);
+    void deleteEvent(UUID id);
 
     /**
      * Get event by ID
      * @param id Event ID
      * @return Event entity
      */
-    Event getEventById(Long id);
+    Event getEventById(UUID id);
 
     /**
      * Get event by slug
@@ -68,7 +69,7 @@ public interface IServiceEvent {
      * @param isFeatured Featured status
      * @return Updated event
      */
-    Event setFeaturedStatus(Long eventId, boolean isFeatured);
+    Event setFeaturedStatus(UUID eventId, boolean isFeatured);
 
     /**
      * Get featured events by category
@@ -111,7 +112,7 @@ public interface IServiceEvent {
      * @param organizerType Organizer type (SCHOOL, COMMUNITY, USER)
      * @return List of organizer's events
      */
-    List<Event> getEventsByOrganizer(Long organizerId, String organizerType);
+    List<Event> getEventsByOrganizer(UUID organizerId, String organizerType);
 
     /**
      * Get events by category
@@ -159,7 +160,7 @@ public interface IServiceEvent {
      * @param status New status
      * @return Updated event
      */
-    Event changeEventStatus(Long eventId, EventStatus status);
+    Event changeEventStatus(UUID eventId, EventStatus status);
 
     /**
      * Update event capacity
@@ -167,7 +168,7 @@ public interface IServiceEvent {
      * @param maxParticipants New max participants
      * @return Updated event
      */
-    Event updateEventCapacity(Long eventId, Integer maxParticipants);
+    Event updateEventCapacity(UUID eventId, Integer maxParticipants);
 
     /**
      * Update event registration deadline
@@ -175,7 +176,7 @@ public interface IServiceEvent {
      * @param deadline New registration deadline
      * @return Updated event
      */
-    Event updateEventRegistrationDeadline(Long eventId, LocalDateTime deadline);
+    Event updateEventRegistrationDeadline(UUID eventId, LocalDateTime deadline);
 
 
     // ==================== PARTICIPANT MANAGEMENT ====================
@@ -185,21 +186,21 @@ public interface IServiceEvent {
      * @param eventId Event ID
      * @return Updated event
      */
-    Event incrementParticipants(Long eventId);
+    Event incrementParticipants(UUID eventId);
 
     /**
      * Decrement event participants count
      * @param eventId Event ID
      * @return Updated event
      */
-    Event decrementParticipants(Long eventId);
+    Event decrementParticipants(UUID eventId);
 
     /**
      * Check if registration is possible for an event
      * @param eventId Event ID
      * @return true if registration is possible
      */
-    boolean canRegisterForEvent(Long eventId);
+    boolean canRegisterForEvent(UUID eventId);
 
 
     // ==================== STATISTICS & ANALYTICS ====================
@@ -241,14 +242,14 @@ public interface IServiceEvent {
 
     List<Event> getEventsByVisibility(String visibility);
 
-    boolean isEventVisible(Long eventId, Long userId);
+    boolean isEventVisible(UUID eventId, UUID userId);
 
     /**
      * Check if event exists
      * @param eventId Event ID
      * @return true if event exists
      */
-    boolean eventExists(Long eventId);
+    boolean eventExists(UUID eventId);
 
     /**
      * Check if slug exists
@@ -262,7 +263,7 @@ public interface IServiceEvent {
      * @param eventId Event ID
      * @throws RuntimeException if event is full
      */
-    void validateEventCapacity(Long eventId);
+    void validateEventCapacity(UUID eventId);
 
 
     // ==================== ALIAS METHODS (for backward compatibility) ====================

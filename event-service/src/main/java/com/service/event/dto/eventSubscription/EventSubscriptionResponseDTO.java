@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,11 +16,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class EventSubscriptionResponseDTO {
 
-    private Long id;
-    private Long eventId;
+    private UUID id;
+    private UUID eventId;
     private EventResponseDTO eventDetails;
-    private Long userId;
-    private Long studentId;
+    private UUID userId;
+    private UUID studentId;
     private SubscriptionStatus status;
     private LocalDateTime registrationDate;
     private LocalDateTime approvalDate;
@@ -42,8 +43,8 @@ public class EventSubscriptionResponseDTO {
     private String cancellationReason;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long createdBy;
-    private Long updatedBy;
+    private UUID createdBy;
+    private UUID updatedBy;
 
     // Calculated fields
     private boolean canCancel;

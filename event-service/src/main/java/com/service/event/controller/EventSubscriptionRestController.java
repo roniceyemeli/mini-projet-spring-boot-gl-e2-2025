@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,16 +36,16 @@ public class EventSubscriptionRestController {
 
     @PostMapping("/subscribe")
     public ResponseEntity<EventSubscriptionResponseDTO> subscribeToEvent(
-            @RequestParam Long eventId,
-            @RequestParam Long userId,
-            @RequestParam Long studentId) {
+            @RequestParam UUID eventId,
+            @RequestParam UUID userId,
+            @RequestParam UUID studentId) {
         EventSubscription subscription = subscriptionService.subscribeToEvent(eventId, userId, studentId);
         EventSubscriptionResponseDTO response = modelMapper.map(subscription, EventSubscriptionResponseDTO.class);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventSubscriptionResponseDTO> getSubscriptionById(@PathVariable Long id) {
+    public ResponseEntity<EventSubscriptionResponseDTO> getSubscriptionById(@PathVariable UUID id) {
         EventSubscription subscription = subscriptionService.getSubscriptionById(id);
         EventSubscriptionResponseDTO response = modelMapper.map(subscription, EventSubscriptionResponseDTO.class);
         return ResponseEntity.ok(response);
@@ -52,8 +53,8 @@ public class EventSubscriptionRestController {
 
     @GetMapping
     public ResponseEntity<List<EventSubscriptionResponseDTO>> getAllSubscriptions(
-            @RequestParam(required = false) Long eventId,
-            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) UUID eventId,
+            @RequestParam(required = false) UUID userId,
             @RequestParam(required = false) SubscriptionStatus status) {
 
         List<EventSubscription> subscriptions;
@@ -78,7 +79,7 @@ public class EventSubscriptionRestController {
     }
 
     @PatchMapping("/{id}/approve")
-    public ResponseEntity<EventSubscriptionResponseDTO> approveSubscription(@PathVariable Long id) {
+    public ResponseEntity<EventSubscriptionResponseDTO> approveSubscription(@PathVariable UUID id) {
         EventSubscription subscription = subscriptionService.approveSubscription(id);
         EventSubscriptionResponseDTO response = modelMapper.map(subscription, EventSubscriptionResponseDTO.class);
         return ResponseEntity.ok(response);
@@ -86,7 +87,7 @@ public class EventSubscriptionRestController {
 
     @PatchMapping("/{id}/reject")
     public ResponseEntity<EventSubscriptionResponseDTO> rejectSubscription(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam String reason) {
         EventSubscription subscription = subscriptionService.rejectSubscription(id, reason);
         EventSubscriptionResponseDTO response = modelMapper.map(subscription, EventSubscriptionResponseDTO.class);
@@ -95,7 +96,7 @@ public class EventSubscriptionRestController {
 
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<EventSubscriptionResponseDTO> cancelSubscription(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam String reason) {
         EventSubscription subscription = subscriptionService.cancelSubscription(id, reason);
         EventSubscriptionResponseDTO response = modelMapper.map(subscription, EventSubscriptionResponseDTO.class);
@@ -104,7 +105,7 @@ public class EventSubscriptionRestController {
 
     @PatchMapping("/{id}/check-in")
     public ResponseEntity<EventSubscriptionResponseDTO> checkIn(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam String checkInCode) {
         EventSubscription subscription = subscriptionService.checkIn(id, checkInCode);
         EventSubscriptionResponseDTO response = modelMapper.map(subscription, EventSubscriptionResponseDTO.class);
@@ -113,7 +114,7 @@ public class EventSubscriptionRestController {
 
     @PatchMapping("/{id}/feedback")
     public ResponseEntity<EventSubscriptionResponseDTO> submitFeedback(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam Integer rating,
             @RequestParam String comment) {
         EventSubscription subscription = subscriptionService.submitFeedback(id, rating, comment);
@@ -122,14 +123,14 @@ public class EventSubscriptionRestController {
     }
 
     @PatchMapping("/{id}/issue-certificate")
-    public ResponseEntity<EventSubscriptionResponseDTO> issueCertificate(@PathVariable Long id) {
+    public ResponseEntity<EventSubscriptionResponseDTO> issueCertificate(@PathVariable UUID id) {
         EventSubscription subscription = subscriptionService.issueCertificate(id);
         EventSubscriptionResponseDTO response = modelMapper.map(subscription, EventSubscriptionResponseDTO.class);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/event/{eventId}/attendees")
-    public ResponseEntity<List<EventSubscriptionResponseDTO>> getAttendees(@PathVariable Long eventId) {
+    public ResponseEntity<List<EventSubscriptionResponseDTO>> getAttendees(@PathVariable UUID eventId) {
         List<EventSubscription> attendees = subscriptionService.getAttendeesForEvent(eventId);
         List<EventSubscriptionResponseDTO> responses = attendees.stream()
                 .map(sub -> modelMapper.map(sub, EventSubscriptionResponseDTO.class))
@@ -138,7 +139,7 @@ public class EventSubscriptionRestController {
     }
 
     @GetMapping("/event/{eventId}/stats")
-    public ResponseEntity<EventStatsResponse> getEventStats(@PathVariable Long eventId) {
+    public ResponseEntity<EventStatsResponse> getEventStats(@PathVariable UUID eventId) {
         Long total = subscriptionService.getTotalSubscriptionsForEvent(eventId);
         Long approved = subscriptionService.getApprovedSubscriptionsForEvent(eventId);
         Long waitlisted = subscriptionService.getWaitlistedSubscriptionsForEvent(eventId);
@@ -148,7 +149,7 @@ public class EventSubscriptionRestController {
     }
 
     @GetMapping("/user/{userId}/events")
-    public ResponseEntity<List<EventSubscriptionResponseDTO>> getUserSubscriptions(@PathVariable Long userId) {
+    public ResponseEntity<List<EventSubscriptionResponseDTO>> getUserSubscriptions(@PathVariable UUID userId) {
         List<EventSubscription> subscriptions = subscriptionService.getSubscriptionsByUser(userId);
         List<EventSubscriptionResponseDTO> responses = subscriptions.stream()
                 .map(sub -> modelMapper.map(sub, EventSubscriptionResponseDTO.class))
@@ -158,16 +159,16 @@ public class EventSubscriptionRestController {
 
     @GetMapping("/check-subscription")
     public ResponseEntity<Boolean> checkUserSubscription(
-            @RequestParam Long eventId,
-            @RequestParam Long userId) {
+            @RequestParam UUID eventId,
+            @RequestParam UUID userId) {
         boolean isSubscribed = subscriptionService.isUserSubscribedToEvent(eventId, userId);
         return ResponseEntity.ok(isSubscribed);
     }
 
     @GetMapping("/can-subscribe")
     public ResponseEntity<Boolean> canSubscribe(
-            @RequestParam Long eventId,
-            @RequestParam Long userId) {
+            @RequestParam UUID eventId,
+            @RequestParam UUID userId) {
         boolean canSubscribe = subscriptionService.canSubscribeToEvent(eventId, userId);
         return ResponseEntity.ok(canSubscribe);
     }

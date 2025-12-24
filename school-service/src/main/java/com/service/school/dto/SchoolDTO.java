@@ -1,6 +1,5 @@
 package com.service.school.dto;
 
-import com.service.school.enums.SchoolStatus;
 import com.service.school.enums.SchoolType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -64,6 +64,6 @@ public class SchoolDTO {
     private String mission;
     private Boolean isActive;
     private Boolean verified;
-    private Long createdBy;
-    private Long updatedBy;
+    private UUID createdBy;
+    private UUID updatedBy;
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,7 +37,7 @@ public class EventRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Event.EventResponseDTO> getEventById(@PathVariable Long id) {
+    public ResponseEntity<Event.EventResponseDTO> getEventById(@PathVariable UUID id) {
         Event event = serviceEvent.getEventById(id);
         Event.EventResponseDTO responseDTO = modelMapper.map(event, Event.EventResponseDTO.class);
         return ResponseEntity.ok(responseDTO);
@@ -77,7 +78,7 @@ public class EventRestController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Event.EventResponseDTO> updateEvent(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody com.service.event.dto.event.EventDTO eventDTO) {
         Event event = modelMapper.map(eventDTO, Event.class);
         Event updatedEvent = serviceEvent.updateEvent(id, event);
@@ -86,7 +87,7 @@ public class EventRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable UUID id) {
         serviceEvent.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }
@@ -103,7 +104,7 @@ public class EventRestController {
 
     @PatchMapping("/{id}/feature")
     public ResponseEntity<Event.EventResponseDTO> setFeaturedStatus(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam boolean featured) {
         Event event = serviceEvent.setFeaturedStatus(id, featured);
         Event.EventResponseDTO responseDTO = modelMapper.map(event, Event.EventResponseDTO.class);
@@ -113,7 +114,7 @@ public class EventRestController {
     // Event Status Management
     @PatchMapping("/{id}/status")
     public ResponseEntity<Event.EventResponseDTO> changeEventStatus(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam EventStatus status) {
         Event event = serviceEvent.changeEventStatus(id, status);
         Event.EventResponseDTO responseDTO = modelMapper.map(event, Event.EventResponseDTO.class);
@@ -192,7 +193,7 @@ public class EventRestController {
     // Organizer Events
     @GetMapping("/organizer/{organizerId}")
     public ResponseEntity<List<Event.EventResponseDTO>> getEventsByOrganizer(
-            @PathVariable Long organizerId,
+            @PathVariable UUID organizerId,
             @RequestParam String organizerType) {
         List<Event> events = serviceEvent.getEventsByOrganizer(organizerId, organizerType);
         List<Event.EventResponseDTO> responseDTOs = events.stream()
@@ -204,7 +205,7 @@ public class EventRestController {
     // Event Capacity Management
     @PatchMapping("/{id}/capacity")
     public ResponseEntity<Event.EventResponseDTO> updateEventCapacity(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam Integer maxParticipants) {
         Event event = serviceEvent.updateEventCapacity(id, maxParticipants);
         Event.EventResponseDTO responseDTO = modelMapper.map(event, Event.EventResponseDTO.class);
@@ -213,7 +214,7 @@ public class EventRestController {
 
     @PatchMapping("/{id}/registration-deadline")
     public ResponseEntity<Event.EventResponseDTO> updateRegistrationDeadline(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime deadline) {
         Event event = serviceEvent.updateEventRegistrationDeadline(id, deadline);
         Event.EventResponseDTO responseDTO = modelMapper.map(event, Event.EventResponseDTO.class);
@@ -222,7 +223,7 @@ public class EventRestController {
 
     // Participant Management
     @PostMapping("/{id}/register")
-    public ResponseEntity<Event.EventResponseDTO> registerForEvent(@PathVariable Long id) {
+    public ResponseEntity<Event.EventResponseDTO> registerForEvent(@PathVariable UUID id) {
         // This would typically be handled by a separate RegistrationService
         // For now, just increment participants
         Event event = serviceEvent.incrementParticipants(id);
@@ -231,7 +232,7 @@ public class EventRestController {
     }
 
     @PostMapping("/{id}/unregister")
-    public ResponseEntity<Event.EventResponseDTO> unregisterFromEvent(@PathVariable Long id) {
+    public ResponseEntity<Event.EventResponseDTO> unregisterFromEvent(@PathVariable UUID id) {
         Event event = serviceEvent.decrementParticipants(id);
         Event.EventResponseDTO responseDTO = modelMapper.map(event, Event.EventResponseDTO.class);
         return ResponseEntity.ok(responseDTO);
@@ -270,15 +271,15 @@ public class EventRestController {
 
     // Validation
     @GetMapping("/{id}/can-register")
-    public ResponseEntity<Boolean> canRegisterForEvent(@PathVariable Long id) {
+    public ResponseEntity<Boolean> canRegisterForEvent(@PathVariable UUID id) {
         boolean canRegister = serviceEvent.canRegisterForEvent(id);
         return ResponseEntity.ok(canRegister);
     }
 
     @GetMapping("/{id}/is-visible")
     public ResponseEntity<Boolean> isEventVisible(
-            @PathVariable Long id,
-            @RequestParam Long userId) {
+            @PathVariable UUID id,
+            @RequestParam UUID userId) {
         boolean isVisible = serviceEvent.isEventVisible(id, userId);
         return ResponseEntity.ok(isVisible);
     }

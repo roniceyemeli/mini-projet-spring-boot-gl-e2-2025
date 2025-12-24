@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -50,7 +51,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public Event updateEvent(Long id, Event event) {
+    public Event updateEvent(UUID id, Event event) {
         log.info("Updating event with ID: {}", id);
 
         Event existingEvent = eventRepository.findById(id)
@@ -94,7 +95,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public void deleteEvent(Long id) {
+    public void deleteEvent(UUID id) {
         log.info("Deleting event with ID: {}", id);
 
         Event event = eventRepository.findById(id)
@@ -110,7 +111,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public Event getEventById(Long id) {
+    public Event getEventById(UUID id) {
         log.debug("Fetching event by ID: {}", id);
 
         return eventRepository.findById(id)
@@ -149,7 +150,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public Event setFeaturedStatus(Long eventId, boolean isFeatured) {
+    public Event setFeaturedStatus(UUID eventId, boolean isFeatured) {
         log.info("Setting featured status for event {} to {}", eventId, isFeatured);
 
         Event event = getEventById(eventId);
@@ -198,7 +199,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public List<Event> getEventsByOrganizer(Long organizerId, String organizerType) {
+    public List<Event> getEventsByOrganizer(UUID organizerId, String organizerType) {
         log.debug("Fetching events by organizer: {} - {}", organizerType, organizerId);
 
         return eventRepository.findByOrganizerIdAndOrganizerType(organizerId, organizerType);
@@ -240,7 +241,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public Event changeEventStatus(Long eventId, EventStatus status) {
+    public Event changeEventStatus(UUID eventId, EventStatus status) {
         log.info("Changing event {} status to {}", eventId, status);
 
         Event event = getEventById(eventId);
@@ -258,7 +259,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public Event updateEventCapacity(Long eventId, Integer maxParticipants) {
+    public Event updateEventCapacity(UUID eventId, Integer maxParticipants) {
         log.info("Updating event {} capacity to {}", eventId, maxParticipants);
 
         Event event = getEventById(eventId);
@@ -277,7 +278,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public Event updateEventRegistrationDeadline(Long eventId, LocalDateTime deadline) {
+    public Event updateEventRegistrationDeadline(UUID eventId, LocalDateTime deadline) {
         log.info("Updating event {} registration deadline to {}", eventId, deadline);
 
         Event event = getEventById(eventId);
@@ -291,7 +292,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public Event incrementParticipants(Long eventId) {
+    public Event incrementParticipants(UUID eventId) {
         log.debug("Incrementing participants for event: {}", eventId);
 
         Event event = getEventById(eventId);
@@ -310,7 +311,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public Event decrementParticipants(Long eventId) {
+    public Event decrementParticipants(UUID eventId) {
         log.debug("Decrementing participants for event: {}", eventId);
 
         Event event = getEventById(eventId);
@@ -324,7 +325,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public boolean canRegisterForEvent(Long eventId) {
+    public boolean canRegisterForEvent(UUID eventId) {
         Event event = getEventById(eventId);
         return event.canRegister();
     }
@@ -365,7 +366,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public boolean isEventVisible(Long eventId, Long userId) {
+    public boolean isEventVisible(UUID eventId, UUID userId) {
         Event event = getEventById(eventId);
 
         // Public events are visible to everyone
@@ -380,7 +381,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public boolean eventExists(Long eventId) {
+    public boolean eventExists(UUID eventId) {
         return eventRepository.existsById(eventId);
     }
 
@@ -390,7 +391,7 @@ public class ServiceEvent implements IServiceEvent {
     }
 
     @Override
-    public void validateEventCapacity(Long eventId) {
+    public void validateEventCapacity(UUID eventId) {
         Event event = getEventById(eventId);
 
         if (event.isFull()) {

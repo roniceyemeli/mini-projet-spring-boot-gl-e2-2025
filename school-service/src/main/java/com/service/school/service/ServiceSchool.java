@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -42,7 +43,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School updateSchool(Long id, School school) {
+    public School updateSchool(UUID id, School school) {
         log.info("Updating school with ID: {}", id);
 
         School existingSchool = schoolRepository.findById(id)
@@ -84,7 +85,6 @@ public class ServiceSchool implements IServiceSchool {
         existingSchool.setCity(school.getCity());
         existingSchool.setPostalCode(school.getPostalCode());
         existingSchool.setLatitude(school.getLatitude());
-        existingSchool.setLongitude(school.getLongitude());
         existingSchool.setIsPublic(school.getIsPublic());
         existingSchool.setTuitionRange(school.getTuitionRange());
         existingSchool.setAdmissionsEmail(school.getAdmissionsEmail());
@@ -111,7 +111,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public void deleteSchool(Long id) {
+    public void deleteSchool(UUID id) {
         log.info("Deleting school with ID: {}", id);
 
         School school = schoolRepository.findById(id)
@@ -127,7 +127,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School getSchoolById(Long id) {
+    public School getSchoolById(UUID id) {
         log.debug("Fetching school by ID: {}", id);
 
         return schoolRepository.findById(id)
@@ -226,7 +226,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School changeSchoolStatus(Long schoolId, SchoolStatus status) {
+    public School changeSchoolStatus(UUID schoolId, SchoolStatus status) {
         log.info("Changing school {} status to {}", schoolId, status);
 
         School school = getSchoolById(schoolId);
@@ -246,7 +246,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School activateSchool(Long schoolId) {
+    public School activateSchool(UUID schoolId) {
         log.info("Activating school: {}", schoolId);
 
         School school = getSchoolById(schoolId);
@@ -256,7 +256,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School deactivateSchool(Long schoolId) {
+    public School deactivateSchool(UUID schoolId) {
         log.info("Deactivating school: {}", schoolId);
 
         School school = getSchoolById(schoolId);
@@ -266,7 +266,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School suspendSchool(Long schoolId) {
+    public School suspendSchool(UUID schoolId) {
         log.info("Suspending school: {}", schoolId);
 
         School school = getSchoolById(schoolId);
@@ -276,7 +276,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School verifySchool(Long schoolId) {
+    public School verifySchool(UUID schoolId) {
         log.info("Verifying school: {}", schoolId);
 
         School school = getSchoolById(schoolId);
@@ -286,7 +286,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School setFeaturedStatus(Long schoolId, boolean isFeatured) {
+    public School setFeaturedStatus(UUID schoolId, boolean isFeatured) {
         log.info("Setting featured status for school {} to {}", schoolId, isFeatured);
 
         School school = getSchoolById(schoolId);
@@ -312,7 +312,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School incrementStudentCount(Long schoolId) {
+    public School incrementStudentCount(UUID schoolId) {
         log.debug("Incrementing student count for school: {}", schoolId);
 
         School school = getSchoolById(schoolId);
@@ -322,7 +322,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School decrementStudentCount(Long schoolId) {
+    public School decrementStudentCount(UUID schoolId) {
         log.debug("Decrementing student count for school: {}", schoolId);
 
         School school = getSchoolById(schoolId);
@@ -332,7 +332,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School incrementTeacherCount(Long schoolId) {
+    public School incrementTeacherCount(UUID schoolId) {
         log.debug("Incrementing teacher count for school: {}", schoolId);
 
         School school = getSchoolById(schoolId);
@@ -342,7 +342,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School decrementTeacherCount(Long schoolId) {
+    public School decrementTeacherCount(UUID schoolId) {
         log.debug("Decrementing teacher count for school: {}", schoolId);
 
         School school = getSchoolById(schoolId);
@@ -352,7 +352,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School updateStudentCount(Long schoolId, Integer count) {
+    public School updateStudentCount(UUID schoolId, Integer count) {
         log.info("Updating student count for school {} to {}", schoolId, count);
 
         School school = getSchoolById(schoolId);
@@ -362,7 +362,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public School updateTeacherCount(Long schoolId, Integer count) {
+    public School updateTeacherCount(UUID schoolId, Integer count) {
         log.info("Updating teacher count for school {} to {}", schoolId, count);
 
         School school = getSchoolById(schoolId);
@@ -372,7 +372,7 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public boolean schoolExists(Long schoolId) {
+    public boolean schoolExists(UUID schoolId) {
         return schoolRepository.existsById(schoolId);
     }
 
@@ -387,19 +387,19 @@ public class ServiceSchool implements IServiceSchool {
     }
 
     @Override
-    public boolean isSchoolOperational(Long schoolId) {
+    public boolean isSchoolOperational(UUID schoolId) {
         School school = getSchoolById(schoolId);
         return school.isOperational();
     }
 
     @Override
-    public boolean isSchoolAccredited(Long schoolId) {
+    public boolean isSchoolAccredited(UUID schoolId) {
         School school = getSchoolById(schoolId);
         return school.isAccredited();
     }
 
     @Override
-    public boolean canSchoolAdmitStudents(Long schoolId) {
+    public boolean canSchoolAdmitStudents(UUID schoolId) {
         School school = getSchoolById(schoolId);
         return school.canAdmitStudents();
     }
