@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -48,7 +49,7 @@ public class CommunityRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommunityDTO> getCommunityById(@PathVariable Integer id) {
+    public ResponseEntity<CommunityDTO> getCommunityById(@PathVariable UUID id) {
         Community community = communityService.getCommunityById(id);
         CommunityDTO communityDTO = modelMapper.map(community, CommunityDTO.class);
         return ResponseEntity.ok(communityDTO);
@@ -71,7 +72,7 @@ public class CommunityRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CommunityDTO> updateCommunity(@PathVariable Integer id,
+    public ResponseEntity<CommunityDTO> updateCommunity(@PathVariable UUID id,
                                                         @Valid @RequestBody CommunityDTO communityDTO) {
         Community community = modelMapper.map(communityDTO, Community.class);
         Community updatedCommunity = communityService.updateCommunity(id, community);
@@ -80,20 +81,20 @@ public class CommunityRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCommunity(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteCommunity(@PathVariable UUID id) {
         communityService.deleteCommunity(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<CommunityDTO> activateCommunity(@PathVariable Integer id) {
+    public ResponseEntity<CommunityDTO> activateCommunity(@PathVariable UUID id) {
         Community activatedCommunity = communityService.activateCommunity(id);
         CommunityDTO communityDTO = modelMapper.map(activatedCommunity, CommunityDTO.class);
         return ResponseEntity.ok(communityDTO);
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<CommunityDTO> deactivateCommunity(@PathVariable Integer id) {
+    public ResponseEntity<CommunityDTO> deactivateCommunity(@PathVariable UUID id) {
         Community deactivatedCommunity = communityService.deactivateCommunity(id);
         CommunityDTO communityDTO = modelMapper.map(deactivatedCommunity, CommunityDTO.class);
         return ResponseEntity.ok(communityDTO);

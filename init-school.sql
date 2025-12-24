@@ -1,19 +1,15 @@
 -- Create schema
 CREATE SCHEMA IF NOT EXISTS school_schema;
 
-SET
-search_path TO school_schema;
+SET search_path TO school_schema;
 
 -- Drop tables if they exist
 DROP TABLE IF EXISTS schools CASCADE;
-DROP TABLE IF EXISTS departments CASCADE;
-DROP TABLE IF EXISTS classrooms CASCADE;
-DROP TABLE IF EXISTS school_facilities CASCADE;
 
 -- Create schools table (with all fields from your Entity)
 CREATE TABLE schools
 (
-    id                        BIGSERIAL PRIMARY KEY,
+    id                        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name                      VARCHAR(200) NOT NULL,
     title                     VARCHAR(200),
     description               TEXT,
@@ -62,111 +58,128 @@ CREATE TABLE schools
     verification_date         TIMESTAMP,
     created_at                TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
     updated_at                TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-    created_by                BIGINT,
-    updated_by                BIGINT,
-
-    -- Add computed columns for business logic
-    is_operational            BOOLEAN GENERATED ALWAYS AS (
-        status = 'ACTIVE' AND is_active = TRUE
-        ) STORED,
-    is_accredited             BOOLEAN GENERATED ALWAYS AS (
-        accreditation_status = 'ACCREDITED' AND
-        (accreditation_expiry_date IS NULL OR accreditation_expiry_date > CURRENT_TIMESTAMP)
-        ) STORED,
-    can_admit_students        BOOLEAN GENERATED ALWAYS AS (
-        is_operational AND is_accredited
-        ) STORED
+    created_by                UUID,
+    updated_by                UUID
 );
 
--- Insert sample schools
-INSERT INTO schools (name, title, description, slug, email, website, phone_number,
+-- Insert sample schools with UUIDs and all required fields
+INSERT INTO schools (id, name, title, description, slug, email, website, phone_number,
                      founding_year, type, accreditation_number, country, city,
                      total_students, total_teachers, is_public, motto, vision, mission,
-                     is_featured, verified, created_by)
-VALUES ('Greenwood International School',
-        'Greenwood International School - Excellence in Education',
-        'Greenwood International School is a premier educational institution committed to academic excellence, character development, and global citizenship. We offer a comprehensive curriculum from kindergarten through high school.',
-        'greenwood-international-school',
-        'info@greenwood.edu',
-        'https://www.greenwood.edu',
-        '+1-555-0201',
-        1995,
-        'K12',
-        'ACC-2024-GIS001',
-        'USA',
-        'Springfield',
-        1500,
-        120,
-        FALSE,
-        'Knowledge, Integrity, Excellence',
-        'To be a world-class institution that nurtures innovative thinkers and responsible global citizens.',
-        'To provide a transformative educational experience that empowers students to achieve their full potential and make meaningful contributions to society.',
-        TRUE,
-        TRUE,
-        2),
-       ('Springfield University',
-        'Springfield University - Advancing Knowledge',
-        'A comprehensive public university offering undergraduate, graduate, and professional programs across various disciplines. Known for research excellence and community engagement.',
-        'springfield-university',
-        'admissions@springfield.edu',
-        'https://www.springfield.edu',
-        '+1-555-0202',
-        1950,
-        'UNIVERSITY',
-        'ACC-2024-SU002',
-        'USA',
-        'Springfield',
-        25000,
-        1500,
-        TRUE,
-        'Truth and Wisdom',
-        'To be a leading research university that transforms lives through education, discovery, and engagement.',
-        'To provide accessible, high-quality education, foster groundbreaking research, and serve our communities.',
-        TRUE,
-        TRUE,
-        2),
-       ('Tech Valley High School',
-        'Tech Valley High - STEM Excellence',
-        'A specialized high school focusing on Science, Technology, Engineering, and Mathematics (STEM) education. Partnered with local tech industries for real-world learning experiences.',
-        'tech-valley-high-school',
-        'admissions@techvalley.edu',
-        'https://www.techvalley.edu',
-        '+1-555-0203',
-        2005,
-        'HIGH_SCHOOL',
-        'ACC-2024-TVHS003',
-        'USA',
-        'Tech City',
-        800,
-        65,
-        TRUE,
-        'Innovate, Create, Elevate',
-        'To prepare the next generation of innovators and problem-solvers for the challenges of tomorrow.',
-        'To provide a rigorous STEM-focused education that develops critical thinking and practical skills.',
-        FALSE,
-        TRUE,
-        3),
-       ('Community Arts Academy',
-        'Community Arts Academy - Nurturing Creativity',
-        'A private arts academy offering specialized programs in visual arts, music, dance, and theater for students of all ages.',
-        'community-arts-academy',
-        'info@artsacademy.edu',
-        'https://www.artsacademy.edu',
-        '+1-555-0204',
-        1980,
-        'ACADEMY',
-        'ACC-2024-CAA004',
-        'USA',
-        'Artsville',
-        400,
-        40,
-        FALSE,
-        'Art Inspires Life',
-        'To cultivate artistic excellence and creative expression in a supportive community.',
-        'To provide comprehensive arts education that fosters talent, creativity, and personal growth.',
-        FALSE,
-        TRUE,
-        4);
+                     is_featured, verified, created_by, status, is_active,
+                     address, facebook_url, linkedin_url)
+VALUES
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
+     'Greenwood International School',
+     'Greenwood International School - Excellence in Education',
+     'Greenwood International School is a premier educational institution committed to academic excellence, character development, and global citizenship. We offer a comprehensive curriculum from kindergarten through high school.',
+     'greenwood-international-school',
+     'info@greenwood.edu',
+     'https://www.greenwood.edu',
+     '+1-555-0201',
+     1995,
+     'K12',
+     'ACC-2024-GIS001',
+     'USA',
+     'Springfield',
+     1500,
+     120,
+     FALSE,
+     'Knowledge, Integrity, Excellence',
+     'To be a world-class institution that nurtures innovative thinkers and responsible global citizens.',
+     'To provide a transformative educational experience that empowers students to achieve their full potential and make meaningful contributions to society.',
+     TRUE,
+     TRUE,
+     '00000000-0000-0000-0000-000000000002',
+     'ACTIVE',
+     TRUE,
+     '123 Education Blvd, Springfield',
+     'https://facebook.com/greenwood.edu',
+     'https://linkedin.com/school/greenwood'),
+
+    ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',
+     'Springfield University',
+     'Springfield University - Advancing Knowledge',
+     'A comprehensive public university offering undergraduate, graduate, and professional programs across various disciplines. Known for research excellence and community engagement.',
+     'springfield-university',
+     'admissions@springfield.edu',
+     'https://www.springfield.edu',
+     '+1-555-0202',
+     1950,
+     'UNIVERSITY',
+     'ACC-2024-SU002',
+     'USA',
+     'Springfield',
+     25000,
+     1500,
+     TRUE,
+     'Truth and Wisdom',
+     'To be a leading research university that transforms lives through education, discovery, and engagement.',
+     'To provide accessible, high-quality education, foster groundbreaking research, and serve our communities.',
+     TRUE,
+     TRUE,
+     '00000000-0000-0000-0000-000000000002',
+     'ACTIVE',
+     TRUE,
+     '456 University Ave, Springfield',
+     'https://facebook.com/springfield.university',
+     'https://linkedin.com/school/springfield-university'),
+
+    ('cccccccc-cccc-cccc-cccc-ccccccccccc3',
+     'Tech Valley High School',
+     'Tech Valley High - STEM Excellence',
+     'A specialized high school focusing on Science, Technology, Engineering, and Mathematics (STEM) education. Partnered with local tech industries for real-world learning experiences.',
+     'tech-valley-high-school',
+     'admissions@techvalley.edu',
+     'https://www.techvalley.edu',
+     '+1-555-0203',
+     2005,
+     'HIGH_SCHOOL',
+     'ACC-2024-TVHS003',
+     'USA',
+     'Tech City',
+     800,
+     65,
+     TRUE,
+     'Innovate, Create, Elevate',
+     'To prepare the next generation of innovators and problem-solvers for the challenges of tomorrow.',
+     'To provide a rigorous STEM-focused education that develops critical thinking and practical skills.',
+     FALSE,
+     TRUE,
+     '00000000-0000-0000-0000-000000000003',
+     'ACTIVE',
+     TRUE,
+     '789 Innovation Drive, Tech City',
+     'https://facebook.com/techvalleyhigh',
+     'https://linkedin.com/school/tech-valley-high'),
+
+    ('dddddddd-dddd-dddd-dddd-ddddddddddd4',
+     'Community Arts Academy',
+     'Community Arts Academy - Nurturing Creativity',
+     'A private arts academy offering specialized programs in visual arts, music, dance, and theater for students of all ages.',
+     'community-arts-academy',
+     'info@artsacademy.edu',
+     'https://www.artsacademy.edu',
+     '+1-555-0204',
+     1980,
+     'ACADEMY',
+     'ACC-2024-CAA004',
+     'USA',
+     'Artsville',
+     400,
+     40,
+     FALSE,
+     'Art Inspires Life',
+     'To cultivate artistic excellence and creative expression in a supportive community.',
+     'To provide comprehensive arts education that fosters talent, creativity, and personal growth.',
+     FALSE,
+     TRUE,
+     '00000000-0000-0000-0000-000000000004',
+     'ACTIVE',
+     TRUE,
+     '321 Creativity Lane, Artsville',
+     'https://facebook.com/communityartsacademy',
+     'https://linkedin.com/school/community-arts-academy');
 
 -- Create indexes for performance
 CREATE INDEX idx_schools_email ON schools (email);
@@ -176,16 +189,11 @@ CREATE INDEX idx_schools_city ON schools (city);
 CREATE INDEX idx_schools_country ON schools (country);
 CREATE INDEX idx_schools_is_featured ON schools (is_featured) WHERE is_featured = TRUE;
 CREATE INDEX idx_schools_verified ON schools (verified) WHERE verified = TRUE;
-
+CREATE INDEX idx_schools_created_by ON schools (created_by);
+CREATE INDEX idx_schools_slug ON schools (slug);
+CREATE INDEX idx_schools_is_active ON schools (is_active) WHERE is_active = TRUE;
 
 -- Grant privileges
-GRANT
-ALL
-PRIVILEGES
-ON
-ALL
-TABLES IN SCHEMA school_schema TO school_admin;
-GRANT ALL PRIVILEGES ON ALL
-SEQUENCES IN SCHEMA school_schema TO school_admin;
-GRANT USAGE ON SCHEMA
-school_schema TO school_admin;
+GRANT USAGE ON SCHEMA school_schema TO school_admin;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA school_schema TO school_admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA school_schema TO school_admin;

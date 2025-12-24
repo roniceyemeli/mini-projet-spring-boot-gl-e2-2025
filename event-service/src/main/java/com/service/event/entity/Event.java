@@ -70,8 +70,8 @@ public class Event {
     @Column(name = "registration_fee")
     private BigDecimal registrationFee = BigDecimal.ZERO;
 
-    @Column(name = "organizer_id", nullable = false)
-    private Long organizerId;
+    @Column(name = "organizer_id",columnDefinition = "uuid", nullable = false)
+    private UUID organizerId;
 
     @Column(name = "organizer_type", length = 50)
     private String organizerType; // SCHOOL, COMMUNITY, USER

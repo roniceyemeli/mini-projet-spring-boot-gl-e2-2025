@@ -63,12 +63,6 @@ public class UserRestController {
         return ResponseEntity.ok(userService.getUsersByRole(roleId));
     }
 
-    @GetMapping("/school/{schoolId}")
-//    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponseDTO>> getUsersBySchool(@PathVariable UUID schoolId) {
-        return ResponseEntity.ok(userService.getUsersBySchool(schoolId));
-    }
-
     @PutMapping("/{id}")
 //    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<UserDTO> updateUser(
@@ -110,13 +104,13 @@ public class UserRestController {
 
     @GetMapping("/stats/total")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UUID> getTotalUsersCount() {
+    public ResponseEntity<Long> getTotalUsersCount() {
         return ResponseEntity.ok(userService.getTotalUsersCount());
     }
 
     @GetMapping("/stats/active")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UUID> getActiveUsersCount() {
+    public ResponseEntity<Long> getActiveUsersCount() {
         return ResponseEntity.ok(userService.getActiveUsersCount());
     }
 }

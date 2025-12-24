@@ -3,7 +3,6 @@ package com.service.user.service;
 import com.service.user.dto.auth.*;
 import com.service.user.dto.user.CreateUserDTO;
 import com.service.user.dto.user.UserDTO;
-import com.service.user.entity.User;
 import com.service.user.utils.JwtUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +53,6 @@ public class AuthService implements IAuthService {
         response.setRole(userDTO.getRole() != null ? userDTO.getRole().getName() : "USER");
         response.setRoleName(response.getRole());
         response.setRoleId(userDTO.getRole() != null ? userDTO.getRole().getId() : null);
-        response.setSchoolId(userDTO.getSchoolId());
         response.setExpiresAt(LocalDateTime.now().plusHours(24)); // 24 hours expiration
 
         log.info("Login successful for user ID: {}", userDTO.getId());
@@ -74,7 +72,6 @@ public class AuthService implements IAuthService {
         createUserDTO.setLastName(request.getLastName());
         createUserDTO.setPhone(request.getPhone());
         createUserDTO.setRoleId(request.getRoleId());
-        createUserDTO.setSchoolId(request.getSchoolId());
 
         // Create user
         UserDTO createdUser = userService.createUser(createUserDTO);
@@ -95,7 +92,6 @@ public class AuthService implements IAuthService {
         response.setRole(createdUser.getRole() != null ? createdUser.getRole().getName() : "USER");
         response.setRoleName(response.getRole());
         response.setRoleId(createdUser.getRole() != null ? createdUser.getRole().getId() : null);
-        response.setSchoolId(createdUser.getSchoolId());
         response.setExpiresAt(LocalDateTime.now().plusHours(24));
 
         log.info("Registration successful for user ID: {}", createdUser.getId());
@@ -156,7 +152,7 @@ public class AuthService implements IAuthService {
         }
 
         String username = jwtUtil.extractUsername(oldToken);
-        Long userId = jwtUtil.extractUserId(oldToken);
+        UUID userId = jwtUtil.extractUserId(oldToken);
         String role = jwtUtil.extractRole(oldToken);
 
         return jwtUtil.generateToken(username, userId, role);
@@ -193,7 +189,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public Long getUserIdFromToken(String token) {
+    public UUID getUserIdFromToken(String token) {
         return jwtUtil.extractUserId(token);
     }
 

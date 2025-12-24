@@ -255,17 +255,6 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public List<UserResponseDTO> getUsersBySchool(UUID schoolId) {
-        return userRepository.findBySchoolId(schoolId).stream()
-                .map(user -> {
-                    UserResponseDTO dto = modelMapper.map(user, UserResponseDTO.class);
-                    dto.setFullName(user.getFullName());
-                    return dto;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<UserResponseDTO> getActiveUsers() {
         return userRepository.findByIsActiveTrue().stream()
                 .map(user -> {

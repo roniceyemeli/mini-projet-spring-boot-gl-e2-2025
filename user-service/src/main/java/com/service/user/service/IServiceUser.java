@@ -20,7 +20,6 @@ public interface IServiceUser {
     // Search & Filter
     List<UserResponseDTO> searchUsers(String keyword);
     List<UserResponseDTO> getUsersByRole(UUID roleId);
-    List<UserResponseDTO> getUsersBySchool(UUID schoolId);
     List<UserResponseDTO> getActiveUsers();
     List<UserResponseDTO> getVerifiedUsers();
 

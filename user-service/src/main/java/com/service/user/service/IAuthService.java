@@ -2,6 +2,8 @@ package com.service.user.service;
 
 import com.service.user.dto.auth.*;
 
+import java.util.UUID;
+
 public interface IAuthService {
 
     AuthResponseDTO login(LoginRequestDTO request);
@@ -21,7 +23,7 @@ public interface IAuthService {
     void verifyEmail(String token);
 
     // Utility
-    Long getUserIdFromToken(String token);
+    UUID getUserIdFromToken(String token);
     String getUsernameFromToken(String token);
     String getRoleFromToken(String token);
 }

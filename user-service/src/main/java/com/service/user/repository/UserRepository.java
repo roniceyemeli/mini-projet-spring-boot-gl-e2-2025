@@ -19,8 +19,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     List<User> findByRoleId(UUID roleId);
 
-    List<User> findBySchoolId(UUID schoolId);
-
     List<User> findByIsActiveTrue();
 
     List<User> findByIsVerifiedTrue();
