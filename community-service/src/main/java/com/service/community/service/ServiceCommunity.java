@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +43,7 @@ public class ServiceCommunity implements IServiceCommunity {
     }
 
     @Override
-    public Community updateCommunity(Integer id, Community community) {
+    public Community updateCommunity(UUID id, Community community) {
         Community existingCommunity = communityRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Community not found with id: " + id));
 
@@ -79,7 +80,7 @@ public class ServiceCommunity implements IServiceCommunity {
     }
 
     @Override
-    public void deleteCommunity(Integer id) {
+    public void deleteCommunity(UUID id) {
         Community community = communityRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Community not found with id: " + id));
 
@@ -92,7 +93,7 @@ public class ServiceCommunity implements IServiceCommunity {
     }
 
     @Override
-    public Community getCommunityById(Integer id) {
+    public Community getCommunityById(UUID id) {
         return communityRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Community not found with id: " + id));
     }
@@ -132,7 +133,7 @@ public class ServiceCommunity implements IServiceCommunity {
     }
 
     @Override
-    public Community activateCommunity(Integer communityId) {
+    public Community activateCommunity(UUID communityId) {
         Community community = getCommunityById(communityId);
         community.setIsActive(true);
         community.setUpdatedAt(LocalDateTime.now());
@@ -140,7 +141,7 @@ public class ServiceCommunity implements IServiceCommunity {
     }
 
     @Override
-    public Community deactivateCommunity(Integer communityId) {
+    public Community deactivateCommunity(UUID communityId) {
         Community community = getCommunityById(communityId);
         community.setIsActive(false);
         community.setUpdatedAt(LocalDateTime.now());
@@ -168,8 +169,8 @@ public class ServiceCommunity implements IServiceCommunity {
     }
 
     @Override
-    public Integer getTotalMembersAcrossCommunities() {
-        return communityRepository.findAll().stream()
+    public Long getTotalMembersAcrossCommunities() {
+        return (long) communityRepository.findAll().stream()
                 .mapToInt(Community::getMemberCount)
                 .sum();
     }

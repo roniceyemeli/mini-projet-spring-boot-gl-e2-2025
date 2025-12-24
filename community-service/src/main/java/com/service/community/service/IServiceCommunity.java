@@ -4,14 +4,15 @@ package com.service.community.service;
 import com.service.community.entity.Community;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IServiceCommunity {
 
     // CRUD Operations
     Community createCommunity(Community community);
-    Community updateCommunity(Integer id, Community community);
-    void deleteCommunity(Integer id);
-    Community getCommunityById(Integer id);
+    Community updateCommunity(UUID id, Community community);
+    void deleteCommunity(UUID id);
+    Community getCommunityById(UUID id);
     Community getCommunityBySlug(String slug);
     List<Community> getAllCommunities();
 
@@ -22,8 +23,8 @@ public interface IServiceCommunity {
     List<Community> getTopCommunitiesByMembers(Integer limit);
 
     // Status Management
-    Community activateCommunity(Integer communityId);
-    Community deactivateCommunity(Integer communityId);
+    Community activateCommunity(UUID communityId);
+    Community deactivateCommunity(UUID communityId);
 
     // Validation
     boolean communityExistsBySlug(String slug);
@@ -32,5 +33,5 @@ public interface IServiceCommunity {
     // Statistics
     Long getTotalCommunities();
     Long getTotalActiveCommunities();
-    Integer getTotalMembersAcrossCommunities();
+    Long getTotalMembersAcrossCommunities();
 }
