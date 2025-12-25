@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/events")
+@RequestMapping("/api/events")
 @CrossOrigin(origins = "*")
 public class EventRestController {
 

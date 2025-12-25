@@ -17,7 +17,9 @@ public enum SchoolType {
     ONLINE("Online School"),
     INTERNATIONAL("International School"),
     PRIVATE("Private School"),
-    PUBLIC("Public School");
+    PUBLIC("Public School"),
+    K12("K-12 School"),
+    ACADEMY("Academy");
 
     private final String displayName;
 

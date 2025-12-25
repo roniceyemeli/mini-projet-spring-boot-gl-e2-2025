@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/event-subscriptions")
+@RequestMapping("/api/event-subscriptions")
 @CrossOrigin(origins = "*")
 public class EventSubscriptionRestController {
 

@@ -26,7 +26,7 @@ public class SchoolRestController {
     private final IServiceSchool schoolService;
     private final ModelMapper modelMapper;
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<SchoolResponseDTO> createSchool(@Valid @RequestBody SchoolDTO schoolDTO) {
         School school = modelMapper.map(schoolDTO, School.class);
         School createdSchool = schoolService.createSchool(school);
