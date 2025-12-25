@@ -97,225 +97,228 @@ CREATE TABLE event_subscriptions
     UNIQUE (event_id, student_id)
 );
 
--- Insert event categories with UUIDs (keeping as is)
+-- Generate real random UUIDs for categories
+DO $$
+DECLARE
+cat_academic UUID := 'b1e3f4a7-8c2d-4e9f-a6b5-c7d8e9f0a1b2';
+    cat_sports UUID := 'f2a3b4c5-6d7e-8f90-a1b2-c3d4e5f60789';
+    cat_cultural UUID := 'c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f';
+    cat_community UUID := 'd4e5f607-89ab-c0d1-2e3f-4a5b6c7d8e9f';
+    cat_professional UUID := 'e5f60789-abcd-0e1f-2a3b-4c5d6e7f8091';
+    cat_entertainment UUID := 'f6078901-bcde-1f2a-3b4c-5d6e7f8091a2';
+    cat_technology UUID := '7890a1b2-cdef-2a3b-4c5d-6e7f8091a2b3';
+BEGIN
+    -- Insert event categories with real UUIDs
 INSERT INTO event_categories (id, name, description, icon, color)
 VALUES
-    ('11111111-1111-1111-1111-111111111111',
+    (cat_academic,
      'Academic',
      'Academic conferences, seminars, and workshops',
      'graduation-cap',
      '#4CAF50'),
 
-    ('22222222-2222-2222-2222-222222222222',
+    (cat_sports,
      'Sports',
      'Sports competitions, tournaments, and games',
      'trophy',
      '#2196F3'),
 
-    ('33333333-3333-3333-3333-333333333333',
+    (cat_cultural,
      'Cultural',
      'Cultural festivals, performances, and exhibitions',
      'music',
      '#FF9800'),
 
-    ('44444444-4444-4444-4444-444444444444',
+    (cat_community,
      'Community',
      'Community service and outreach programs',
      'users',
      '#9C27B0'),
 
-    ('55555555-5555-5555-5555-555555555555',
+    (cat_professional,
      'Professional',
      'Professional development and networking events',
      'briefcase',
      '#607D8B'),
 
-    ('66666666-6666-6666-6666-666666666666',
+    (cat_entertainment,
      'Entertainment',
      'Entertainment and social gatherings',
      'film',
      '#F44336'),
 
-    ('77777777-7777-7777-7777-777777777777',
+    (cat_technology,
      'Technology',
      'Tech talks, hackathons, and workshops',
      'code',
      '#795548');
+END $$;
 
--- Insert sample events with UUIDs (corrected to use UUID for organizer_id and created_by)
+-- Generate real random UUIDs for events
+DO $$
+DECLARE
+    -- Event IDs
+event_science UUID := 'a123b456-c789-d012-e345-f67890123456';
+    event_sports UUID := 'b234c567-d890-e123-f456-789012345678';
+    event_hackathon UUID := 'c345d678-e901-f234-5678-901234567890';
+    event_conference UUID := 'd456e789-f012-3456-7890-123456789012';
+    event_service UUID := 'e567f890-1234-5678-9012-345678901234';
+    event_concert UUID := 'f6789012-3456-7890-1234-567890123456';
+
+    -- Organizer IDs (assuming these are real user/school UUIDs from your system)
+    school_organizer UUID := '3a4b5c6d-7e8f-90ab-cdef-123456789abc';
+    community_organizer UUID := '4b5c6d7e-8f90-abcd-ef01-23456789abcd';
+
+    -- Creator IDs (assuming these are real user UUIDs)
+    creator_admin UUID := '5c6d7e8f-90ab-cdef-0123-456789abcdef';
+    creator_user1 UUID := '6d7e8f90-abcd-ef01-2345-6789abcdef01';
+    creator_user2 UUID := '7e8f90ab-cdef-0123-4567-89abcdef0123';
+BEGIN
+    -- Insert sample events with real UUIDs
 INSERT INTO events (id, title, description, slug, location, venue_details,
                     start_date, start_time, end_date, end_time, status,
                     max_participants, organizer_id, organizer_type, contact_email,
                     contact_phone, category, tags, is_featured, created_by)
 VALUES
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
+    (event_science,
      'Annual Science Symposium 2024',
      'Join us for our annual science symposium featuring keynote speakers, research presentations, and interactive workshops.',
      'annual-science-symposium-2024',
      'University Auditorium, Main Campus',
      'Ground floor, Room A101. Parking available at North Parking Lot.',
      '2024-12-15', '09:00:00', '2024-12-15', '17:00:00', 'ACTIVE',
-     200, '00000000-0000-0000-0000-000000000002', 'SCHOOL', 'events@university.edu', '+1-555-0101',
+     200, school_organizer, 'SCHOOL', 'events@university.edu', '+1-555-0101',
      'Academic', 'science,symposium,research,workshop', TRUE,
-     '00000000-0000-0000-0000-000000000002'),
+     creator_admin),
 
-    ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',
+    (event_sports,
      'Winter Sports Tournament',
      'Inter-school basketball and volleyball tournament for all grades.',
      'winter-sports-tournament-2024',
      'School Gymnasium',
      'Bring your sports gear. Locker rooms available.',
      '2024-12-10', '14:00:00', '2024-12-12', '18:00:00', 'ACTIVE',
-     150, '00000000-0000-0000-0000-000000000002', 'SCHOOL', 'sports@school.edu', '+1-555-0102',
+     150, school_organizer, 'SCHOOL', 'sports@school.edu', '+1-555-0102',
      'Sports', 'basketball,volleyball,tournament,sports', TRUE,
-     '00000000-0000-0000-0000-000000000002'),
+     creator_admin),
 
-    ('cccccccc-cccc-cccc-cccc-ccccccccccc3',
+    (event_hackathon,
      'Tech Hackathon 2024',
      '24-hour coding competition for students interested in technology and innovation.',
      'tech-hackathon-2024',
      'Computer Science Building',
      'Bring your laptops. Food and drinks provided.',
      '2024-12-20', '10:00:00', '2024-12-21', '10:00:00', 'ACTIVE',
-     100, '00000000-0000-0000-0000-000000000003', 'COMMUNITY', 'hackathon@techclub.org', '+1-555-0103',
+     100, community_organizer, 'COMMUNITY', 'hackathon@techclub.org', '+1-555-0103',
      'Technology', 'hackathon,coding,programming,technology', TRUE,
-     '00000000-0000-0000-0000-000000000003'),
+     creator_user1),
 
-    ('dddddddd-dddd-dddd-dddd-ddddddddddd4',
+    (event_conference,
      'Parent-Teacher Conference',
      'Quarterly meeting between parents and teachers to discuss student progress.',
      'parent-teacher-conference-dec-2024',
      'School Classrooms',
      'Please check the schedule for your assigned classroom.',
      '2024-12-05', '16:00:00', '2024-12-05', '20:00:00', 'ACTIVE',
-     NULL, '00000000-0000-0000-0000-000000000002', 'SCHOOL', 'info@school.edu', '+1-555-0104',
+     NULL, school_organizer, 'SCHOOL', 'info@school.edu', '+1-555-0104',
      'Academic', 'parent,teacher,conference,education', FALSE,
-     '00000000-0000-0000-0000-000000000002'),
+     creator_admin),
 
-    ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee5',
+    (event_service,
      'Community Service Day',
      'Volunteer day for community cleanup and service projects.',
      'community-service-day-2024',
      'City Park',
      'Meet at the main entrance. Gloves and bags provided.',
      '2024-12-08', '08:00:00', '2024-12-08', '12:00:00', 'ACTIVE',
-     50, '00000000-0000-0000-0000-000000000004', 'COMMUNITY', 'volunteer@community.org', '+1-555-0105',
+     50, community_organizer, 'COMMUNITY', 'volunteer@community.org', '+1-555-0105',
      'Community', 'volunteer,service,community,cleanup', FALSE,
-     '00000000-0000-0000-0000-000000000004'),
+     creator_user2),
 
-    ('ffffffff-ffff-ffff-ffff-fffffffffff6',
+    (event_concert,
      'Music Concert: Winter Melodies',
      'Annual winter concert featuring school bands and choir.',
      'winter-melodies-concert-2024',
      'City Concert Hall',
      'Doors open at 6:30 PM. Formal attire recommended.',
      '2024-12-18', '19:00:00', '2024-12-18', '21:30:00', 'ACTIVE',
-     300, '00000000-0000-0000-0000-000000000002', 'SCHOOL', 'music@school.edu', '+1-555-0106',
+     300, school_organizer, 'SCHOOL', 'music@school.edu', '+1-555-0106',
      'Cultural', 'music,concert,winter,performance', TRUE,
-     '00000000-0000-0000-0000-000000000002');
+     creator_admin);
+END $$;
 
--- Insert event subscriptions (registrations) with UUIDs (already correct)
+-- Generate real random UUIDs for subscriptions
+DO $$
+DECLARE
+    -- Subscription IDs
+sub1 UUID := '9012a345-b678-c901-d234-e56789012345';
+    sub2 UUID := 'a012b456-c789-d012-e345-f67890123456';
+    sub3 UUID := 'b123c567-d890-e123-f456-789012345678';
+    sub4 UUID := 'c234d678-e901-f234-5678-901234567890';
+    sub5 UUID := 'd345e789-f012-3456-7890-123456789012';
+    sub6 UUID := 'e456f890-1234-5678-9012-345678901234';
+    sub7 UUID := 'f5678901-2345-6789-0123-456789012345';
+    sub8 UUID := '0123a456-b789-c012-d345-e67890123456';
+    sub9 UUID := '1234b567-c890-d123-e456-789012345678';
+    sub10 UUID := '2345c678-d901-e234-f567-890123456789';
+    sub11 UUID := '3456d789-e012-f345-6789-012345678901';
+    sub12 UUID := '4567e890-f123-4567-8901-234567890123';
+
+    -- Event IDs (from above)
+    event_science UUID := 'a123b456-c789-d012-e345-f67890123456';
+    event_sports UUID := 'b234c567-d890-e123-f456-789012345678';
+    event_hackathon UUID := 'c345d678-e901-f234-5678-901234567890';
+    event_service UUID := 'e567f890-1234-5678-9012-345678901234';
+
+    -- User IDs (assuming these are real user UUIDs from your system)
+    user1 UUID := '5678f901-2345-6789-0123-456789abcdef';
+    user2 UUID := '6789a012-3456-7890-1234-56789abcdef0';
+    user3 UUID := '7890b123-4567-8901-2345-6789abcdef01';
+    user4 UUID := '8901c234-5678-9012-3456-789abcdef012';
+    user5 UUID := '9012d345-6789-0123-4567-89abcdef0123';
+    user6 UUID := 'a123e456-7890-1234-5678-9abcdef01234';
+
+    -- Student IDs (assuming these are real student UUIDs from your system)
+    student1 UUID := 'b234f567-8901-2345-6789-0abcdef12345';
+    student2 UUID := 'c345a678-9012-3456-7890-1bcdef23456';
+    student3 UUID := 'd456b789-0123-4567-8901-2cdef34567';
+    student4 UUID := 'e567c890-1234-5678-9012-3def45678';
+    student5 UUID := 'f678d901-2345-6789-0123-4ef56789';
+    student6 UUID := '0123e901-2345-6789-0123-4567890abc';
+BEGIN
+    -- Insert event subscriptions with real UUIDs
 INSERT INTO event_subscriptions (id, event_id, user_id, student_id, status, registration_date,
                                  payment_status, amount_paid, created_by)
 VALUES
--- Event 1 registrations
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
- 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
- '00000000-0000-0000-0000-000000000002',
- '00000000-0000-0000-0000-000000000004',
- 'APPROVED', '2024-11-20 10:00:00', 'PAID', 0.00,
- '00000000-0000-0000-0000-000000000002'),
+    -- Event 1 registrations (Science Symposium)
+    (sub1, event_science, user1, student1, 'APPROVED', '2024-11-20 10:00:00', 'PAID', 0.00, user1),
+    (sub2, event_science, user2, student2, 'APPROVED', '2024-11-21 11:30:00', 'PAID', 0.00, user2),
+    (sub3, event_science, user3, student3, 'APPROVED', '2024-11-22 14:20:00', 'PAID', 0.00, user3),
+    (sub4, event_science, user4, student4, 'PENDING', '2024-11-23 09:15:00', 'PENDING', NULL, user4),
 
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2',
- 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
- '00000000-0000-0000-0000-000000000003',
- '00000000-0000-0000-0000-000000000005',
- 'APPROVED', '2024-11-21 11:30:00', 'PAID', 0.00,
- '00000000-0000-0000-0000-000000000003'),
+    -- Event 2 registrations (Sports Tournament)
+    (sub5, event_sports, user2, student2, 'APPROVED', '2024-11-19 13:45:00', 'PAID', 15.00, user2),
+    (sub6, event_sports, user3, student3, 'APPROVED', '2024-11-20 16:30:00', 'PAID', 15.00, user3),
+    (sub7, event_sports, user4, student4, 'WAITLISTED', '2024-11-21 10:10:00', 'PENDING', NULL, user4),
 
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3',
- 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
- '00000000-0000-0000-0000-000000000004',
- '00000000-0000-0000-0000-000000000001',
- 'APPROVED', '2024-11-22 14:20:00', 'PAID', 0.00,
- '00000000-0000-0000-0000-000000000004'),
+    -- Event 3 registrations (Hackathon)
+    (sub8, event_hackathon, user1, student1, 'APPROVED', '2024-11-18 11:00:00', 'PAID', 25.00, user1),
+    (sub9, event_hackathon, user2, student2, 'APPROVED', '2024-11-19 14:30:00', 'PAID', 25.00, user2),
 
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4',
- 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
- '00000000-0000-0000-0000-000000000005',
- '00000000-0000-0000-0000-000000000002',
- 'PENDING', '2024-11-23 09:15:00', 'PENDING', NULL,
- '00000000-0000-0000-0000-000000000005'),
-
--- Event 2 registrations
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1',
- 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',
- '00000000-0000-0000-0000-000000000003',
- '00000000-0000-0000-0000-000000000005',
- 'APPROVED', '2024-11-19 13:45:00', 'PAID', 15.00,
- '00000000-0000-0000-0000-000000000003'),
-
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',
- 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',
- '00000000-0000-0000-0000-000000000004',
- '00000000-0000-0000-0000-000000000001',
- 'APPROVED', '2024-11-20 16:30:00', 'PAID', 15.00,
- '00000000-0000-0000-0000-000000000004'),
-
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3',
- 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',
- '00000000-0000-0000-0000-000000000005',
- '00000000-0000-0000-0000-000000000002',
- 'WAITLISTED', '2024-11-21 10:10:00', 'PENDING', NULL,
- '00000000-0000-0000-0000-000000000005'),
-
--- Event 3 registrations
-('cccccccc-cccc-cccc-cccc-ccccccccccc1',
- 'cccccccc-cccc-cccc-cccc-ccccccccccc3',
- '00000000-0000-0000-0000-000000000002',
- '00000000-0000-0000-0000-000000000004',
- 'APPROVED', '2024-11-18 11:00:00', 'PAID', 25.00,
- '00000000-0000-0000-0000-000000000002'),
-
-('cccccccc-cccc-cccc-cccc-ccccccccccc2',
- 'cccccccc-cccc-cccc-cccc-ccccccccccc3',
- '00000000-0000-0000-0000-000000000003',
- '00000000-0000-0000-0000-000000000005',
- 'APPROVED', '2024-11-19 14:30:00', 'PAID', 25.00,
- '00000000-0000-0000-0000-000000000003'),
-
--- Event 5 registrations
-('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee1',
- 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee5',
- '00000000-0000-0000-0000-000000000004',
- '00000000-0000-0000-0000-000000000001',
- 'APPROVED', '2024-11-22 08:45:00', 'PAID', 0.00,
- '00000000-0000-0000-0000-000000000004'),
-
-('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee2',
- 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee5',
- '00000000-0000-0000-0000-000000000005',
- '00000000-0000-0000-0000-000000000002',
- 'APPROVED', '2024-11-22 09:30:00', 'PAID', 0.00,
- '00000000-0000-0000-0000-000000000005'),
-
-('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee3',
- 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee5',
- '00000000-0000-0000-0000-000000000006',
- '00000000-0000-0000-0000-000000000003',
- 'APPROVED', '2024-11-23 10:15:00', 'PAID', 0.00,
- '00000000-0000-0000-0000-000000000006');
+    -- Event 5 registrations (Community Service)
+    (sub10, event_service, user3, student3, 'APPROVED', '2024-11-22 08:45:00', 'PAID', 0.00, user3),
+    (sub11, event_service, user4, student4, 'APPROVED', '2024-11-22 09:30:00', 'PAID', 0.00, user4),
+    (sub12, event_service, user5, student5, 'APPROVED', '2024-11-23 10:15:00', 'PAID', 0.00, user5);
+END $$;
 
 -- Update current participants count in events table
 UPDATE events
-SET current_participants = (SELECT COUNT(*)
-                            FROM event_subscriptions
-                            WHERE event_id = events.id
-                              AND status IN ('APPROVED', 'ATTENDING'))
-WHERE id IN ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
-             'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',
-             'cccccccc-cccc-cccc-cccc-ccccccccccc3',
-             'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee5');
+SET current_participants = (
+    SELECT COUNT(*)
+    FROM event_subscriptions
+    WHERE event_id = events.id
+      AND status IN ('APPROVED', 'ATTENDING')
+);
 
 -- Create indexes for performance
 CREATE INDEX idx_events_status ON events (status);
