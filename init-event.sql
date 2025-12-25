@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS event_subscriptions CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
 DROP TABLE IF EXISTS event_categories CASCADE;
 
--- Create events table (with all fields from your Entity)
+-- Create events table (corrected to match Entity)
 CREATE TABLE events
 (
     id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -22,24 +22,24 @@ CREATE TABLE events
     end_date              DATE         NOT NULL,
     end_time              TIME,
     status                VARCHAR(20)  NOT NULL DEFAULT 'DRAFT',
-    max_participants      INT,
-    current_participants  INT                   DEFAULT 0,
-    registration_fee      DECIMAL(10, 2)        DEFAULT 0.00,
-    organizer_id          BIGINT       NOT NULL,
+    max_participants      INTEGER,
+    current_participants  INTEGER             DEFAULT 0,
+    registration_fee      DECIMAL(19, 2)      DEFAULT 0.00,
+    organizer_id          UUID         NOT NULL,
     organizer_type        VARCHAR(50),
     contact_email         VARCHAR(100),
     contact_phone         VARCHAR(20),
     image_url             VARCHAR(500),
-    is_online             BOOLEAN               DEFAULT FALSE,
+    is_online             BOOLEAN             DEFAULT FALSE,
     online_link           VARCHAR(500),
-    requires_approval     BOOLEAN               DEFAULT FALSE,
+    requires_approval     BOOLEAN             DEFAULT FALSE,
     registration_deadline TIMESTAMP,
     category              VARCHAR(50),
     tags                  VARCHAR(500),
-    is_featured           BOOLEAN               DEFAULT FALSE,
-    visibility            VARCHAR(20)           DEFAULT 'PUBLIC',
-    created_at            TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
-    updated_at            TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
+    is_featured           BOOLEAN             DEFAULT FALSE,
+    visibility            VARCHAR(20)         DEFAULT 'PUBLIC',
+    created_at            TIMESTAMP           DEFAULT CURRENT_TIMESTAMP,
+    updated_at            TIMESTAMP           DEFAULT CURRENT_TIMESTAMP,
     created_by            UUID,
     updated_by            UUID
 );
@@ -71,7 +71,7 @@ CREATE TABLE event_subscriptions
     attendance_date        TIMESTAMP,
     payment_status         VARCHAR(20)          DEFAULT 'PENDING',
     payment_reference      VARCHAR(100),
-    amount_paid            DECIMAL(10, 2),
+    amount_paid            DECIMAL(19, 2),
     notes                  TEXT,
     check_in_code          VARCHAR(50),
     check_in_time          TIMESTAMP,
@@ -79,7 +79,7 @@ CREATE TABLE event_subscriptions
     certificate_issued     BOOLEAN              DEFAULT FALSE,
     certificate_issue_date TIMESTAMP,
     feedback_submitted     BOOLEAN              DEFAULT FALSE,
-    rating                 INT CHECK (rating >= 1 AND rating <= 5),
+    rating                 INTEGER CHECK (rating >= 1 AND rating <= 5),
     feedback_comment       TEXT,
     is_active              BOOLEAN              DEFAULT TRUE,
     cancellation_reason    VARCHAR(500),
@@ -97,7 +97,7 @@ CREATE TABLE event_subscriptions
     UNIQUE (event_id, student_id)
 );
 
--- Insert event categories with UUIDs
+-- Insert event categories with UUIDs (keeping as is)
 INSERT INTO event_categories (id, name, description, icon, color)
 VALUES
     ('11111111-1111-1111-1111-111111111111',
@@ -142,7 +142,7 @@ VALUES
      'code',
      '#795548');
 
--- Insert sample events with UUIDs
+-- Insert sample events with UUIDs (corrected to use UUID for organizer_id and created_by)
 INSERT INTO events (id, title, description, slug, location, venue_details,
                     start_date, start_time, end_date, end_time, status,
                     max_participants, organizer_id, organizer_type, contact_email,
@@ -155,7 +155,7 @@ VALUES
      'University Auditorium, Main Campus',
      'Ground floor, Room A101. Parking available at North Parking Lot.',
      '2024-12-15', '09:00:00', '2024-12-15', '17:00:00', 'ACTIVE',
-     200, 2, 'SCHOOL', 'events@university.edu', '+1-555-0101',
+     200, '00000000-0000-0000-0000-000000000002', 'SCHOOL', 'events@university.edu', '+1-555-0101',
      'Academic', 'science,symposium,research,workshop', TRUE,
      '00000000-0000-0000-0000-000000000002'),
 
@@ -166,7 +166,7 @@ VALUES
      'School Gymnasium',
      'Bring your sports gear. Locker rooms available.',
      '2024-12-10', '14:00:00', '2024-12-12', '18:00:00', 'ACTIVE',
-     150, 2, 'SCHOOL', 'sports@school.edu', '+1-555-0102',
+     150, '00000000-0000-0000-0000-000000000002', 'SCHOOL', 'sports@school.edu', '+1-555-0102',
      'Sports', 'basketball,volleyball,tournament,sports', TRUE,
      '00000000-0000-0000-0000-000000000002'),
 
@@ -177,7 +177,7 @@ VALUES
      'Computer Science Building',
      'Bring your laptops. Food and drinks provided.',
      '2024-12-20', '10:00:00', '2024-12-21', '10:00:00', 'ACTIVE',
-     100, 3, 'COMMUNITY', 'hackathon@techclub.org', '+1-555-0103',
+     100, '00000000-0000-0000-0000-000000000003', 'COMMUNITY', 'hackathon@techclub.org', '+1-555-0103',
      'Technology', 'hackathon,coding,programming,technology', TRUE,
      '00000000-0000-0000-0000-000000000003'),
 
@@ -188,7 +188,7 @@ VALUES
      'School Classrooms',
      'Please check the schedule for your assigned classroom.',
      '2024-12-05', '16:00:00', '2024-12-05', '20:00:00', 'ACTIVE',
-     NULL, 2, 'SCHOOL', 'info@school.edu', '+1-555-0104',
+     NULL, '00000000-0000-0000-0000-000000000002', 'SCHOOL', 'info@school.edu', '+1-555-0104',
      'Academic', 'parent,teacher,conference,education', FALSE,
      '00000000-0000-0000-0000-000000000002'),
 
@@ -199,7 +199,7 @@ VALUES
      'City Park',
      'Meet at the main entrance. Gloves and bags provided.',
      '2024-12-08', '08:00:00', '2024-12-08', '12:00:00', 'ACTIVE',
-     50, 4, 'COMMUNITY', 'volunteer@community.org', '+1-555-0105',
+     50, '00000000-0000-0000-0000-000000000004', 'COMMUNITY', 'volunteer@community.org', '+1-555-0105',
      'Community', 'volunteer,service,community,cleanup', FALSE,
      '00000000-0000-0000-0000-000000000004'),
 
@@ -210,11 +210,11 @@ VALUES
      'City Concert Hall',
      'Doors open at 6:30 PM. Formal attire recommended.',
      '2024-12-18', '19:00:00', '2024-12-18', '21:30:00', 'ACTIVE',
-     300, 2, 'SCHOOL', 'music@school.edu', '+1-555-0106',
+     300, '00000000-0000-0000-0000-000000000002', 'SCHOOL', 'music@school.edu', '+1-555-0106',
      'Cultural', 'music,concert,winter,performance', TRUE,
      '00000000-0000-0000-0000-000000000002');
 
--- Insert event subscriptions (registrations) with UUIDs
+-- Insert event subscriptions (registrations) with UUIDs (already correct)
 INSERT INTO event_subscriptions (id, event_id, user_id, student_id, status, registration_date,
                                  payment_status, amount_paid, created_by)
 VALUES
@@ -373,7 +373,7 @@ SELECT e.id as event_id,
            END as registration_eligibility
 FROM events e;
 
--- Grant privileges
+-- Grant privileges (adjust role name as needed)
 GRANT USAGE ON SCHEMA event_schema TO event_admin;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA event_schema TO event_admin;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA event_schema TO event_admin;
