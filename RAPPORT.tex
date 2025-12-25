@@ -1,0 +1,1527 @@
+\section{RAPPORT DE PROJET}\label{rapport-de-projet}
+
+\subsection{Architecture Microservices avec Spring
+Boot}\label{architecture-microservices-avec-spring-boot}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{PAGE DE GARDE}\label{page-de-garde}
+
+\textbf{Nom:} {[}À compléter par l'étudiant{]}\\
+\textbf{Prénom:} {[}À compléter par l'étudiant{]}\\
+\textbf{Groupe:} 5ème GL (EPI Sousse)\\
+\textbf{Photo d'identité:} {[}À insérer par l'étudiant{]}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{TABLE DES MATIÈRES}\label{table-des-matiuxe8res}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \hyperref[1-moduxe9lisation-des-entituxe9s]{Modélisation des Entités}
+\item
+  \hyperref[2-pattern-dto]{Pattern DTO}
+\item
+  \hyperref[3-communication-synchrone]{Communication Synchrone}
+\item
+  \hyperref[4-stratuxe9gie-de-suxe9curituxe9]{Stratégie de Sécurité}
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{1. MODÉLISATION DES
+ENTITÉS}\label{moduxe9lisation-des-entituxe9s}
+
+\subsubsection{1.1 Diagramme de Classes}\label{diagramme-de-classes}
+
+Le système est composé de plusieurs microservices, chacun gérant ses
+propres entités. Voici les principales entités identifiées :
+
+\paragraph{Entités Principales}\label{entituxe9s-principales}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{User} (user-service)
+\item
+  \textbf{Role} (user-service)
+\item
+  \textbf{Student} (student-service)
+\item
+  \textbf{Event} (event-service)
+\item
+  \textbf{EventSubscription} (event-service)
+\item
+  \textbf{Community} (community-service)
+\item
+  \textbf{School} (school-service)
+\end{enumerate}
+
+\subsubsection{1.2 Description des Entités et
+Associations}\label{description-des-entituxe9s-et-associations}
+
+\paragraph{1.2.1 Entité User}\label{entituxe9-user}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/entity/User.java}
+
+\textbf{Attributs principaux:} - \texttt{id} (UUID) : Identifiant unique
+- \texttt{email} (String) : Email unique de l'utilisateur -
+\texttt{password} (String) : Mot de passe crypté - \texttt{firstName}
+(String) : Prénom - \texttt{lastName} (String) : Nom - \texttt{phone}
+(String) : Téléphone - \texttt{isActive} (Boolean) : Statut
+actif/inactif - \texttt{isVerified} (Boolean) : Statut de vérification -
+\texttt{role} (Role) : Relation Many-to-One avec Role -
+\texttt{profilePicture} (String) : URL de la photo de profil -
+\texttt{createdAt}, \texttt{updatedAt}, \texttt{lastLogin}
+(LocalDateTime) : Timestamps
+
+\textbf{Associations:} - \textbf{Many-to-One} avec \texttt{Role} : Un
+utilisateur a un rôle, un rôle peut être attribué à plusieurs
+utilisateurs
+
+\paragraph{1.2.2 Entité Role}\label{entituxe9-role}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/entity/Role.java}
+
+\textbf{Attributs principaux:} - \texttt{id} (UUID) : Identifiant unique
+- \texttt{name} (String) : Nom du rôle (unique) - \texttt{description}
+(String) : Description du rôle - \texttt{permissions} (String) : Liste
+des permissions séparées par virgule - \texttt{isDefault} (Boolean) :
+Rôle par défaut - \texttt{isSystem} (Boolean) : Rôle système
+
+\textbf{Associations:} - \textbf{One-to-Many} avec \texttt{User} : Un
+rôle peut être attribué à plusieurs utilisateurs
+
+\paragraph{1.2.3 Entité Student}\label{entituxe9-student}
+
+\textbf{Localisation:}
+\texttt{student-service/src/main/java/com/service/student/entity/Student.java}
+
+\textbf{Attributs principaux:} - \texttt{id} (UUID) : Identifiant unique
+- \texttt{userId} (UUID) : Référence vers User (pas de clé étrangère,
+référence par UUID) - \texttt{studentCode} (String) : Code étudiant
+unique - \texttt{firstName}, \texttt{lastName}, \texttt{fullName}
+(String) : Informations personnelles - \texttt{dateOfBirth} (LocalDate)
+: Date de naissance - \texttt{schoolId} (UUID) : Référence vers School -
+\texttt{program}, \texttt{major}, \texttt{minor} (String) : Informations
+académiques - \texttt{enrollmentStatus} (EnrollmentStatus) : Statut
+d'inscription - \texttt{gpa} (BigDecimal) : Moyenne générale -
+\texttt{communityId} (UUID) : Référence vers Community -
+\texttt{isActive}, \texttt{isGraduated} (Boolean) : Statuts
+
+\textbf{Associations:} - \textbf{Référence logique} vers \texttt{User}
+via \texttt{userId} (UUID) : Un étudiant est lié à un utilisateur -
+\textbf{Référence logique} vers \texttt{School} via \texttt{schoolId}
+(UUID) - \textbf{Référence logique} vers \texttt{Community} via
+\texttt{communityId} (UUID)
+
+\textbf{Note:} Dans une architecture microservices, les associations
+sont gérées par références (UUID) plutôt que par des clés étrangères JPA
+pour maintenir l'indépendance des services.
+
+\paragraph{1.2.4 Entité Event}\label{entituxe9-event}
+
+\textbf{Localisation:}
+\texttt{event-service/src/main/java/com/service/event/entity/Event.java}
+
+\textbf{Attributs principaux:} - \texttt{id} (UUID) : Identifiant unique
+- \texttt{title} (String) : Titre de l'événement - \texttt{description}
+(String) : Description - \texttt{slug} (String) : Slug unique pour l'URL
+- \texttt{location} (String) : Lieu - \texttt{startDate},
+\texttt{endDate} (LocalDate) : Dates de début et fin -
+\texttt{startTime}, \texttt{endTime} (LocalTime) : Heures -
+\texttt{status} (EventStatus) : Statut de l'événement -
+\texttt{maxParticipants} (Integer) : Nombre maximum de participants -
+\texttt{currentParticipants} (Integer) : Nombre actuel -
+\texttt{registrationFee} (BigDecimal) : Frais d'inscription -
+\texttt{organizerId} (UUID) : Référence vers l'organisateur
+
+\textbf{Associations:} - \textbf{One-to-Many} avec
+\texttt{EventSubscription} : Un événement peut avoir plusieurs
+inscriptions
+
+\paragraph{1.2.5 Entité
+EventSubscription}\label{entituxe9-eventsubscription}
+
+\textbf{Localisation:}
+\texttt{event-service/src/main/java/com/service/event/entity/EventSubscription.java}
+
+\textbf{Attributs principaux:} - \texttt{id} (UUID) : Identifiant unique
+- \texttt{eventId} (UUID) : Référence vers Event - \texttt{userId}
+(UUID) : Référence vers User - \texttt{studentId} (UUID) : Référence
+vers Student - \texttt{status} (SubscriptionStatus) : Statut de
+l'inscription - \texttt{registrationDate} (LocalDateTime) : Date
+d'inscription - \texttt{attended} (Boolean) : Présence à l'événement -
+\texttt{paymentStatus} (String) : Statut du paiement -
+\texttt{checkInCode} (String) : Code de check-in
+
+\textbf{Associations:} - \textbf{Many-to-One} avec \texttt{Event} : Une
+inscription appartient à un événement - \textbf{Référence logique} vers
+\texttt{User} via \texttt{userId} (UUID) - \textbf{Référence logique}
+vers \texttt{Student} via \texttt{studentId} (UUID)
+
+\paragraph{1.2.6 Entité Community}\label{entituxe9-community}
+
+\textbf{Localisation:}
+\texttt{community-service/src/main/java/com/service/community/entity/Community.java}
+
+\textbf{Attributs principaux:} - \texttt{id} (UUID) : Identifiant unique
+- \texttt{title} (String) : Titre de la communauté -
+\texttt{description} (String) : Description - \texttt{slug} (String) :
+Slug unique - \texttt{memberCount} (Integer) : Nombre de membres -
+\texttt{isActive} (Boolean) : Statut actif - \texttt{createdBy} (UUID) :
+Référence vers User créateur
+
+\subsubsection{1.3 Diagramme de Classes
+Conceptuel}\label{diagramme-de-classes-conceptuel}
+
+\begin{verbatim}
+┌─────────────┐         ┌─────────────┐
+│    User     │────────▶│    Role     │
+│             │ Many-1  │             │
+└─────────────┘         └─────────────┘
+      │
+      │ (référence UUID)
+      │
+      ▼
+┌─────────────┐
+│   Student  │─────────▶ (référence UUID vers School)
+│             │
+└─────────────┘
+      │
+      │ (référence UUID)
+      │
+      ▼
+┌─────────────┐         ┌─────────────┐
+│   Event    │◀────────│EventSubscr. │
+│            │  1-Many │             │
+└─────────────┘         └─────────────┘
+                              │
+                              │ (références UUID)
+                              │
+                              ▼
+                        ┌─────────────┐
+                        │   Student   │
+                        │   (ref)     │
+                        └─────────────┘
+\end{verbatim}
+
+\textbf{Légende:} - Les relations avec des clés étrangères JPA sont
+représentées par des flèches continues - Les références logiques (UUID)
+entre microservices sont représentées par des flèches pointillées
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{2. PATTERN DTO}\label{pattern-dto}
+
+\subsubsection{2.1 Introduction}\label{introduction}
+
+Le pattern DTO (Data Transfer Object) est utilisé dans tous les
+microservices pour séparer la couche de présentation (API) de la couche
+métier (entités). Ce pattern permet de :
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Sécuriser les données} : Ne pas exposer toutes les propriétés
+  des entités
+\item
+  \textbf{Optimiser les transferts} : Transférer uniquement les données
+  nécessaires
+\item
+  \textbf{Découpler les couches} : Permettre l'évolution indépendante
+  des entités et des APIs
+\item
+  \textbf{Valider les données} : Utiliser des annotations de validation
+  sur les DTOs
+\end{itemize}
+
+\subsubsection{2.2 Services Utilisant le Pattern
+DTO}\label{services-utilisant-le-pattern-dto}
+
+Tous les microservices du projet utilisent le pattern DTO :
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{user-service} : \texttt{UserDTO}, \texttt{UserResponseDTO},
+  \texttt{UserMinimalDTO}, \texttt{CreateUserDTO},
+  \texttt{UpdateUserDTO}, \texttt{RoleDTO}, \texttt{AuthResponseDTO},
+  etc.
+\item
+  \textbf{student-service} : \texttt{StudentDTO},
+  \texttt{StudentResponseDTO}, \texttt{StudentMinimalDTO},
+  \texttt{CreateStudentDTO}, \texttt{UpdateStudentDTO}, etc.
+\item
+  \textbf{event-service} : \texttt{EventDTO}, \texttt{EventResponseDTO},
+  \texttt{EventSubscriptionDTO}, \texttt{EventSubscriptionResponseDTO}
+\item
+  \textbf{community-service} : \texttt{CommunityDTO}
+\item
+  \textbf{school-service} : \texttt{SchoolDTO},
+  \texttt{SchoolResponseDTO}
+\end{enumerate}
+
+\subsubsection{2.3 Structure des Classes
+DTO}\label{structure-des-classes-dto}
+
+\paragraph{2.3.1 Exemple : UserDTO}\label{exemple-userdto}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/dto/user/UserDTO.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Data}
+\AttributeTok{@NoArgsConstructor}
+\AttributeTok{@AllArgsConstructor}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ UserDTO }\OperatorTok{\{}
+    \KeywordTok{private} \BuiltInTok{UUID}\NormalTok{ id}\OperatorTok{;}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ email}\OperatorTok{;}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ firstName}\OperatorTok{;}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ lastName}\OperatorTok{;}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ phone}\OperatorTok{;}
+    \KeywordTok{private} \BuiltInTok{Boolean}\NormalTok{ isActive}\OperatorTok{;}
+    \KeywordTok{private} \BuiltInTok{Boolean}\NormalTok{ isVerified}\OperatorTok{;}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ profilePicture}\OperatorTok{;}
+    \KeywordTok{private}\NormalTok{ RoleDTO role}\OperatorTok{;}
+    \KeywordTok{private}\NormalTok{ LocalDateTime createdAt}\OperatorTok{;}
+    \KeywordTok{private}\NormalTok{ LocalDateTime updatedAt}\OperatorTok{;}
+    \KeywordTok{private}\NormalTok{ LocalDateTime lastLogin}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Caractéristiques:} - Ne contient \textbf{pas} le champ
+\texttt{password} pour des raisons de sécurité - Contient un
+\texttt{RoleDTO} imbriqué au lieu de l'entité \texttt{Role} - Utilise
+des annotations Lombok pour réduire le code boilerplate
+
+\paragraph{2.3.2 Exemple : CreateUserDTO}\label{exemple-createuserdto}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/dto/user/CreateUserDTO.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Data}
+\AttributeTok{@NoArgsConstructor}
+\AttributeTok{@AllArgsConstructor}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ CreateUserDTO }\OperatorTok{\{}
+    \AttributeTok{@NotBlank}\OperatorTok{(}\NormalTok{message }\OperatorTok{=} \StringTok{"Email is required"}\OperatorTok{)}
+    \AttributeTok{@Email}\OperatorTok{(}\NormalTok{message }\OperatorTok{=} \StringTok{"Email should be valid"}\OperatorTok{)}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ email}\OperatorTok{;}
+    
+    \AttributeTok{@NotBlank}\OperatorTok{(}\NormalTok{message }\OperatorTok{=} \StringTok{"Password is required"}\OperatorTok{)}
+    \AttributeTok{@Size}\OperatorTok{(}\NormalTok{min }\OperatorTok{=} \DecValTok{8}\OperatorTok{,}\NormalTok{ message }\OperatorTok{=} \StringTok{"Password must be at least 8 characters"}\OperatorTok{)}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ password}\OperatorTok{;}
+    
+    \AttributeTok{@NotBlank}\OperatorTok{(}\NormalTok{message }\OperatorTok{=} \StringTok{"First name is required"}\OperatorTok{)}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ firstName}\OperatorTok{;}
+    
+    \AttributeTok{@NotBlank}\OperatorTok{(}\NormalTok{message }\OperatorTok{=} \StringTok{"Last name is required"}\OperatorTok{)}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ lastName}\OperatorTok{;}
+    
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ phone}\OperatorTok{;}
+    \KeywordTok{private} \BuiltInTok{UUID}\NormalTok{ roleId}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Caractéristiques:} - Contient des \textbf{annotations de
+validation} (\texttt{@NotBlank}, \texttt{@Email}, \texttt{@Size}) -
+Utilisé uniquement pour la création, donc pas d'\texttt{id} ni de
+timestamps - Contient le \texttt{password} car nécessaire pour la
+création
+
+\paragraph{2.3.3 Exemple :
+StudentResponseDTO}\label{exemple-studentresponsedto}
+
+\textbf{Localisation:}
+\texttt{student-service/src/main/java/com/service/student/dto/response/StudentResponseDTO.java}
+
+Ce DTO enrichit les données de l'étudiant avec des informations
+provenant d'autres services (comme User) via la communication synchrone.
+
+\subsubsection{2.4 Le Mapper (Méthodes de
+Conversion)}\label{le-mapper-muxe9thodes-de-conversion}
+
+\paragraph{2.4.1 Utilisation de
+ModelMapper}\label{utilisation-de-modelmapper}
+
+Tous les services utilisent \textbf{ModelMapper} pour convertir entre
+entités et DTOs. ModelMapper est une bibliothèque qui mappe
+automatiquement les propriétés ayant le même nom.
+
+\paragraph{2.4.2 Configuration du Mapper}\label{configuration-du-mapper}
+
+\textbf{Exemple : user-service}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/config/ModelMapperConfig.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Configuration}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ ModelMapperConfig }\OperatorTok{\{}
+    \AttributeTok{@Bean}
+    \KeywordTok{public}\NormalTok{ ModelMapper }\FunctionTok{modelMapper}\OperatorTok{()} \OperatorTok{\{}
+\NormalTok{        ModelMapper modelMapper }\OperatorTok{=} \KeywordTok{new} \FunctionTok{ModelMapper}\OperatorTok{();}
+        
+\NormalTok{        modelMapper}\OperatorTok{.}\FunctionTok{getConfiguration}\OperatorTok{()}
+                \OperatorTok{.}\FunctionTok{setMatchingStrategy}\OperatorTok{(}\NormalTok{MatchingStrategies}\OperatorTok{.}\FunctionTok{STRICT}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{setSkipNullEnabled}\OperatorTok{(}\KeywordTok{true}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{setFieldMatchingEnabled}\OperatorTok{(}\KeywordTok{true}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{setAmbiguityIgnored}\OperatorTok{(}\KeywordTok{true}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{setFieldAccessLevel}\OperatorTok{(}\BuiltInTok{Configuration}\OperatorTok{.}\FunctionTok{AccessLevel}\OperatorTok{.}\FunctionTok{PRIVATE}\OperatorTok{);}
+        
+        \ControlFlowTok{return}\NormalTok{ modelMapper}\OperatorTok{;}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Configuration:} - \texttt{STRICT} : Correspondance stricte des
+noms de propriétés - \texttt{SkipNullEnabled} : Ignore les valeurs null
+lors du mapping - \texttt{FieldAccessLevel.PRIVATE} : Accès aux champs
+privés via réflexion
+
+\paragraph{2.4.3 Configuration Personnalisée (Exemple :
+Community)}\label{configuration-personnalisuxe9e-exemple-community}
+
+\textbf{Localisation:}
+\texttt{community-service/src/main/java/com/service/community/utils/CommunityMapperConfig.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Configuration}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ CommunityMapperConfig }\OperatorTok{\{}
+    \AttributeTok{@Bean}
+    \KeywordTok{public}\NormalTok{ ModelMapper }\FunctionTok{modelMapper}\OperatorTok{()} \OperatorTok{\{}
+\NormalTok{        ModelMapper modelMapper }\OperatorTok{=} \KeywordTok{new} \FunctionTok{ModelMapper}\OperatorTok{();}
+        
+        \CommentTok{// Mapping personnalisé}
+\NormalTok{        modelMapper}\OperatorTok{.}\FunctionTok{createTypeMap}\OperatorTok{(}\NormalTok{Community}\OperatorTok{.}\FunctionTok{class}\OperatorTok{,}\NormalTok{ CommunityDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{addMappings}\OperatorTok{(}\NormalTok{mapper }\OperatorTok{{-}\textgreater{}} \OperatorTok{\{}
+\NormalTok{                    mapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{Community}\OperatorTok{::}\NormalTok{getId}\OperatorTok{,}\NormalTok{ CommunityDTO}\OperatorTok{::}\NormalTok{setId}\OperatorTok{);}
+\NormalTok{                    mapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{Community}\OperatorTok{::}\NormalTok{getTitle}\OperatorTok{,}\NormalTok{ CommunityDTO}\OperatorTok{::}\NormalTok{setTitle}\OperatorTok{);}
+                    \CommentTok{// ... autres mappings}
+                \OperatorTok{\});}
+        
+        \ControlFlowTok{return}\NormalTok{ modelMapper}\OperatorTok{;}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{2.5 Utilisation du DTO dans les Classes Service et
+Contrôleur}\label{utilisation-du-dto-dans-les-classes-service-et-contruxf4leur}
+
+\paragraph{2.5.1 Dans le Contrôleur}\label{dans-le-contruxf4leur}
+
+\textbf{Exemple : CommunityRestController}
+
+\textbf{Localisation:}
+\texttt{community-service/src/main/java/com/service/community/controller/CommunityRestController.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@RestController}
+\AttributeTok{@RequestMapping}\OperatorTok{(}\StringTok{"/api/communities"}\OperatorTok{)}
+\AttributeTok{@AllArgsConstructor}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ CommunityRestController }\OperatorTok{\{}
+    
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ ServiceCommunity communityService}\OperatorTok{;}
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ ModelMapper modelMapper}\OperatorTok{;}
+    
+    \AttributeTok{@PostMapping}
+    \KeywordTok{public}\NormalTok{ ResponseEntity}\OperatorTok{\textless{}}\NormalTok{CommunityDTO}\OperatorTok{\textgreater{}} \FunctionTok{createCommunity}\OperatorTok{(}
+            \AttributeTok{@Valid} \AttributeTok{@RequestBody}\NormalTok{ CommunityDTO communityDTO}\OperatorTok{)} \OperatorTok{\{}
+        \CommentTok{// Conversion DTO → Entity}
+\NormalTok{        Community community }\OperatorTok{=}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{communityDTO}\OperatorTok{,}\NormalTok{ Community}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+        
+        \CommentTok{// Appel du service}
+\NormalTok{        Community createdCommunity }\OperatorTok{=}\NormalTok{ communityService}\OperatorTok{.}\FunctionTok{createCommunity}\OperatorTok{(}\NormalTok{community}\OperatorTok{);}
+        
+        \CommentTok{// Conversion Entity → DTO}
+\NormalTok{        CommunityDTO responseDTO }\OperatorTok{=}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{createdCommunity}\OperatorTok{,}\NormalTok{ CommunityDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+        
+        \ControlFlowTok{return} \KeywordTok{new}\NormalTok{ ResponseEntity}\OperatorTok{\textless{}\textgreater{}(}\NormalTok{responseDTO}\OperatorTok{,}\NormalTok{ HttpStatus}\OperatorTok{.}\FunctionTok{CREATED}\OperatorTok{);}
+    \OperatorTok{\}}
+    
+    \AttributeTok{@GetMapping}
+    \KeywordTok{public}\NormalTok{ ResponseEntity}\OperatorTok{\textless{}}\BuiltInTok{List}\OperatorTok{\textless{}}\NormalTok{CommunityDTO}\OperatorTok{\textgreater{}\textgreater{}} \FunctionTok{getAllCommunities}\OperatorTok{()} \OperatorTok{\{}
+        \BuiltInTok{List}\OperatorTok{\textless{}}\NormalTok{Community}\OperatorTok{\textgreater{}}\NormalTok{ communities }\OperatorTok{=}\NormalTok{ communityService}\OperatorTok{.}\FunctionTok{getAllCommunities}\OperatorTok{();}
+        
+        \CommentTok{// Conversion de la liste Entity → DTO}
+        \BuiltInTok{List}\OperatorTok{\textless{}}\NormalTok{CommunityDTO}\OperatorTok{\textgreater{}}\NormalTok{ communityDTOs }\OperatorTok{=}\NormalTok{ communities}\OperatorTok{.}\FunctionTok{stream}\OperatorTok{()}
+                \OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{community }\OperatorTok{{-}\textgreater{}}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{community}\OperatorTok{,}\NormalTok{ CommunityDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{))}
+                \OperatorTok{.}\FunctionTok{collect}\OperatorTok{(}\NormalTok{Collectors}\OperatorTok{.}\FunctionTok{toList}\OperatorTok{());}
+        
+        \ControlFlowTok{return}\NormalTok{ ResponseEntity}\OperatorTok{.}\FunctionTok{ok}\OperatorTok{(}\NormalTok{communityDTOs}\OperatorTok{);}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Flux de données:} 1. Le client envoie un \texttt{CommunityDTO}
+dans le body de la requête 2. Le contrôleur convertit le DTO en entité
+\texttt{Community} 3. Le service traite l'entité 4. Le contrôleur
+convertit l'entité résultante en DTO pour la réponse
+
+\paragraph{2.5.2 Dans le Service}\label{dans-le-service}
+
+\textbf{Exemple : ServiceStudent}
+
+\textbf{Localisation:}
+\texttt{student-service/src/main/java/com/service/student/service/ServiceStudent.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Service}
+\AttributeTok{@AllArgsConstructor}
+\AttributeTok{@Transactional}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ ServiceStudent }\KeywordTok{implements}\NormalTok{ IServiceStudent }\OperatorTok{\{}
+    
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ StudentRepository studentRepository}\OperatorTok{;}
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ ModelMapper modelMapper}\OperatorTok{;}
+    
+    \AttributeTok{@Override}
+    \KeywordTok{public}\NormalTok{ StudentDTO }\FunctionTok{createStudent}\OperatorTok{(}\NormalTok{CreateStudentDTO studentDTO}\OperatorTok{)} \OperatorTok{\{}
+        \CommentTok{// Conversion DTO → Entity}
+\NormalTok{        Student student }\OperatorTok{=}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{studentDTO}\OperatorTok{,}\NormalTok{ Student}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+\NormalTok{        student}\OperatorTok{.}\FunctionTok{setUserSyncStatus}\OperatorTok{(}\StringTok{"PENDING"}\OperatorTok{);}
+        
+        \CommentTok{// Sauvegarde}
+\NormalTok{        Student saved }\OperatorTok{=}\NormalTok{ studentRepository}\OperatorTok{.}\FunctionTok{save}\OperatorTok{(}\NormalTok{student}\OperatorTok{);}
+        
+        \CommentTok{// Conversion Entity → DTO}
+        \ControlFlowTok{return}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{saved}\OperatorTok{,}\NormalTok{ StudentDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+    \OperatorTok{\}}
+    
+    \AttributeTok{@Override}
+    \KeywordTok{public}\NormalTok{ StudentResponseDTO }\FunctionTok{getStudentResponseById}\OperatorTok{(}\BuiltInTok{UUID}\NormalTok{ id}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{        Student student }\OperatorTok{=}\NormalTok{ studentRepository}\OperatorTok{.}\FunctionTok{findById}\OperatorTok{(}\NormalTok{id}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{orElseThrow}\OperatorTok{(()} \OperatorTok{{-}\textgreater{}} \KeywordTok{new} \BuiltInTok{RuntimeException}\OperatorTok{(}\StringTok{"Student not found"}\OperatorTok{));}
+        
+        \CommentTok{// Conversion de base}
+\NormalTok{        StudentResponseDTO response }\OperatorTok{=}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{student}\OperatorTok{,}\NormalTok{ StudentResponseDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+        
+        \CommentTok{// Enrichissement avec des données d\textquotesingle{}autres services}
+        \FunctionTok{enrichWithUser}\OperatorTok{(}\NormalTok{student}\OperatorTok{,}\NormalTok{ response}\OperatorTok{);}
+        \FunctionTok{calculateDerivedFields}\OperatorTok{(}\NormalTok{student}\OperatorTok{,}\NormalTok{ response}\OperatorTok{);}
+        
+        \ControlFlowTok{return}\NormalTok{ response}\OperatorTok{;}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Avantages:} - Le service peut enrichir les DTOs avec des données
+provenant d'autres services - Séparation claire entre la logique métier
+et la présentation - Possibilité de calculer des champs dérivés avant la
+réponse
+
+\subsubsection{2.6 Résumé du Pattern
+DTO}\label{ruxe9sumuxe9-du-pattern-dto}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Aspect
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Détails
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Bibliothèque utilisée} & ModelMapper \\
+\textbf{Services concernés} & Tous les microservices \\
+\textbf{Types de DTOs} & Request DTOs (Create, Update), Response DTOs,
+Minimal DTOs \\
+\textbf{Validation} & Annotations Jakarta Validation (\texttt{@Valid},
+\texttt{@NotBlank}, \texttt{@Email}, etc.) \\
+\textbf{Configuration} & Bean \texttt{ModelMapper} configuré dans chaque
+service \\
+\textbf{Avantages} & Sécurité, découplage, optimisation, validation \\
+\end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{3. COMMUNICATION SYNCHRONE}\label{communication-synchrone}
+
+\subsubsection{3.1 Justification de la Communication
+Synchrone}\label{justification-de-la-communication-synchrone}
+
+La communication synchrone est utilisée dans ce projet pour
+\textbf{vérifier l'existence et récupérer des données} d'un microservice
+depuis un autre.
+
+\textbf{Exemple concret :} Le service \texttt{student-service} doit
+vérifier et récupérer des informations utilisateur depuis
+\texttt{user-service} lors de : - La création d'un étudiant
+(vérification que l'utilisateur existe) - L'affichage des détails d'un
+étudiant (enrichissement avec les données utilisateur) - La
+synchronisation des données entre services
+
+\subsubsection{3.2 Contexte d'Utilisation}\label{contexte-dutilisation}
+
+\paragraph{3.2.1 Relation dans le Diagramme de
+Classes}\label{relation-dans-le-diagramme-de-classes}
+
+Dans le diagramme de classes, nous avons identifié une relation logique
+entre : - \textbf{Student} (student-service) → \textbf{User}
+(user-service) via \texttt{userId} (UUID)
+
+Cette relation nécessite une communication synchrone car : 1.
+\textbf{Vérification d'existence} : Avant de créer un étudiant, il faut
+vérifier que l'utilisateur référencé existe 2. \textbf{Référencement
+pendant l'affichage} : Lors de l'affichage d'un étudiant, on enrichit
+les données avec les informations de l'utilisateur (nom, prénom, photo
+de profil)
+
+\paragraph{3.2.2 Cas d'Usage Concrets}\label{cas-dusage-concrets}
+
+\textbf{Cas 1 : Vérification d'existence lors de la création}
+
+Lors de la création d'un étudiant, le \texttt{student-service} doit
+vérifier que le \texttt{userId} fourni correspond à un utilisateur
+existant dans \texttt{user-service}.
+
+\textbf{Cas 2 : Enrichissement des données lors de l'affichage}
+
+Lors de la récupération d'un étudiant, le \texttt{student-service}
+appelle \texttt{user-service} pour enrichir la réponse avec les données
+utilisateur (firstName, lastName, profilePicture).
+
+\textbf{Code exemple :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// Dans ServiceStudent.java}
+\KeywordTok{private} \DataTypeTok{void} \FunctionTok{enrichWithUser}\OperatorTok{(}\NormalTok{Student student}\OperatorTok{,}\NormalTok{ StudentResponseDTO response}\OperatorTok{)} \OperatorTok{\{}
+    \ControlFlowTok{try} \OperatorTok{\{}
+\NormalTok{        UserMinimalDTO user }\OperatorTok{=}\NormalTok{ userServiceClient}\OperatorTok{.}\FunctionTok{getUserMinimalById}\OperatorTok{(}\NormalTok{student}\OperatorTok{.}\FunctionTok{getUserId}\OperatorTok{());}
+        \CommentTok{// Enrichissement des données}
+    \OperatorTok{\}} \ControlFlowTok{catch} \OperatorTok{(}\BuiltInTok{Exception}\NormalTok{ e}\OperatorTok{)} \OperatorTok{\{}
+        \CommentTok{// Gestion d\textquotesingle{}erreur}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Cas 3 : Synchronisation des données}
+
+Le service \texttt{student-service} peut synchroniser les données de
+l'étudiant avec celles de l'utilisateur :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Override}
+\KeywordTok{public}\NormalTok{ StudentDTO }\FunctionTok{syncWithUserService}\OperatorTok{(}\BuiltInTok{UUID}\NormalTok{ studentId}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{    Student student }\OperatorTok{=} \FunctionTok{getEntity}\OperatorTok{(}\NormalTok{studentId}\OperatorTok{);}
+    
+    \ControlFlowTok{try} \OperatorTok{\{}
+\NormalTok{        UserMinimalDTO user }\OperatorTok{=}\NormalTok{ userServiceClient}\OperatorTok{.}\FunctionTok{getUserMinimalById}\OperatorTok{(}\NormalTok{student}\OperatorTok{.}\FunctionTok{getUserId}\OperatorTok{());}
+\NormalTok{        student}\OperatorTok{.}\FunctionTok{setFirstName}\OperatorTok{(}\NormalTok{user}\OperatorTok{.}\FunctionTok{getFirstName}\OperatorTok{());}
+\NormalTok{        student}\OperatorTok{.}\FunctionTok{setLastName}\OperatorTok{(}\NormalTok{user}\OperatorTok{.}\FunctionTok{getLastName}\OperatorTok{());}
+\NormalTok{        student}\OperatorTok{.}\FunctionTok{setProfilePicture}\OperatorTok{(}\NormalTok{user}\OperatorTok{.}\FunctionTok{getProfilePicture}\OperatorTok{());}
+\NormalTok{        student}\OperatorTok{.}\FunctionTok{markUserSynced}\OperatorTok{();}
+    \OperatorTok{\}} \ControlFlowTok{catch} \OperatorTok{(}\BuiltInTok{Exception}\NormalTok{ e}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{        student}\OperatorTok{.}\FunctionTok{markUserSyncFailed}\OperatorTok{();}
+    \OperatorTok{\}}
+    
+    \ControlFlowTok{return}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{studentRepository}\OperatorTok{.}\FunctionTok{save}\OperatorTok{(}\NormalTok{student}\OperatorTok{),}\NormalTok{ StudentDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{3.3 Implémentation Technique :
+OpenFeign}\label{impluxe9mentation-technique-openfeign}
+
+\paragraph{3.3.1 Framework Utilisé}\label{framework-utilisuxe9}
+
+Le projet utilise \textbf{Spring Cloud OpenFeign} pour implémenter la
+communication synchrone entre microservices.
+
+\paragraph{3.3.2 Dépendances}\label{duxe9pendances}
+
+\textbf{Dans \texttt{student-service/pom.xml} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textless{}}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{groupId}\NormalTok{\textgreater{}org.springframework.cloud\textless{}/}\KeywordTok{groupId}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{artifactId}\NormalTok{\textgreater{}spring{-}cloud{-}starter{-}openfeign\textless{}/}\KeywordTok{artifactId}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Dans \texttt{user-service/pom.xml} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textless{}}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{groupId}\NormalTok{\textgreater{}org.springframework.cloud\textless{}/}\KeywordTok{groupId}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{artifactId}\NormalTok{\textgreater{}spring{-}cloud{-}starter{-}openfeign\textless{}/}\KeywordTok{artifactId}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+\paragraph{3.3.3 Activation d'OpenFeign}\label{activation-dopenfeign}
+
+\textbf{Dans \texttt{StudentServiceApplication.java} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@SpringBootApplication}
+\AttributeTok{@EnableDiscoveryClient}
+\AttributeTok{@EnableFeignClients}\OperatorTok{(}\NormalTok{basePackages }\OperatorTok{=} \StringTok{"com.service.student"}\OperatorTok{)}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ StudentServiceApplication }\OperatorTok{\{}
+    \KeywordTok{public} \DataTypeTok{static} \DataTypeTok{void} \FunctionTok{main}\OperatorTok{(}\BuiltInTok{String}\OperatorTok{[]}\NormalTok{ args}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{        SpringApplication}\OperatorTok{.}\FunctionTok{run}\OperatorTok{(}\NormalTok{StudentServiceApplication}\OperatorTok{.}\FunctionTok{class}\OperatorTok{,}\NormalTok{ args}\OperatorTok{);}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+L'annotation \texttt{@EnableFeignClients} active OpenFeign et scanne le
+package spécifié pour trouver les interfaces Feign.
+
+\paragraph{3.3.4 Définition du Client
+Feign}\label{duxe9finition-du-client-feign}
+
+\textbf{Localisation:}
+\texttt{student-service/src/main/java/com/service/student/config/UserServiceClient.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@FeignClient}\OperatorTok{(}\NormalTok{name }\OperatorTok{=} \StringTok{"user{-}service"}\OperatorTok{)}
+\KeywordTok{public} \KeywordTok{interface}\NormalTok{ UserServiceClient }\OperatorTok{\{}
+    
+    \AttributeTok{@GetMapping}\OperatorTok{(}\StringTok{"/api/users/\{id\}/minimal"}\OperatorTok{)}
+\NormalTok{    UserMinimalDTO }\FunctionTok{getUserMinimalById}\OperatorTok{(}\AttributeTok{@PathVariable}\OperatorTok{(}\StringTok{"id"}\OperatorTok{)} \BuiltInTok{UUID}\NormalTok{ id}\OperatorTok{);}
+    
+    \AttributeTok{@GetMapping}\OperatorTok{(}\StringTok{"/api/users/email/\{email\}/minimal"}\OperatorTok{)}
+\NormalTok{    UserMinimalDTO }\FunctionTok{getUserMinimalByEmail}\OperatorTok{(}\AttributeTok{@PathVariable}\OperatorTok{(}\StringTok{"email"}\OperatorTok{)} \BuiltInTok{String}\NormalTok{ email}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Explication:} - \texttt{@FeignClient(name\ =\ "user-service")} :
+Déclare un client Feign qui communique avec le service nommé
+``user-service'' - Le nom ``user-service'' correspond au
+\texttt{spring.application.name} dans
+\texttt{user-service/application.properties} - Les méthodes de
+l'interface sont annotées comme des endpoints REST
+(\texttt{@GetMapping}, \texttt{@PostMapping}, etc.) - OpenFeign génère
+automatiquement l'implémentation de cette interface
+
+\paragraph{3.3.5 Utilisation du Client
+Feign}\label{utilisation-du-client-feign}
+
+\textbf{Dans \texttt{ServiceStudent.java} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Service}
+\AttributeTok{@AllArgsConstructor}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ ServiceStudent }\KeywordTok{implements}\NormalTok{ IServiceStudent }\OperatorTok{\{}
+    
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ StudentRepository studentRepository}\OperatorTok{;}
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ ModelMapper modelMapper}\OperatorTok{;}
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ UserServiceClient userServiceClient}\OperatorTok{;} \CommentTok{// Injection du client Feign}
+    
+    \AttributeTok{@Override}
+    \KeywordTok{public}\NormalTok{ StudentResponseDTO }\FunctionTok{getStudentResponseById}\OperatorTok{(}\BuiltInTok{UUID}\NormalTok{ id}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{        Student student }\OperatorTok{=}\NormalTok{ studentRepository}\OperatorTok{.}\FunctionTok{findById}\OperatorTok{(}\NormalTok{id}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{orElseThrow}\OperatorTok{(()} \OperatorTok{{-}\textgreater{}} \KeywordTok{new} \BuiltInTok{RuntimeException}\OperatorTok{(}\StringTok{"Student not found"}\OperatorTok{));}
+        
+\NormalTok{        StudentResponseDTO response }\OperatorTok{=}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{student}\OperatorTok{,}\NormalTok{ StudentResponseDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+        
+        \CommentTok{// Appel synchrone à user{-}service via Feign}
+        \ControlFlowTok{try} \OperatorTok{\{}
+\NormalTok{            UserMinimalDTO user }\OperatorTok{=}\NormalTok{ userServiceClient}\OperatorTok{.}\FunctionTok{getUserMinimalById}\OperatorTok{(}\NormalTok{student}\OperatorTok{.}\FunctionTok{getUserId}\OperatorTok{());}
+            \CommentTok{// Enrichissement des données}
+            \FunctionTok{enrichWithUser}\OperatorTok{(}\NormalTok{student}\OperatorTok{,}\NormalTok{ response}\OperatorTok{);}
+        \OperatorTok{\}} \ControlFlowTok{catch} \OperatorTok{(}\BuiltInTok{Exception}\NormalTok{ e}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{            log}\OperatorTok{.}\FunctionTok{error}\OperatorTok{(}\StringTok{"Error fetching user data: \{\}"}\OperatorTok{,}\NormalTok{ e}\OperatorTok{.}\FunctionTok{getMessage}\OperatorTok{());}
+        \OperatorTok{\}}
+        
+        \ControlFlowTok{return}\NormalTok{ response}\OperatorTok{;}
+    \OperatorTok{\}}
+    
+    \AttributeTok{@Override}
+    \KeywordTok{public}\NormalTok{ StudentDTO }\FunctionTok{syncWithUserService}\OperatorTok{(}\BuiltInTok{UUID}\NormalTok{ studentId}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{        Student student }\OperatorTok{=} \FunctionTok{getEntity}\OperatorTok{(}\NormalTok{studentId}\OperatorTok{);}
+        
+        \ControlFlowTok{try} \OperatorTok{\{}
+            \CommentTok{// Appel synchrone pour récupérer les données utilisateur}
+\NormalTok{            UserMinimalDTO user }\OperatorTok{=}\NormalTok{ userServiceClient}\OperatorTok{.}\FunctionTok{getUserMinimalById}\OperatorTok{(}\NormalTok{student}\OperatorTok{.}\FunctionTok{getUserId}\OperatorTok{());}
+            
+            \CommentTok{// Synchronisation des données}
+\NormalTok{            student}\OperatorTok{.}\FunctionTok{setFirstName}\OperatorTok{(}\NormalTok{user}\OperatorTok{.}\FunctionTok{getFirstName}\OperatorTok{());}
+\NormalTok{            student}\OperatorTok{.}\FunctionTok{setLastName}\OperatorTok{(}\NormalTok{user}\OperatorTok{.}\FunctionTok{getLastName}\OperatorTok{());}
+\NormalTok{            student}\OperatorTok{.}\FunctionTok{setProfilePicture}\OperatorTok{(}\NormalTok{user}\OperatorTok{.}\FunctionTok{getProfilePicture}\OperatorTok{());}
+\NormalTok{            student}\OperatorTok{.}\FunctionTok{markUserSynced}\OperatorTok{();}
+        \OperatorTok{\}} \ControlFlowTok{catch} \OperatorTok{(}\BuiltInTok{Exception}\NormalTok{ e}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{            student}\OperatorTok{.}\FunctionTok{markUserSyncFailed}\OperatorTok{();}
+\NormalTok{            log}\OperatorTok{.}\FunctionTok{error}\OperatorTok{(}\StringTok{"Failed to sync with user service: \{\}"}\OperatorTok{,}\NormalTok{ e}\OperatorTok{.}\FunctionTok{getMessage}\OperatorTok{());}
+        \OperatorTok{\}}
+        
+        \ControlFlowTok{return}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{studentRepository}\OperatorTok{.}\FunctionTok{save}\OperatorTok{(}\NormalTok{student}\OperatorTok{),}\NormalTok{ StudentDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\paragraph{3.3.6 Service Discovery avec
+Eureka}\label{service-discovery-avec-eureka}
+
+OpenFeign utilise \textbf{Eureka} pour la découverte de services :
+
+\textbf{Configuration dans
+\texttt{student-service/application.properties} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spring.application.name=student{-}service}
+\NormalTok{eureka.client.service{-}url.defaultZone=http://localhost:8761/eureka}
+\NormalTok{eureka.client.register{-}with{-}eureka=true}
+\NormalTok{eureka.client.fetch{-}registry=true}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Fonctionnement:} 1. \texttt{user-service} s'enregistre auprès
+d'Eureka avec le nom ``user-service'' 2. \texttt{student-service}
+récupère la liste des services depuis Eureka 3. OpenFeign résout le nom
+``user-service'' en URL réelle (ex: \texttt{http://localhost:8081}) 4.
+La requête HTTP est effectuée vers cette URL
+
+\paragraph{3.3.7 Endpoint Exposé dans
+user-service}\label{endpoint-exposuxe9-dans-user-service}
+
+Pour que le client Feign fonctionne, \texttt{user-service} doit exposer
+l'endpoint correspondant :
+
+\textbf{Dans \texttt{UserRestController.java} (user-service) :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@GetMapping}\OperatorTok{(}\StringTok{"/api/users/\{id\}/minimal"}\OperatorTok{)}
+\KeywordTok{public}\NormalTok{ ResponseEntity}\OperatorTok{\textless{}}\NormalTok{UserMinimalDTO}\OperatorTok{\textgreater{}} \FunctionTok{getUserMinimalById}\OperatorTok{(}\AttributeTok{@PathVariable} \BuiltInTok{UUID}\NormalTok{ id}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{    User user }\OperatorTok{=}\NormalTok{ userService}\OperatorTok{.}\FunctionTok{getUserById}\OperatorTok{(}\NormalTok{id}\OperatorTok{);}
+\NormalTok{    UserMinimalDTO dto }\OperatorTok{=}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{user}\OperatorTok{,}\NormalTok{ UserMinimalDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+    \ControlFlowTok{return}\NormalTok{ ResponseEntity}\OperatorTok{.}\FunctionTok{ok}\OperatorTok{(}\NormalTok{dto}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{3.4 Flux de Communication
+Synchrone}\label{flux-de-communication-synchrone}
+
+\begin{verbatim}
+┌─────────────────┐                    ┌─────────────────┐
+│ student-service │                    │  user-service   │
+│                 │                    │                 │
+│ 1. Appel        │───HTTP Request───▶ │ 2. Traitement  │
+│    userService  │                    │    de la        │
+│    Client       │                    │    requête      │
+│    .getUser...  │                    │                 │
+│                 │◀──HTTP Response───│ 3. Retour       │
+│ 4. Utilisation  │                    │    UserMinimal  │
+│    des données  │                    │    DTO           │
+└─────────────────┘                    └─────────────────┘
+         │
+         │ (via Eureka Service Discovery)
+         ▼
+┌─────────────────┐
+│  Eureka Server  │
+│  (Port 8761)    │
+└─────────────────┘
+\end{verbatim}
+
+\subsubsection{3.5 Avantages et
+Inconvénients}\label{avantages-et-inconvuxe9nients}
+
+\textbf{Avantages:} - ✅ Simplicité d'implémentation avec OpenFeign - ✅
+Intégration native avec Spring Cloud - ✅ Découverte automatique des
+services via Eureka - ✅ Gestion automatique du load balancing (si
+plusieurs instances)
+
+\textbf{Inconvénients:} - ⚠️ Couplage temporel : Si
+\texttt{user-service} est indisponible, \texttt{student-service} peut
+être impacté - ⚠️ Latence : Chaque appel synchrone ajoute de la latence
+- ⚠️ Pas de résilience native (nécessite Circuit Breaker pour la
+tolérance aux pannes)
+
+\subsubsection{3.6 Résumé de la Communication
+Synchrone}\label{ruxe9sumuxe9-de-la-communication-synchrone}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4706}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5294}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Aspect
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Détails
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Framework} & Spring Cloud OpenFeign \\
+\textbf{Services concernés} & student-service → user-service \\
+\textbf{Justification} & Vérification d'existence et enrichissement des
+données \\
+\textbf{Contexte} & Création d'étudiant, affichage d'étudiant,
+synchronisation \\
+\textbf{Service Discovery} & Eureka (Port 8761) \\
+\textbf{Interface Feign} & \texttt{UserServiceClient} dans
+student-service \\
+\textbf{Endpoint appelé} & \texttt{/api/users/\{id\}/minimal} dans
+user-service \\
+\end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4. STRATÉGIE DE
+SÉCURITÉ}\label{stratuxe9gie-de-suxe9curituxe9}
+
+\subsubsection{4.1 Introduction}\label{introduction-1}
+
+La stratégie de sécurité est implémentée dans le \textbf{user-service}
+et utilise \textbf{Spring Security} avec \textbf{JWT (JSON Web Token)}
+pour l'authentification et l'autorisation.
+
+\subsubsection{4.2 Dépendances
+Utilisées}\label{duxe9pendances-utilisuxe9es}
+
+\textbf{Dans \texttt{user-service/pom.xml} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\textless{}!{-}{-} Spring Security {-}{-}\textgreater{}}
+\NormalTok{\textless{}}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{groupId}\NormalTok{\textgreater{}org.springframework.boot\textless{}/}\KeywordTok{groupId}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{artifactId}\NormalTok{\textgreater{}spring{-}boot{-}starter{-}security\textless{}/}\KeywordTok{artifactId}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+
+\CommentTok{\textless{}!{-}{-} JWT Dependencies {-}{-}\textgreater{}}
+\NormalTok{\textless{}}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{groupId}\NormalTok{\textgreater{}io.jsonwebtoken\textless{}/}\KeywordTok{groupId}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{artifactId}\NormalTok{\textgreater{}jjwt{-}api\textless{}/}\KeywordTok{artifactId}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{version}\NormalTok{\textgreater{}0.13.0\textless{}/}\KeywordTok{version}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{groupId}\NormalTok{\textgreater{}io.jsonwebtoken\textless{}/}\KeywordTok{groupId}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{artifactId}\NormalTok{\textgreater{}jjwt{-}impl\textless{}/}\KeywordTok{artifactId}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{version}\NormalTok{\textgreater{}0.13.0\textless{}/}\KeywordTok{version}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{scope}\NormalTok{\textgreater{}runtime\textless{}/}\KeywordTok{scope}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{groupId}\NormalTok{\textgreater{}io.jsonwebtoken\textless{}/}\KeywordTok{groupId}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{artifactId}\NormalTok{\textgreater{}jjwt{-}jackson\textless{}/}\KeywordTok{artifactId}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{version}\NormalTok{\textgreater{}0.13.0\textless{}/}\KeywordTok{version}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{scope}\NormalTok{\textgreater{}runtime\textless{}/}\KeywordTok{scope}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{dependency}\NormalTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{4.3 Implémentation de la
+Sécurité}\label{impluxe9mentation-de-la-suxe9curituxe9}
+
+La sécurité est implémentée \textbf{dans le user-service} (et non dans
+un microservice de sécurité séparé). Le user-service gère : -
+L'authentification (login) - L'enregistrement (sign up) - La génération
+et validation des JWT - La protection des endpoints
+
+\textbf{Note:} Le gateway-service pourrait également être utilisé pour
+centraliser la sécurité, mais dans ce projet, c'est le user-service qui
+gère la sécurité.
+
+\subsubsection{4.4 Structure des Entités de
+Sécurité}\label{structure-des-entituxe9s-de-suxe9curituxe9}
+
+\paragraph{4.4.1 Entité User}\label{entituxe9-user-1}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/entity/User.java}
+
+L'entité \texttt{User} contient les champs de sécurité : -
+\texttt{password} : Mot de passe crypté avec BCrypt - \texttt{isActive}
+: Statut actif/inactif - \texttt{isVerified} : Statut de vérification
+email - \texttt{verificationToken} : Token pour la vérification email -
+\texttt{resetToken} : Token pour la réinitialisation de mot de passe -
+\texttt{lastLogin} : Dernière connexion - \texttt{role} : Relation avec
+l'entité Role pour l'autorisation
+
+\paragraph{4.4.2 Entité Role}\label{entituxe9-role-1}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/entity/Role.java}
+
+L'entité \texttt{Role} contient : - \texttt{name} : Nom du rôle (ex:
+``ADMIN'', ``USER'', ``STUDENT'') - \texttt{permissions} : Liste des
+permissions séparées par virgule (ex: ``USER\_READ,USER\_WRITE'') -
+\texttt{isDefault} : Rôle par défaut - \texttt{isSystem} : Rôle système
+(non modifiable)
+
+\subsubsection{4.5 Actions Sign Up et Sign
+In}\label{actions-sign-up-et-sign-in}
+
+\paragraph{4.5.1 Sign Up (Inscription)}\label{sign-up-inscription}
+
+\textbf{Endpoint:} \texttt{POST\ /api/auth/register}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/controller/AuthRestController.java}
+
+\textbf{DTO utilisé:} \texttt{RegisterRequestDTO}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@PostMapping}\OperatorTok{(}\StringTok{"/register"}\OperatorTok{)}
+\KeywordTok{public}\NormalTok{ ResponseEntity}\OperatorTok{\textless{}}\NormalTok{AuthResponseDTO}\OperatorTok{\textgreater{}} \FunctionTok{register}\OperatorTok{(}\AttributeTok{@Valid} \AttributeTok{@RequestBody}\NormalTok{ RegisterRequestDTO request}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{    AuthResponseDTO response }\OperatorTok{=}\NormalTok{ authService}\OperatorTok{.}\FunctionTok{register}\OperatorTok{(}\NormalTok{request}\OperatorTok{);}
+    \ControlFlowTok{return}\NormalTok{ ResponseEntity}\OperatorTok{.}\FunctionTok{status}\OperatorTok{(}\NormalTok{HttpStatus}\OperatorTok{.}\FunctionTok{CREATED}\OperatorTok{).}\FunctionTok{body}\OperatorTok{(}\NormalTok{response}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Flux d'inscription dans \texttt{AuthService.java} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Override}
+\KeywordTok{public}\NormalTok{ AuthResponseDTO }\FunctionTok{register}\OperatorTok{(}\NormalTok{RegisterRequestDTO request}\OperatorTok{)} \OperatorTok{\{}
+    \CommentTok{// 1. Création du DTO utilisateur}
+\NormalTok{    CreateUserDTO createUserDTO }\OperatorTok{=} \KeywordTok{new} \FunctionTok{CreateUserDTO}\OperatorTok{();}
+\NormalTok{    createUserDTO}\OperatorTok{.}\FunctionTok{setEmail}\OperatorTok{(}\NormalTok{request}\OperatorTok{.}\FunctionTok{getEmail}\OperatorTok{());}
+\NormalTok{    createUserDTO}\OperatorTok{.}\FunctionTok{setPassword}\OperatorTok{(}\NormalTok{request}\OperatorTok{.}\FunctionTok{getPassword}\OperatorTok{());} \CommentTok{// Sera crypté dans le service}
+\NormalTok{    createUserDTO}\OperatorTok{.}\FunctionTok{setFirstName}\OperatorTok{(}\NormalTok{request}\OperatorTok{.}\FunctionTok{getFirstName}\OperatorTok{());}
+\NormalTok{    createUserDTO}\OperatorTok{.}\FunctionTok{setLastName}\OperatorTok{(}\NormalTok{request}\OperatorTok{.}\FunctionTok{getLastName}\OperatorTok{());}
+\NormalTok{    createUserDTO}\OperatorTok{.}\FunctionTok{setPhone}\OperatorTok{(}\NormalTok{request}\OperatorTok{.}\FunctionTok{getPhone}\OperatorTok{());}
+\NormalTok{    createUserDTO}\OperatorTok{.}\FunctionTok{setRoleId}\OperatorTok{(}\NormalTok{request}\OperatorTok{.}\FunctionTok{getRoleId}\OperatorTok{());}
+    
+    \CommentTok{// 2. Création de l\textquotesingle{}utilisateur (le mot de passe est crypté ici)}
+\NormalTok{    UserDTO createdUser }\OperatorTok{=}\NormalTok{ userService}\OperatorTok{.}\FunctionTok{createUser}\OperatorTok{(}\NormalTok{createUserDTO}\OperatorTok{);}
+    
+    \CommentTok{// 3. Génération du token JWT}
+    \BuiltInTok{String}\NormalTok{ token }\OperatorTok{=}\NormalTok{ jwtUtil}\OperatorTok{.}\FunctionTok{generateToken}\OperatorTok{(}
+\NormalTok{            createdUser}\OperatorTok{.}\FunctionTok{getEmail}\OperatorTok{(),}
+\NormalTok{            createdUser}\OperatorTok{.}\FunctionTok{getId}\OperatorTok{(),}
+\NormalTok{            createdUser}\OperatorTok{.}\FunctionTok{getRole}\OperatorTok{()} \OperatorTok{!=} \KeywordTok{null} \OperatorTok{?}\NormalTok{ createdUser}\OperatorTok{.}\FunctionTok{getRole}\OperatorTok{().}\FunctionTok{getName}\OperatorTok{()} \OperatorTok{:} \StringTok{"USER"}
+    \OperatorTok{);}
+    
+    \CommentTok{// 4. Création de la réponse}
+\NormalTok{    AuthResponseDTO response }\OperatorTok{=} \KeywordTok{new} \FunctionTok{AuthResponseDTO}\OperatorTok{();}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setToken}\OperatorTok{(}\NormalTok{token}\OperatorTok{);}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setUserId}\OperatorTok{(}\NormalTok{createdUser}\OperatorTok{.}\FunctionTok{getId}\OperatorTok{());}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setEmail}\OperatorTok{(}\NormalTok{createdUser}\OperatorTok{.}\FunctionTok{getEmail}\OperatorTok{());}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setFullName}\OperatorTok{(}\NormalTok{createdUser}\OperatorTok{.}\FunctionTok{getFirstName}\OperatorTok{()} \OperatorTok{+} \StringTok{" "} \OperatorTok{+}\NormalTok{ createdUser}\OperatorTok{.}\FunctionTok{getLastName}\OperatorTok{());}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setRole}\OperatorTok{(}\NormalTok{createdUser}\OperatorTok{.}\FunctionTok{getRole}\OperatorTok{()} \OperatorTok{!=} \KeywordTok{null} \OperatorTok{?}\NormalTok{ createdUser}\OperatorTok{.}\FunctionTok{getRole}\OperatorTok{().}\FunctionTok{getName}\OperatorTok{()} \OperatorTok{:} \StringTok{"USER"}\OperatorTok{);}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setExpiresAt}\OperatorTok{(}\NormalTok{LocalDateTime}\OperatorTok{.}\FunctionTok{now}\OperatorTok{().}\FunctionTok{plusHours}\OperatorTok{(}\DecValTok{24}\OperatorTok{));}
+    
+    \ControlFlowTok{return}\NormalTok{ response}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Dans \texttt{ServiceUser.java}, le mot de passe est crypté :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Override}
+\KeywordTok{public}\NormalTok{ UserDTO }\FunctionTok{createUser}\OperatorTok{(}\NormalTok{CreateUserDTO userDTO}\OperatorTok{)} \OperatorTok{\{}
+    \CommentTok{// Vérification de l\textquotesingle{}unicité de l\textquotesingle{}email}
+    \ControlFlowTok{if} \OperatorTok{(}\NormalTok{userRepository}\OperatorTok{.}\FunctionTok{existsByEmail}\OperatorTok{(}\NormalTok{userDTO}\OperatorTok{.}\FunctionTok{getEmail}\OperatorTok{()))} \OperatorTok{\{}
+        \ControlFlowTok{throw} \KeywordTok{new} \BuiltInTok{RuntimeException}\OperatorTok{(}\StringTok{"Email already exists"}\OperatorTok{);}
+    \OperatorTok{\}}
+    
+    \CommentTok{// Création de l\textquotesingle{}entité}
+\NormalTok{    User user }\OperatorTok{=}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{userDTO}\OperatorTok{,}\NormalTok{ User}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+    
+    \CommentTok{// Cryptage du mot de passe avec BCrypt}
+\NormalTok{    user}\OperatorTok{.}\FunctionTok{setPassword}\OperatorTok{(}\NormalTok{passwordEncoder}\OperatorTok{.}\FunctionTok{encode}\OperatorTok{(}\NormalTok{userDTO}\OperatorTok{.}\FunctionTok{getPassword}\OperatorTok{()));}
+    
+    \CommentTok{// Attribution du rôle par défaut si non spécifié}
+    \ControlFlowTok{if} \OperatorTok{(}\NormalTok{userDTO}\OperatorTok{.}\FunctionTok{getRoleId}\OperatorTok{()} \OperatorTok{==} \KeywordTok{null}\OperatorTok{)} \OperatorTok{\{}
+        \BuiltInTok{Role}\NormalTok{ defaultRole }\OperatorTok{=}\NormalTok{ roleRepository}\OperatorTok{.}\FunctionTok{findByName}\OperatorTok{(}\StringTok{"USER"}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{orElseThrow}\OperatorTok{(()} \OperatorTok{{-}\textgreater{}} \KeywordTok{new} \BuiltInTok{RuntimeException}\OperatorTok{(}\StringTok{"Default role not found"}\OperatorTok{));}
+\NormalTok{        user}\OperatorTok{.}\FunctionTok{setRole}\OperatorTok{(}\NormalTok{defaultRole}\OperatorTok{);}
+    \OperatorTok{\}}
+    
+    \CommentTok{// Sauvegarde}
+\NormalTok{    User saved }\OperatorTok{=}\NormalTok{ userRepository}\OperatorTok{.}\FunctionTok{save}\OperatorTok{(}\NormalTok{user}\OperatorTok{);}
+    \ControlFlowTok{return}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{saved}\OperatorTok{,}\NormalTok{ UserDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\paragraph{4.5.2 Sign In (Connexion)}\label{sign-in-connexion}
+
+\textbf{Endpoint:} \texttt{POST\ /api/auth/login}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/controller/AuthRestController.java}
+
+\textbf{DTO utilisé:} \texttt{LoginRequestDTO}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@PostMapping}\OperatorTok{(}\StringTok{"/login"}\OperatorTok{)}
+\KeywordTok{public}\NormalTok{ ResponseEntity}\OperatorTok{\textless{}}\NormalTok{AuthResponseDTO}\OperatorTok{\textgreater{}} \FunctionTok{login}\OperatorTok{(}\AttributeTok{@Valid} \AttributeTok{@RequestBody}\NormalTok{ LoginRequestDTO request}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{    AuthResponseDTO response }\OperatorTok{=}\NormalTok{ authService}\OperatorTok{.}\FunctionTok{login}\OperatorTok{(}\NormalTok{request}\OperatorTok{);}
+    \ControlFlowTok{return}\NormalTok{ ResponseEntity}\OperatorTok{.}\FunctionTok{ok}\OperatorTok{(}\NormalTok{response}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Flux de connexion dans \texttt{AuthService.java} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Override}
+\KeywordTok{public}\NormalTok{ AuthResponseDTO }\FunctionTok{login}\OperatorTok{(}\NormalTok{LoginRequestDTO request}\OperatorTok{)} \OperatorTok{\{}
+    \CommentTok{// 1. Authentification de l\textquotesingle{}utilisateur}
+\NormalTok{    UserDTO userDTO }\OperatorTok{=}\NormalTok{ userService}\OperatorTok{.}\FunctionTok{authenticateUser}\OperatorTok{(}\NormalTok{request}\OperatorTok{.}\FunctionTok{getEmail}\OperatorTok{(),}\NormalTok{ request}\OperatorTok{.}\FunctionTok{getPassword}\OperatorTok{());}
+    
+    \ControlFlowTok{if} \OperatorTok{(}\NormalTok{userDTO }\OperatorTok{==} \KeywordTok{null}\OperatorTok{)} \OperatorTok{\{}
+        \ControlFlowTok{throw} \KeywordTok{new} \BuiltInTok{RuntimeException}\OperatorTok{(}\StringTok{"Invalid credentials"}\OperatorTok{);}
+    \OperatorTok{\}}
+    
+    \CommentTok{// 2. Mise à jour de la dernière connexion}
+\NormalTok{    userService}\OperatorTok{.}\FunctionTok{updateLastLogin}\OperatorTok{(}\NormalTok{userDTO}\OperatorTok{.}\FunctionTok{getId}\OperatorTok{());}
+    
+    \CommentTok{// 3. Génération du token JWT}
+    \BuiltInTok{String}\NormalTok{ token }\OperatorTok{=}\NormalTok{ jwtUtil}\OperatorTok{.}\FunctionTok{generateToken}\OperatorTok{(}
+\NormalTok{            userDTO}\OperatorTok{.}\FunctionTok{getEmail}\OperatorTok{(),}
+\NormalTok{            userDTO}\OperatorTok{.}\FunctionTok{getId}\OperatorTok{(),}
+\NormalTok{            userDTO}\OperatorTok{.}\FunctionTok{getRole}\OperatorTok{()} \OperatorTok{!=} \KeywordTok{null} \OperatorTok{?}\NormalTok{ userDTO}\OperatorTok{.}\FunctionTok{getRole}\OperatorTok{().}\FunctionTok{getName}\OperatorTok{()} \OperatorTok{:} \StringTok{"USER"}
+    \OperatorTok{);}
+    
+    \CommentTok{// 4. Création de la réponse}
+\NormalTok{    AuthResponseDTO response }\OperatorTok{=} \KeywordTok{new} \FunctionTok{AuthResponseDTO}\OperatorTok{();}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setToken}\OperatorTok{(}\NormalTok{token}\OperatorTok{);}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setUserId}\OperatorTok{(}\NormalTok{userDTO}\OperatorTok{.}\FunctionTok{getId}\OperatorTok{());}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setEmail}\OperatorTok{(}\NormalTok{userDTO}\OperatorTok{.}\FunctionTok{getEmail}\OperatorTok{());}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setFullName}\OperatorTok{(}\NormalTok{userDTO}\OperatorTok{.}\FunctionTok{getFirstName}\OperatorTok{()} \OperatorTok{+} \StringTok{" "} \OperatorTok{+}\NormalTok{ userDTO}\OperatorTok{.}\FunctionTok{getLastName}\OperatorTok{());}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setRole}\OperatorTok{(}\NormalTok{userDTO}\OperatorTok{.}\FunctionTok{getRole}\OperatorTok{()} \OperatorTok{!=} \KeywordTok{null} \OperatorTok{?}\NormalTok{ userDTO}\OperatorTok{.}\FunctionTok{getRole}\OperatorTok{().}\FunctionTok{getName}\OperatorTok{()} \OperatorTok{:} \StringTok{"USER"}\OperatorTok{);}
+\NormalTok{    response}\OperatorTok{.}\FunctionTok{setExpiresAt}\OperatorTok{(}\NormalTok{LocalDateTime}\OperatorTok{.}\FunctionTok{now}\OperatorTok{().}\FunctionTok{plusHours}\OperatorTok{(}\DecValTok{24}\OperatorTok{));}
+    
+    \ControlFlowTok{return}\NormalTok{ response}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Authentification dans \texttt{ServiceUser.java} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Override}
+\KeywordTok{public}\NormalTok{ UserDTO }\FunctionTok{authenticateUser}\OperatorTok{(}\BuiltInTok{String}\NormalTok{ email}\OperatorTok{,} \BuiltInTok{String}\NormalTok{ password}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{    User user }\OperatorTok{=}\NormalTok{ userRepository}\OperatorTok{.}\FunctionTok{findByEmail}\OperatorTok{(}\NormalTok{email}\OperatorTok{)}
+            \OperatorTok{.}\FunctionTok{orElseThrow}\OperatorTok{(()} \OperatorTok{{-}\textgreater{}} \KeywordTok{new} \BuiltInTok{RuntimeException}\OperatorTok{(}\StringTok{"User not found"}\OperatorTok{));}
+    
+    \CommentTok{// Vérification du mot de passe avec BCrypt}
+    \ControlFlowTok{if} \OperatorTok{(!}\NormalTok{passwordEncoder}\OperatorTok{.}\FunctionTok{matches}\OperatorTok{(}\NormalTok{password}\OperatorTok{,}\NormalTok{ user}\OperatorTok{.}\FunctionTok{getPassword}\OperatorTok{()))} \OperatorTok{\{}
+        \ControlFlowTok{return} \KeywordTok{null}\OperatorTok{;} \CommentTok{// Mot de passe incorrect}
+    \OperatorTok{\}}
+    
+    \CommentTok{// Vérification que l\textquotesingle{}utilisateur est actif}
+    \ControlFlowTok{if} \OperatorTok{(!}\BuiltInTok{Boolean}\OperatorTok{.}\FunctionTok{TRUE}\OperatorTok{.}\FunctionTok{equals}\OperatorTok{(}\NormalTok{user}\OperatorTok{.}\FunctionTok{getIsActive}\OperatorTok{()))} \OperatorTok{\{}
+        \ControlFlowTok{throw} \KeywordTok{new} \BuiltInTok{RuntimeException}\OperatorTok{(}\StringTok{"User account is inactive"}\OperatorTok{);}
+    \OperatorTok{\}}
+    
+    \ControlFlowTok{return}\NormalTok{ modelMapper}\OperatorTok{.}\FunctionTok{map}\OperatorTok{(}\NormalTok{user}\OperatorTok{,}\NormalTok{ UserDTO}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{4.6 Logique de Génération de
+JWT}\label{logique-de-guxe9nuxe9ration-de-jwt}
+
+\paragraph{4.6.1 Classe JwtUtil}\label{classe-jwtutil}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/utils/JwtUtil.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Component}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ JwtUtil }\OperatorTok{\{}
+    
+    \AttributeTok{@Value}\OperatorTok{(}\StringTok{"$\{jwt.secret\}"}\OperatorTok{)}
+    \KeywordTok{private} \BuiltInTok{String}\NormalTok{ secret}\OperatorTok{;}
+    
+    \AttributeTok{@Value}\OperatorTok{(}\StringTok{"$\{jwt.expiration\}"}\OperatorTok{)}
+    \KeywordTok{private} \BuiltInTok{Long}\NormalTok{ expiration}\OperatorTok{;} \CommentTok{// En millisecondes (86400000 = 24 heures)}
+    
+    \KeywordTok{private} \BuiltInTok{Key} \FunctionTok{getSigningKey}\OperatorTok{()} \OperatorTok{\{}
+        \ControlFlowTok{return}\NormalTok{ Keys}\OperatorTok{.}\FunctionTok{hmacShaKeyFor}\OperatorTok{(}\NormalTok{secret}\OperatorTok{.}\FunctionTok{getBytes}\OperatorTok{());}
+    \OperatorTok{\}}
+    
+    \KeywordTok{public} \BuiltInTok{String} \FunctionTok{generateToken}\OperatorTok{(}\BuiltInTok{String}\NormalTok{ username}\OperatorTok{,} \BuiltInTok{UUID}\NormalTok{ userId}\OperatorTok{,} \BuiltInTok{String}\NormalTok{ role}\OperatorTok{)} \OperatorTok{\{}
+        \BuiltInTok{Map}\OperatorTok{\textless{}}\BuiltInTok{String}\OperatorTok{,} \BuiltInTok{Object}\OperatorTok{\textgreater{}}\NormalTok{ claims }\OperatorTok{=} \KeywordTok{new} \BuiltInTok{HashMap}\OperatorTok{\textless{}\textgreater{}();}
+\NormalTok{        claims}\OperatorTok{.}\FunctionTok{put}\OperatorTok{(}\StringTok{"userId"}\OperatorTok{,}\NormalTok{ userId}\OperatorTok{);}
+\NormalTok{        claims}\OperatorTok{.}\FunctionTok{put}\OperatorTok{(}\StringTok{"role"}\OperatorTok{,}\NormalTok{ role}\OperatorTok{);}
+        
+        \ControlFlowTok{return}\NormalTok{ Jwts}\OperatorTok{.}\FunctionTok{builder}\OperatorTok{()}
+                \OperatorTok{.}\FunctionTok{setClaims}\OperatorTok{(}\NormalTok{claims}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{setSubject}\OperatorTok{(}\NormalTok{username}\OperatorTok{)} \CommentTok{// Email de l\textquotesingle{}utilisateur}
+                \OperatorTok{.}\FunctionTok{setIssuedAt}\OperatorTok{(}\KeywordTok{new} \BuiltInTok{Date}\OperatorTok{())}
+                \OperatorTok{.}\FunctionTok{setExpiration}\OperatorTok{(}\KeywordTok{new} \BuiltInTok{Date}\OperatorTok{(}\BuiltInTok{System}\OperatorTok{.}\FunctionTok{currentTimeMillis}\OperatorTok{()} \OperatorTok{+}\NormalTok{ expiration}\OperatorTok{))}
+                \OperatorTok{.}\FunctionTok{signWith}\OperatorTok{(}\FunctionTok{getSigningKey}\OperatorTok{(),}\NormalTok{ SignatureAlgorithm}\OperatorTok{.}\FunctionTok{HS256}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{compact}\OperatorTok{();}
+    \OperatorTok{\}}
+    
+    \KeywordTok{public} \DataTypeTok{boolean} \FunctionTok{validateToken}\OperatorTok{(}\BuiltInTok{String}\NormalTok{ token}\OperatorTok{)} \OperatorTok{\{}
+        \ControlFlowTok{try} \OperatorTok{\{}
+\NormalTok{            Jwts}\OperatorTok{.}\FunctionTok{parser}\OperatorTok{()}
+                    \OperatorTok{.}\FunctionTok{setSigningKey}\OperatorTok{(}\FunctionTok{getSigningKey}\OperatorTok{())}
+                    \OperatorTok{.}\FunctionTok{build}\OperatorTok{()}
+                    \OperatorTok{.}\FunctionTok{parseClaimsJws}\OperatorTok{(}\NormalTok{token}\OperatorTok{);}
+            \ControlFlowTok{return} \KeywordTok{true}\OperatorTok{;}
+        \OperatorTok{\}} \ControlFlowTok{catch} \OperatorTok{(}\NormalTok{JwtException }\OperatorTok{|} \BuiltInTok{IllegalArgumentException}\NormalTok{ e}\OperatorTok{)} \OperatorTok{\{}
+            \ControlFlowTok{return} \KeywordTok{false}\OperatorTok{;}
+        \OperatorTok{\}}
+    \OperatorTok{\}}
+    
+    \KeywordTok{public} \BuiltInTok{String} \FunctionTok{extractUsername}\OperatorTok{(}\BuiltInTok{String}\NormalTok{ token}\OperatorTok{)} \OperatorTok{\{}
+        \ControlFlowTok{return} \FunctionTok{extractAllClaims}\OperatorTok{(}\NormalTok{token}\OperatorTok{).}\FunctionTok{getSubject}\OperatorTok{();}
+    \OperatorTok{\}}
+    
+    \KeywordTok{public} \BuiltInTok{UUID} \FunctionTok{extractUserId}\OperatorTok{(}\BuiltInTok{String}\NormalTok{ token}\OperatorTok{)} \OperatorTok{\{}
+        \ControlFlowTok{return} \FunctionTok{extractAllClaims}\OperatorTok{(}\NormalTok{token}\OperatorTok{).}\FunctionTok{get}\OperatorTok{(}\StringTok{"userId"}\OperatorTok{,} \BuiltInTok{UUID}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+    \OperatorTok{\}}
+    
+    \KeywordTok{public} \BuiltInTok{String} \FunctionTok{extractRole}\OperatorTok{(}\BuiltInTok{String}\NormalTok{ token}\OperatorTok{)} \OperatorTok{\{}
+        \ControlFlowTok{return} \FunctionTok{extractAllClaims}\OperatorTok{(}\NormalTok{token}\OperatorTok{).}\FunctionTok{get}\OperatorTok{(}\StringTok{"role"}\OperatorTok{,} \BuiltInTok{String}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+    \OperatorTok{\}}
+    
+    \KeywordTok{private}\NormalTok{ Claims }\FunctionTok{extractAllClaims}\OperatorTok{(}\BuiltInTok{String}\NormalTok{ token}\OperatorTok{)} \OperatorTok{\{}
+        \ControlFlowTok{return}\NormalTok{ Jwts}\OperatorTok{.}\FunctionTok{parser}\OperatorTok{()}
+                \OperatorTok{.}\FunctionTok{setSigningKey}\OperatorTok{(}\FunctionTok{getSigningKey}\OperatorTok{())}
+                \OperatorTok{.}\FunctionTok{build}\OperatorTok{()}
+                \OperatorTok{.}\FunctionTok{parseClaimsJws}\OperatorTok{(}\NormalTok{token}\OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{getBody}\OperatorTok{();}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\paragraph{4.6.2 Configuration JWT}\label{configuration-jwt}
+
+\textbf{Dans
+\texttt{user-service/src/main/resources/application.properties} :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\# JWT Configuration}
+\NormalTok{jwt.secret=+hSzNU2WzmvAVGQOjUmlon/Whkf8DINcSDnOF0w8R/TlzQVtBRwEffI8lNzgQFxH4ZuYwyniSjTQbMc5e2cDeQ==}
+\NormalTok{jwt.expiration=86400000  \# 24 heures en millisecondes}
+\NormalTok{jwt.issuer=user{-}service}
+\NormalTok{jwt.audience=user{-}client}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Structure du JWT généré :} - \textbf{Header} : Algorithme de
+signature (HS256) - \textbf{Payload (Claims)} : - \texttt{sub} (subject)
+: Email de l'utilisateur - \texttt{userId} : UUID de l'utilisateur -
+\texttt{role} : Rôle de l'utilisateur - \texttt{iat} (issued at) : Date
+d'émission - \texttt{exp} (expiration) : Date d'expiration -
+\textbf{Signature} : HMAC SHA256 avec la clé secrète
+
+\subsubsection{4.7 Utilisation du JWT pour Protéger les Accès aux
+API}\label{utilisation-du-jwt-pour-protuxe9ger-les-accuxe8s-aux-api}
+
+\paragraph{4.7.1 Configuration de Spring
+Security}\label{configuration-de-spring-security}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/config/SecurityConfig.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Configuration}
+\AttributeTok{@EnableWebSecurity}
+\AttributeTok{@EnableMethodSecurity}
+\AttributeTok{@RequiredArgsConstructor}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ SecurityConfig }\OperatorTok{\{}
+    
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ JwtUtil jwtUtil}\OperatorTok{;}
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ UserDetailsService userDetailsService}\OperatorTok{;}
+    
+    \AttributeTok{@Bean}
+    \KeywordTok{public}\NormalTok{ SecurityFilterChain }\FunctionTok{securityFilterChain}\OperatorTok{(}\NormalTok{HttpSecurity http}\OperatorTok{)} \KeywordTok{throws} \BuiltInTok{Exception} \OperatorTok{\{}
+\NormalTok{        http}
+                \OperatorTok{.}\FunctionTok{csrf}\OperatorTok{(}\NormalTok{csrf }\OperatorTok{{-}\textgreater{}}\NormalTok{ csrf}\OperatorTok{.}\FunctionTok{disable}\OperatorTok{())}
+                \OperatorTok{.}\FunctionTok{sessionManagement}\OperatorTok{(}\NormalTok{session }\OperatorTok{{-}\textgreater{}}\NormalTok{ session}
+                        \OperatorTok{.}\FunctionTok{sessionCreationPolicy}\OperatorTok{(}\NormalTok{SessionCreationPolicy}\OperatorTok{.}\FunctionTok{STATELESS}\OperatorTok{)}
+                \OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{authorizeHttpRequests}\OperatorTok{(}\NormalTok{auth }\OperatorTok{{-}\textgreater{}}\NormalTok{ auth}
+                        \CommentTok{// Endpoints publics {-} authentification}
+                        \OperatorTok{.}\FunctionTok{requestMatchers}\OperatorTok{(}\StringTok{"/api/auth/**"}\OperatorTok{).}\FunctionTok{permitAll}\OperatorTok{()}
+                        \CommentTok{// Endpoints Actuator (optionnel)}
+                        \OperatorTok{.}\FunctionTok{requestMatchers}\OperatorTok{(}\StringTok{"/actuator/health"}\OperatorTok{,} \StringTok{"/actuator/info"}\OperatorTok{).}\FunctionTok{permitAll}\OperatorTok{()}
+                        \CommentTok{// Tous les autres endpoints nécessitent une authentification}
+                        \OperatorTok{.}\FunctionTok{anyRequest}\OperatorTok{().}\FunctionTok{authenticated}\OperatorTok{()}
+                \OperatorTok{)}
+                \OperatorTok{.}\FunctionTok{authenticationProvider}\OperatorTok{(}\FunctionTok{authenticationProvider}\OperatorTok{())}
+                \OperatorTok{.}\FunctionTok{addFilterBefore}\OperatorTok{(}\FunctionTok{jwtAuthenticationFilter}\OperatorTok{(),}\NormalTok{ UsernamePasswordAuthenticationFilter}\OperatorTok{.}\FunctionTok{class}\OperatorTok{);}
+        
+        \ControlFlowTok{return}\NormalTok{ http}\OperatorTok{.}\FunctionTok{build}\OperatorTok{();}
+    \OperatorTok{\}}
+    
+    \AttributeTok{@Bean}
+    \KeywordTok{public}\NormalTok{ PasswordEncoder }\FunctionTok{passwordEncoder}\OperatorTok{()} \OperatorTok{\{}
+        \ControlFlowTok{return} \KeywordTok{new} \FunctionTok{BCryptPasswordEncoder}\OperatorTok{();}
+    \OperatorTok{\}}
+    
+    \AttributeTok{@Bean}
+    \KeywordTok{public}\NormalTok{ AuthenticationProvider }\FunctionTok{authenticationProvider}\OperatorTok{()} \OperatorTok{\{}
+\NormalTok{        DaoAuthenticationProvider authProvider }\OperatorTok{=} \KeywordTok{new} \FunctionTok{DaoAuthenticationProvider}\OperatorTok{();}
+\NormalTok{        authProvider}\OperatorTok{.}\FunctionTok{setUserDetailsService}\OperatorTok{(}\NormalTok{userDetailsService}\OperatorTok{);}
+\NormalTok{        authProvider}\OperatorTok{.}\FunctionTok{setPasswordEncoder}\OperatorTok{(}\FunctionTok{passwordEncoder}\OperatorTok{());}
+        \ControlFlowTok{return}\NormalTok{ authProvider}\OperatorTok{;}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Points clés:} - \texttt{SessionCreationPolicy.STATELESS} : Pas
+de session, utilisation de JWT - \texttt{/api/auth/**} : Endpoints
+publics (login, register) - \texttt{anyRequest().authenticated()} : Tous
+les autres endpoints nécessitent une authentification - Filtre JWT
+ajouté avant le filtre d'authentification par défaut
+
+\paragraph{4.7.2 Filtre JWT}\label{filtre-jwt}
+
+\textbf{Localisation:}
+\texttt{user-service/src/main/java/com/service/user/config/JwtAuthenticationFilter.java}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@Component}
+\AttributeTok{@RequiredArgsConstructor}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ JwtAuthenticationFilter }\KeywordTok{extends}\NormalTok{ OncePerRequestFilter }\OperatorTok{\{}
+    
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ JwtUtil jwtUtil}\OperatorTok{;}
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ UserDetailsService userDetailsService}\OperatorTok{;}
+    
+    \AttributeTok{@Override}
+    \KeywordTok{protected} \DataTypeTok{void} \FunctionTok{doFilterInternal}\OperatorTok{(}\NormalTok{HttpServletRequest request}\OperatorTok{,}
+\NormalTok{                                    HttpServletResponse response}\OperatorTok{,}
+\NormalTok{                                    FilterChain filterChain}\OperatorTok{)} \KeywordTok{throws}\NormalTok{ ServletException}\OperatorTok{,} \BuiltInTok{IOException} \OperatorTok{\{}
+        
+        \BuiltInTok{String}\NormalTok{ authHeader }\OperatorTok{=}\NormalTok{ request}\OperatorTok{.}\FunctionTok{getHeader}\OperatorTok{(}\StringTok{"Authorization"}\OperatorTok{);}
+        
+        \CommentTok{// Vérification de la présence du token}
+        \ControlFlowTok{if} \OperatorTok{(}\NormalTok{authHeader }\OperatorTok{==} \KeywordTok{null} \OperatorTok{||} \OperatorTok{!}\NormalTok{authHeader}\OperatorTok{.}\FunctionTok{startsWith}\OperatorTok{(}\StringTok{"Bearer "}\OperatorTok{))} \OperatorTok{\{}
+\NormalTok{            filterChain}\OperatorTok{.}\FunctionTok{doFilter}\OperatorTok{(}\NormalTok{request}\OperatorTok{,}\NormalTok{ response}\OperatorTok{);}
+            \ControlFlowTok{return}\OperatorTok{;}
+        \OperatorTok{\}}
+        
+        \CommentTok{// Extraction du token}
+        \BuiltInTok{String}\NormalTok{ token }\OperatorTok{=}\NormalTok{ authHeader}\OperatorTok{.}\FunctionTok{substring}\OperatorTok{(}\DecValTok{7}\OperatorTok{);}
+        
+        \CommentTok{// Validation du token}
+        \ControlFlowTok{if} \OperatorTok{(}\NormalTok{jwtUtil}\OperatorTok{.}\FunctionTok{validateToken}\OperatorTok{(}\NormalTok{token}\OperatorTok{))} \OperatorTok{\{}
+            \BuiltInTok{String}\NormalTok{ username }\OperatorTok{=}\NormalTok{ jwtUtil}\OperatorTok{.}\FunctionTok{extractUsername}\OperatorTok{(}\NormalTok{token}\OperatorTok{);}
+            
+            \ControlFlowTok{if} \OperatorTok{(}\NormalTok{username }\OperatorTok{!=} \KeywordTok{null} \OperatorTok{\&\&}\NormalTok{ SecurityContextHolder}\OperatorTok{.}\FunctionTok{getContext}\OperatorTok{().}\FunctionTok{getAuthentication}\OperatorTok{()} \OperatorTok{==} \KeywordTok{null}\OperatorTok{)} \OperatorTok{\{}
+                \CommentTok{// Chargement des détails de l\textquotesingle{}utilisateur}
+\NormalTok{                UserDetails userDetails }\OperatorTok{=}\NormalTok{ userDetailsService}\OperatorTok{.}\FunctionTok{loadUserByUsername}\OperatorTok{(}\NormalTok{username}\OperatorTok{);}
+                
+                \CommentTok{// Création de l\textquotesingle{}authentication token}
+\NormalTok{                UsernamePasswordAuthenticationToken authToken }\OperatorTok{=}
+                        \KeywordTok{new} \FunctionTok{UsernamePasswordAuthenticationToken}\OperatorTok{(}
+\NormalTok{                                userDetails}\OperatorTok{,}
+                                \KeywordTok{null}\OperatorTok{,}
+\NormalTok{                                userDetails}\OperatorTok{.}\FunctionTok{getAuthorities}\OperatorTok{()}
+                        \OperatorTok{);}
+                
+                \CommentTok{// Mise en contexte de l\textquotesingle{}authentification}
+\NormalTok{                SecurityContextHolder}\OperatorTok{.}\FunctionTok{getContext}\OperatorTok{().}\FunctionTok{setAuthentication}\OperatorTok{(}\NormalTok{authToken}\OperatorTok{);}
+            \OperatorTok{\}}
+        \OperatorTok{\}}
+        
+\NormalTok{        filterChain}\OperatorTok{.}\FunctionTok{doFilter}\OperatorTok{(}\NormalTok{request}\OperatorTok{,}\NormalTok{ response}\OperatorTok{);}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Fonctionnement:} 1. Le filtre intercepte chaque requête 2. Il
+extrait le token du header
+\texttt{Authorization:\ Bearer\ \textless{}token\textgreater{}} 3. Il
+valide le token avec \texttt{JwtUtil} 4. Si valide, il charge les
+détails de l'utilisateur et crée une \texttt{Authentication} 5. Il met
+l'authentification dans le \texttt{SecurityContext} 6. Les endpoints
+protégés peuvent maintenant accéder aux informations de l'utilisateur
+authentifié
+
+\paragraph{4.7.3 Protection des
+Endpoints}\label{protection-des-endpoints}
+
+\textbf{Exemple : UserRestController}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{@RestController}
+\AttributeTok{@RequestMapping}\OperatorTok{(}\StringTok{"/api/users"}\OperatorTok{)}
+\AttributeTok{@AllArgsConstructor}
+\KeywordTok{public} \KeywordTok{class}\NormalTok{ UserRestController }\OperatorTok{\{}
+    
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ IServiceUser userService}\OperatorTok{;}
+    \KeywordTok{private} \DataTypeTok{final}\NormalTok{ ModelMapper modelMapper}\OperatorTok{;}
+    
+    \CommentTok{// Endpoint protégé {-} nécessite une authentification}
+    \AttributeTok{@GetMapping}\OperatorTok{(}\StringTok{"/\{id\}"}\OperatorTok{)}
+    \KeywordTok{public}\NormalTok{ ResponseEntity}\OperatorTok{\textless{}}\NormalTok{UserDTO}\OperatorTok{\textgreater{}} \FunctionTok{getUserById}\OperatorTok{(}\AttributeTok{@PathVariable} \BuiltInTok{UUID}\NormalTok{ id}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{        UserDTO user }\OperatorTok{=}\NormalTok{ userService}\OperatorTok{.}\FunctionTok{getUserById}\OperatorTok{(}\NormalTok{id}\OperatorTok{);}
+        \ControlFlowTok{return}\NormalTok{ ResponseEntity}\OperatorTok{.}\FunctionTok{ok}\OperatorTok{(}\NormalTok{user}\OperatorTok{);}
+    \OperatorTok{\}}
+    
+    \CommentTok{// Endpoint protégé avec autorisation basée sur les rôles}
+    \AttributeTok{@PreAuthorize}\OperatorTok{(}\StringTok{"hasRole(\textquotesingle{}ADMIN\textquotesingle{})"}\OperatorTok{)}
+    \AttributeTok{@DeleteMapping}\OperatorTok{(}\StringTok{"/\{id\}"}\OperatorTok{)}
+    \KeywordTok{public}\NormalTok{ ResponseEntity}\OperatorTok{\textless{}}\BuiltInTok{Void}\OperatorTok{\textgreater{}} \FunctionTok{deleteUser}\OperatorTok{(}\AttributeTok{@PathVariable} \BuiltInTok{UUID}\NormalTok{ id}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{        userService}\OperatorTok{.}\FunctionTok{deleteUser}\OperatorTok{(}\NormalTok{id}\OperatorTok{);}
+        \ControlFlowTok{return}\NormalTok{ ResponseEntity}\OperatorTok{.}\FunctionTok{noContent}\OperatorTok{().}\FunctionTok{build}\OperatorTok{();}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Utilisation de \texttt{@PreAuthorize} :} -
+\texttt{@PreAuthorize("hasRole(\textquotesingle{}ADMIN\textquotesingle{})")}
+: Seuls les utilisateurs avec le rôle ADMIN peuvent accéder -
+\texttt{@PreAuthorize("hasAuthority(\textquotesingle{}USER\_WRITE\textquotesingle{})")}
+: Nécessite une permission spécifique
+
+\paragraph{4.7.4 Utilisation du Token dans les Requêtes
+Client}\label{utilisation-du-token-dans-les-requuxeates-client}
+
+\textbf{Exemple de requête HTTP avec JWT :}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{GET /api/users/123e4567{-}e89b{-}12d3{-}a456{-}426614174000}
+\NormalTok{Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwidXNlcklkIjoiMTIzZTQ1NjctZTg5Yi0xMmQzLWE0NTYtNDI2NjE0MTc0MDAwIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE2ODk5OTk5OTksImV4cCI6MTY5MDA4NjM5OX0.xxxxx}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Flux complet :} 1. Client envoie une requête avec le token JWT
+dans le header \texttt{Authorization} 2. Le
+\texttt{JwtAuthenticationFilter} intercepte la requête 3. Le token est
+validé et l'utilisateur est authentifié 4. L'endpoint est exécuté avec
+le contexte de sécurité rempli 5. La réponse est renvoyée au client
+
+\subsubsection{4.8 Résumé de la Stratégie de
+Sécurité}\label{ruxe9sumuxe9-de-la-stratuxe9gie-de-suxe9curituxe9}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4706}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5294}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Aspect
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Détails
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Service de sécurité} & user-service (sécurité intégrée) \\
+\textbf{Framework} & Spring Security + JWT \\
+\textbf{Dépendances} & spring-boot-starter-security, jjwt (0.13.0) \\
+\textbf{Cryptage des mots de passe} & BCryptPasswordEncoder \\
+\textbf{Algorithme JWT} & HS256 (HMAC SHA256) \\
+\textbf{Durée de validité du token} & 24 heures (86400000 ms) \\
+\textbf{Endpoints publics} & \texttt{/api/auth/**} (login, register) \\
+\textbf{Endpoints protégés} & Tous les autres endpoints \\
+\textbf{Autorisation} & Basée sur les rôles avec
+\texttt{@PreAuthorize} \\
+\textbf{Filtre JWT} & \texttt{JwtAuthenticationFilter}
+(OncePerRequestFilter) \\
+\textbf{Service Discovery} & Eureka (pour la communication entre
+services) \\
+\end{longtable}
+
+\subsubsection{4.9 Diagramme de Flux
+d'Authentification}\label{diagramme-de-flux-dauthentification}
+
+\begin{verbatim}
+┌──────────┐                    ┌──────────────┐
+│ Client  │                    │ user-service │
+└────┬─────┘                    └──────┬───────┘
+     │                                 │
+     │ 1. POST /api/auth/login         │
+     │    {email, password}            │
+     ├────────────────────────────────▶│
+     │                                 │ 2. Vérification credentials
+     │                                 │    (BCrypt)
+     │                                 │ 3. Génération JWT
+     │                                 │
+     │ 4. Retour {token, userInfo}     │
+     │◀────────────────────────────────┤
+     │                                 │
+     │ 5. Requête avec token           │
+     │    GET /api/users/{id}          │
+     │    Authorization: Bearer <token> │
+     ├────────────────────────────────▶│
+     │                                 │ 6. JwtAuthenticationFilter
+     │                                 │    - Valide le token
+     │                                 │    - Charge UserDetails
+     │                                 │    - Met en contexte
+     │                                 │ 7. Exécution endpoint
+     │                                 │
+     │ 8. Retour des données           │
+     │◀────────────────────────────────┤
+     │                                 │
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{CONCLUSION}\label{conclusion}
+
+Ce rapport a présenté l'architecture microservices du projet avec :
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Modélisation des entités} : 7 entités principales avec leurs
+  associations logiques via UUID
+\item
+  \textbf{Pattern DTO} : Implémenté dans tous les services avec
+  ModelMapper pour la conversion
+\item
+  \textbf{Communication synchrone} : OpenFeign entre student-service et
+  user-service pour la vérification et l'enrichissement des données
+\item
+  \textbf{Stratégie de sécurité} : Spring Security + JWT dans
+  user-service pour l'authentification et l'autorisation
+\end{enumerate}
+
+L'architecture respecte les principes des microservices : indépendance
+des services, communication via APIs, découverte de services avec
+Eureka, et sécurité centralisée.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Date de rédaction :} {[}À compléter{]}\\
+\textbf{Version :} 1.0
