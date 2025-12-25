@@ -21,50 +21,50 @@ public class RoleRestController {
     private final IServiceRole roleService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody CreateRoleDTO createRoleDTO) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(roleService.createRole(createRoleDTO));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<RoleResponseDTO> getRoleById(@PathVariable UUID id) {
         return ResponseEntity.ok(roleService.getRoleResponseById(id));
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<RoleDTO>> getAllRoles() {
         return ResponseEntity.ok(roleService.getAllRoles());
     }
 
     @GetMapping("/with-count")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<RoleResponseDTO>> getAllRolesWithUserCount() {
         return ResponseEntity.ok(roleService.getAllRoleResponses());
     }
 
     @GetMapping("/default")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<RoleDTO>> getDefaultRoles() {
         return ResponseEntity.ok(roleService.getDefaultRoles());
     }
 
     @GetMapping("/custom")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<RoleDTO>> getCustomRoles() {
         return ResponseEntity.ok(roleService.getCustomRoles());
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<RoleDTO>> searchRoles(@RequestParam String keyword) {
         return ResponseEntity.ok(roleService.searchRoles(keyword));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<RoleDTO> updateRole(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateRoleDTO updateRoleDTO) {
@@ -72,14 +72,14 @@ public class RoleRestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> deleteRole(@PathVariable UUID id) {
         roleService.deleteRole(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/permissions")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<RoleDTO> addPermission(
             @PathVariable UUID id,
             @RequestParam String permission) {
@@ -87,7 +87,7 @@ public class RoleRestController {
     }
 
     @DeleteMapping("/{id}/permissions")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<RoleDTO> removePermission(
             @PathVariable UUID id,
             @RequestParam String permission) {
@@ -95,25 +95,25 @@ public class RoleRestController {
     }
 
     @GetMapping("/{id}/permissions")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<String>> getRolePermissions(@PathVariable UUID id) {
         return ResponseEntity.ok(roleService.getRolePermissions(id));
     }
 
     @PostMapping("/{id}/default")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<RoleDTO> setAsDefault(@PathVariable UUID id) {
         return ResponseEntity.ok(roleService.setAsDefault(id));
     }
 
     @DeleteMapping("/{id}/default")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<RoleDTO> removeAsDefault(@PathVariable UUID id) {
         return ResponseEntity.ok(roleService.removeAsDefault(id));
     }
 
     @PostMapping("/initialize-defaults")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> initializeDefaultRoles() {
         roleService.initializeDefaultRoles();
         return ResponseEntity.ok().build();
