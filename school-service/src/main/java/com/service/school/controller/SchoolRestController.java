@@ -49,7 +49,7 @@ public class SchoolRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<SchoolResponseDTO>> getAllSchools(
             @RequestParam(required = false) SchoolType type,
             @RequestParam(required = false) SchoolStatus status,

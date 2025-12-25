@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/communities")
+@RequestMapping("/api/communities")
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
 public class CommunityRestController {
@@ -22,7 +22,7 @@ public class CommunityRestController {
     private final ServiceCommunity communityService;
     private final ModelMapper modelMapper;
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<CommunityDTO> createCommunity(@Valid @RequestBody CommunityDTO communityDTO) {
         Community community = modelMapper.map(communityDTO, Community.class);
         Community createdCommunity = communityService.createCommunity(community);
@@ -30,7 +30,7 @@ public class CommunityRestController {
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<CommunityDTO>> getAllCommunities() {
         List<Community> communities = communityService.getAllCommunities();
         List<CommunityDTO> communityDTOs = communities.stream()
