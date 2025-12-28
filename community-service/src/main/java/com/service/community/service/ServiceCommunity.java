@@ -1,5 +1,6 @@
 package com.service.community.service;
 
+import com.service.community.dto.CommunityMinimalDTO;
 import com.service.community.entity.Community;
 import com.service.community.repository.CommunityRepository;
 import lombok.AllArgsConstructor;
@@ -173,5 +174,18 @@ public class ServiceCommunity implements IServiceCommunity {
         return (long) communityRepository.findAll().stream()
                 .mapToInt(Community::getMemberCount)
                 .sum();
+    }
+
+    @Override
+    public CommunityMinimalDTO getCommunityMinimalById(UUID id) {
+        Community community = getCommunityById(id);
+        CommunityMinimalDTO dto = new CommunityMinimalDTO();
+        dto.setId(community.getId());
+        dto.setTitle(community.getTitle());
+        dto.setSlug(community.getSlug());
+        dto.setLogoUrl(community.getLogoUrl());
+        dto.setIsActive(community.getIsActive());
+        dto.setMemberCount(community.getMemberCount());
+        return dto;
     }
 }

@@ -1,5 +1,6 @@
 package com.service.school.service;
 
+import com.service.school.dto.SchoolMinimalDTO;
 import com.service.school.entity.School;
 import com.service.school.enums.SchoolStatus;
 import com.service.school.enums.SchoolType;
@@ -87,4 +88,8 @@ public interface IServiceSchool {
     void verifyAllPendingSchools();
     void deactivateInactiveSchools(LocalDateTime cutoffDate);
     void updateAccreditationStatuses();
+
+    // ==================== MINIMAL DTO FOR INTER-SERVICE COMMUNICATION ====================
+
+    SchoolMinimalDTO getSchoolMinimalById(UUID id);
 }

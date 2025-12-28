@@ -1,5 +1,7 @@
 package com.service.student.dto.response;
 
+import com.service.community.dto.CommunityMinimalDTO;
+import com.service.school.dto.SchoolMinimalDTO;
 import com.service.student.enums.EnrollmentStatus;
 import com.service.user.dto.user.UserMinimalDTO;
 import lombok.AllArgsConstructor;
@@ -46,8 +48,10 @@ public class StudentResponseDTO {
     private Boolean isGraduated;
     private LocalDateTime createdAt;
 
-    // Communication with user-service
+    // Communication with other services
     private UserMinimalDTO userInfo;
+    private CommunityMinimalDTO communityInfo;
+    private SchoolMinimalDTO schoolInfo;
 
     // Calculated fields
     private Integer age;

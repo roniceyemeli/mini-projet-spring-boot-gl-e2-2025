@@ -1,6 +1,7 @@
 package com.service.community.service;
 
 
+import com.service.community.dto.CommunityMinimalDTO;
 import com.service.community.entity.Community;
 
 import java.util.List;
@@ -34,4 +35,7 @@ public interface IServiceCommunity {
     Long getTotalCommunities();
     Long getTotalActiveCommunities();
     Long getTotalMembersAcrossCommunities();
+
+    // Minimal DTO for inter-service communication
+    CommunityMinimalDTO getCommunityMinimalById(UUID id);
 }

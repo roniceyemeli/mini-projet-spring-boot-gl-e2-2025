@@ -89,7 +89,7 @@ public class Student {
     private String personalEmail;
 
     @Column(name = "school_id")
-    private UUID schoolId; // Changed from Long schoolId to UUID
+    private UUID schoolId;
 
     @Column(name = "program", length = 100)
     private String program;
@@ -123,7 +123,7 @@ public class Student {
     private Integer completedCredits = 0;
 
     @Column(name = "community_id")
-    private UUID communityId; // Changed from Long
+    private UUID communityId;
 
     @Column(name = "club_id")
     private UUID clubId; // Changed from Long

@@ -1,5 +1,6 @@
 package com.service.school.service;
 
+import com.service.school.dto.SchoolMinimalDTO;
 import com.service.school.entity.School;
 import com.service.school.enums.SchoolStatus;
 import com.service.school.enums.SchoolType;
@@ -506,5 +507,23 @@ public class ServiceSchool implements IServiceSchool {
 
         schoolRepository.saveAll(schools);
         log.info("Updated accreditation statuses for {} schools", schools.size());
+    }
+
+    @Override
+    public SchoolMinimalDTO getSchoolMinimalById(UUID id) {
+        log.debug("Fetching minimal school by ID: {}", id);
+        
+        School school = getSchoolById(id);
+        SchoolMinimalDTO dto = new SchoolMinimalDTO();
+        dto.setId(school.getId());
+        dto.setName(school.getName());
+        dto.setSlug(school.getSlug());
+        dto.setLogoUrl(school.getLogoUrl());
+        dto.setType(school.getType());
+        dto.setIsActive(school.getIsActive());
+        dto.setCity(school.getCity());
+        dto.setCountry(school.getCountry());
+        
+        return dto;
     }
 }

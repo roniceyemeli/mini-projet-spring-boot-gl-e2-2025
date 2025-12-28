@@ -1,6 +1,7 @@
 package com.service.school.controller;
 
 import com.service.school.dto.SchoolDTO;
+import com.service.school.dto.SchoolMinimalDTO;
 import com.service.school.dto.SchoolResponseDTO;
 import com.service.school.entity.School;
 import com.service.school.enums.SchoolStatus;
@@ -264,5 +265,10 @@ public class SchoolRestController {
                 .map(school -> modelMapper.map(school, SchoolResponseDTO.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responseDTOs);
+    }
+
+    @GetMapping("/{id}/minimal")
+    public ResponseEntity<SchoolMinimalDTO> getSchoolMinimalById(@PathVariable UUID id) {
+        return ResponseEntity.ok(schoolService.getSchoolMinimalById(id));
     }
 }

@@ -1,6 +1,7 @@
 package com.service.community.controller;
 
 import com.service.community.dto.CommunityDTO;
+import com.service.community.dto.CommunityMinimalDTO;
 import com.service.community.entity.Community;
 import com.service.community.service.ServiceCommunity;
 import jakarta.validation.Valid;
@@ -119,5 +120,10 @@ public class CommunityRestController {
     public ResponseEntity<Long> getTotalActiveCommunities() {
         Long totalActive = communityService.getTotalActiveCommunities();
         return ResponseEntity.ok(totalActive);
+    }
+
+    @GetMapping("/{id}/minimal")
+    public ResponseEntity<CommunityMinimalDTO> getCommunityMinimalById(@PathVariable UUID id) {
+        return ResponseEntity.ok(communityService.getCommunityMinimalById(id));
     }
 }

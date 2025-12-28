@@ -1,5 +1,7 @@
 package com.service.student.service;
 
+import com.service.student.config.CommunityServiceClient;
+import com.service.student.config.SchoolServiceClient;
 import com.service.student.config.UserServiceClient;
 import com.service.student.dto.request.AcademicUpdateDTO;
 import com.service.student.dto.request.CreateStudentDTO;
@@ -31,6 +33,8 @@ public class ServiceStudent implements IServiceStudent {
     private final StudentRepository studentRepository;
     private final ModelMapper modelMapper;
     private final UserServiceClient userServiceClient;
+    private final CommunityServiceClient communityServiceClient;
+    private final SchoolServiceClient schoolServiceClient;
 
     /* =======================
        CREATE & READ
@@ -450,8 +454,44 @@ public class ServiceStudent implements IServiceStudent {
     private StudentResponseDTO toResponse(Student student) {
         StudentResponseDTO response = modelMapper.map(student, StudentResponseDTO.class);
         enrichWithUser(student, response);
+        enrichWithCommunity(student, response);
+        enrichWithSchool(student, response);
         calculateDerivedFields(student, response);
         return response;
+    }
+
+    private void enrichWithCommunity(Student student, StudentResponseDTO response) {
+        if (student.getCommunityId() == null) {
+            log.debug("Student {} has no communityId, skipping community enrichment", student.getId());
+            return;
+        }
+        
+        try {
+            log.debug("Fetching community info for communityId: {}", student.getCommunityId());
+            response.setCommunityInfo(communityServiceClient.getCommunityMinimalById(student.getCommunityId()));
+            log.debug("Successfully enriched student {} with community info", student.getId());
+        } catch (Exception e) {
+            log.error("Failed to fetch community info for student {} with communityId {}: {}", 
+                    student.getId(), student.getCommunityId(), e.getMessage(), e);
+            // Continue without community info - student data is still valid
+        }
+    }
+
+    private void enrichWithSchool(Student student, StudentResponseDTO response) {
+        if (student.getSchoolId() == null) {
+            log.debug("Student {} has no schoolId, skipping school enrichment", student.getId());
+            return;
+        }
+        
+        try {
+            log.debug("Fetching school info for schoolId: {}", student.getSchoolId());
+            response.setSchoolInfo(schoolServiceClient.getSchoolMinimalById(student.getSchoolId()));
+            log.debug("Successfully enriched student {} with school info", student.getId());
+        } catch (Exception e) {
+            log.error("Failed to fetch school info for student {} with schoolId {}: {}", 
+                    student.getId(), student.getSchoolId(), e.getMessage(), e);
+            // Continue without school info - student data is still valid
+        }
     }
 
 }
