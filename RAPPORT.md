@@ -1285,3 +1285,5 @@ L'architecture respecte les principes des microservices : indépendance des serv
 **Date de rédaction :** [À compléter]  
 **Version :** 1.0
 
+
+

@@ -51,6 +51,16 @@ public class UserRestController {
         return ResponseEntity.ok(userService.getAllMinimalUsers());
     }
 
+    @GetMapping("/{id}/minimal")
+    public ResponseEntity<UserMinimalDTO> getUserMinimalById(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.getUserMinimalById(id));
+    }
+
+    @GetMapping("/email/{email}/minimal")
+    public ResponseEntity<UserMinimalDTO> getUserMinimalByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(userService.getUserMinimalByEmail(email));
+    }
+
     @GetMapping("/search")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<UserResponseDTO>> searchUsers(@RequestParam String keyword) {

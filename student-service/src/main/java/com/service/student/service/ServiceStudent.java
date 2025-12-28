@@ -68,10 +68,7 @@ public class ServiceStudent implements IServiceStudent {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
-        StudentResponseDTO response = modelMapper.map(student, StudentResponseDTO.class);
-        enrichWithUser(student, response);
-        calculateDerivedFields(student, response);
-        return response;
+        return toResponse(student);
     }
 
     @Override
@@ -86,12 +83,7 @@ public class ServiceStudent implements IServiceStudent {
     @Override
     public List<StudentResponseDTO> getAllStudents() {
         return studentRepository.findAll().stream()
-                .map(student -> {
-                    StudentResponseDTO response = modelMapper.map(student, StudentResponseDTO.class);
-                    enrichWithUser(student, response);
-                    calculateDerivedFields(student, response);
-                    return response;
-                })
+                .map(this::toResponse)
                 .collect(Collectors.toList());
     }
     @Override
@@ -358,9 +350,25 @@ public class ServiceStudent implements IServiceStudent {
     }
 
     private void enrichWithUser(Student student, StudentResponseDTO response) {
+        if (student.getUserId() == null) {
+            log.warn("Student {} has no userId, skipping user enrichment", student.getId());
+            return;
+        }
+        
         try {
-            response.setUserInfo(userServiceClient.getUserMinimalById(student.getUserId()));
-        } catch (Exception ignored) {}
+            log.debug("Fetching user info for userId: {}", student.getUserId());
+            UserMinimalDTO userInfo = userServiceClient.getUserMinimalById(student.getUserId());
+            if (userInfo != null) {
+                response.setUserInfo(userInfo);
+                log.debug("Successfully enriched student {} with user info", student.getId());
+            } else {
+                log.warn("User service returned null for userId: {}", student.getUserId());
+            }
+        } catch (Exception e) {
+            log.error("Failed to fetch user info for student {} with userId {}: {}", 
+                    student.getId(), student.getUserId(), e.getMessage(), e);
+            // Continue without user info - student data is still valid
+        }
     }
 
     private void calculateDerivedFields(Student student, StudentResponseDTO response) {

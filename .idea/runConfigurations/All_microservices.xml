@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All microservices" type="CompoundRunConfigurationType">
+    <toRun name="DiscoveryServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="ConfigServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="GatewayServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="UserServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="StudentServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="EventServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="SchoolServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="CommunityServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

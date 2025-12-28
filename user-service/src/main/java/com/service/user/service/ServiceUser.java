@@ -293,6 +293,42 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
+    public UserMinimalDTO getUserMinimalById(UUID id) {
+        log.debug("Fetching minimal user by ID: {}", id);
+        
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        
+        UserMinimalDTO dto = new UserMinimalDTO();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setFullName(user.getFullName());
+        dto.setProfilePicture(user.getProfilePicture());
+        
+        return dto;
+    }
+
+    @Override
+    public UserMinimalDTO getUserMinimalByEmail(String email) {
+        log.debug("Fetching minimal user by email: {}", email);
+        
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        
+        UserMinimalDTO dto = new UserMinimalDTO();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setFullName(user.getFullName());
+        dto.setProfilePicture(user.getProfilePicture());
+        
+        return dto;
+    }
+
+    @Override
     public boolean userExists(UUID userId) {
         return userRepository.existsById(userId);
     }

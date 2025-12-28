@@ -32,7 +32,7 @@ public class Student {
 
     // Use UUID for cross-service references instead of foreign key
     @Column(name = "user_id", nullable = false, unique = true, length = 36)
-    private UUID userId; // Changed from Long userId to UUID userUuid
+    private UUID userId;
 
     @Column(name = "student_code", unique = true, length = 50)
     private String studentCode;

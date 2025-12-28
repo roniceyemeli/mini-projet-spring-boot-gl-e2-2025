@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints - authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Inter-service communication endpoints (for microservice-to-microservice calls)
+                        .requestMatchers("/api/users/*/minimal", "/api/users/email/*/minimal").permitAll()
                         // Actuator endpoints (optional - adjust based on your needs)
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         // All other endpoints require authentication

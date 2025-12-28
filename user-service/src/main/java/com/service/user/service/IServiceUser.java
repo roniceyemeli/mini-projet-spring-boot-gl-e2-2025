@@ -16,6 +16,8 @@ public interface IServiceUser {
     UserResponseDTO getUserResponseById(UUID id);
     List<UserResponseDTO> getAllUsers();
     List<UserMinimalDTO> getAllMinimalUsers();
+    UserMinimalDTO getUserMinimalById(UUID id);
+    UserMinimalDTO getUserMinimalByEmail(String email);
 
     // Search & Filter
     List<UserResponseDTO> searchUsers(String keyword);
