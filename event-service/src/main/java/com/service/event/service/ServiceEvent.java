@@ -1,5 +1,6 @@
 package com.service.event.service;
 
+import com.service.event.dto.event.UpdateEventDTO;
 import com.service.event.entity.Event;
 import com.service.event.enums.EventStatus;
 import com.service.event.repository.EventRepository;
@@ -90,6 +91,54 @@ public class ServiceEvent implements IServiceEvent {
 
         Event updatedEvent = eventRepository.save(existingEvent);
         log.info("Event updated successfully: {}", updatedEvent.getTitle());
+
+        return updatedEvent;
+    }
+
+    @Override
+    public Event updateEventFromDTO(UUID id, UpdateEventDTO updateDTO) {
+        log.info("Updating event with ID: {} from DTO", id);
+
+        Event existingEvent = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
+
+        // Check if slug changed and is still unique
+        if (updateDTO.getSlug() != null &&
+                !updateDTO.getSlug().equals(existingEvent.getSlug()) &&
+                eventRepository.existsBySlug(updateDTO.getSlug())) {
+            throw new RuntimeException("Event with slug '" + updateDTO.getSlug() + "' already exists");
+        }
+
+        // Update only provided fields (partial update)
+        if (updateDTO.getTitle() != null) existingEvent.setTitle(updateDTO.getTitle());
+        if (updateDTO.getDescription() != null) existingEvent.setDescription(updateDTO.getDescription());
+        if (updateDTO.getSlug() != null) existingEvent.setSlug(updateDTO.getSlug());
+        if (updateDTO.getLocation() != null) existingEvent.setLocation(updateDTO.getLocation());
+        if (updateDTO.getVenueDetails() != null) existingEvent.setVenueDetails(updateDTO.getVenueDetails());
+        if (updateDTO.getStartDate() != null) existingEvent.setStartDate(updateDTO.getStartDate());
+        if (updateDTO.getStartTime() != null) existingEvent.setStartTime(updateDTO.getStartTime());
+        if (updateDTO.getEndDate() != null) existingEvent.setEndDate(updateDTO.getEndDate());
+        if (updateDTO.getEndTime() != null) existingEvent.setEndTime(updateDTO.getEndTime());
+        if (updateDTO.getStatus() != null) existingEvent.setStatus(updateDTO.getStatus());
+        if (updateDTO.getMaxParticipants() != null) existingEvent.setMaxParticipants(updateDTO.getMaxParticipants());
+        if (updateDTO.getRegistrationFee() != null) existingEvent.setRegistrationFee(updateDTO.getRegistrationFee());
+        if (updateDTO.getOrganizerId() != null) existingEvent.setOrganizerId(updateDTO.getOrganizerId());
+        if (updateDTO.getOrganizerType() != null) existingEvent.setOrganizerType(updateDTO.getOrganizerType());
+        if (updateDTO.getContactEmail() != null) existingEvent.setContactEmail(updateDTO.getContactEmail());
+        if (updateDTO.getContactPhone() != null) existingEvent.setContactPhone(updateDTO.getContactPhone());
+        if (updateDTO.getImageUrl() != null) existingEvent.setImageUrl(updateDTO.getImageUrl());
+        if (updateDTO.getIsOnline() != null) existingEvent.setIsOnline(updateDTO.getIsOnline());
+        if (updateDTO.getOnlineLink() != null) existingEvent.setOnlineLink(updateDTO.getOnlineLink());
+        if (updateDTO.getRequiresApproval() != null) existingEvent.setRequiresApproval(updateDTO.getRequiresApproval());
+        if (updateDTO.getRegistrationDeadline() != null) existingEvent.setRegistrationDeadline(updateDTO.getRegistrationDeadline());
+        if (updateDTO.getCategory() != null) existingEvent.setCategory(updateDTO.getCategory());
+        if (updateDTO.getTags() != null) existingEvent.setTags(updateDTO.getTags());
+        if (updateDTO.getIsFeatured() != null) existingEvent.setIsFeatured(updateDTO.getIsFeatured());
+        if (updateDTO.getVisibility() != null) existingEvent.setVisibility(updateDTO.getVisibility());
+        if (updateDTO.getUpdatedBy() != null) existingEvent.setUpdatedBy(updateDTO.getUpdatedBy());
+
+        Event updatedEvent = eventRepository.save(existingEvent);
+        log.info("Event updated successfully from DTO: {}", updatedEvent.getTitle());
 
         return updatedEvent;
     }

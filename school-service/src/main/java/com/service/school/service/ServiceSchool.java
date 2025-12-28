@@ -1,6 +1,7 @@
 package com.service.school.service;
 
 import com.service.school.dto.SchoolMinimalDTO;
+import com.service.school.dto.UpdateSchoolDTO;
 import com.service.school.entity.School;
 import com.service.school.enums.SchoolStatus;
 import com.service.school.enums.SchoolType;
@@ -107,6 +108,77 @@ public class ServiceSchool implements IServiceSchool {
 
         School updatedSchool = schoolRepository.save(existingSchool);
         log.info("School updated successfully: {}", updatedSchool.getName());
+
+        return updatedSchool;
+    }
+
+    @Override
+    public School updateSchoolFromDTO(UUID id, UpdateSchoolDTO updateDTO) {
+        log.info("Updating school with ID: {} from DTO", id);
+
+        School existingSchool = schoolRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("School not found with id: " + id));
+
+        // Check if email changed and is still unique
+        if (updateDTO.getEmail() != null &&
+                !updateDTO.getEmail().equals(existingSchool.getEmail()) &&
+                schoolRepository.existsByEmail(updateDTO.getEmail())) {
+            throw new RuntimeException("School with email '" + updateDTO.getEmail() + "' already exists");
+        }
+
+        // Check if slug changed and is still unique
+        if (updateDTO.getSlug() != null &&
+                !updateDTO.getSlug().equals(existingSchool.getSlug()) &&
+                schoolRepository.existsBySlug(updateDTO.getSlug())) {
+            throw new RuntimeException("School with slug '" + updateDTO.getSlug() + "' already exists");
+        }
+
+        // Update only provided fields (partial update)
+        if (updateDTO.getName() != null) existingSchool.setName(updateDTO.getName());
+        if (updateDTO.getTitle() != null) existingSchool.setTitle(updateDTO.getTitle());
+        if (updateDTO.getDescription() != null) existingSchool.setDescription(updateDTO.getDescription());
+        if (updateDTO.getSlug() != null) existingSchool.setSlug(updateDTO.getSlug());
+        if (updateDTO.getAddress() != null) existingSchool.setAddress(updateDTO.getAddress());
+        if (updateDTO.getFullAddress() != null) existingSchool.setFullAddress(updateDTO.getFullAddress());
+        if (updateDTO.getEmail() != null) existingSchool.setEmail(updateDTO.getEmail());
+        if (updateDTO.getWebsite() != null) existingSchool.setWebsite(updateDTO.getWebsite());
+        if (updateDTO.getPhoneNumber() != null) existingSchool.setPhoneNumber(updateDTO.getPhoneNumber());
+        if (updateDTO.getFaxNumber() != null) existingSchool.setFaxNumber(updateDTO.getFaxNumber());
+        if (updateDTO.getFoundingYear() != null) existingSchool.setFoundingYear(updateDTO.getFoundingYear());
+        if (updateDTO.getType() != null) existingSchool.setType(updateDTO.getType());
+        if (updateDTO.getAccreditationNumber() != null) existingSchool.setAccreditationNumber(updateDTO.getAccreditationNumber());
+        if (updateDTO.getTaxId() != null) existingSchool.setTaxId(updateDTO.getTaxId());
+        if (updateDTO.getRegistrationNumber() != null) existingSchool.setRegistrationNumber(updateDTO.getRegistrationNumber());
+        if (updateDTO.getLogoUrl() != null) existingSchool.setLogoUrl(updateDTO.getLogoUrl());
+        if (updateDTO.getBannerUrl() != null) existingSchool.setBannerUrl(updateDTO.getBannerUrl());
+        if (updateDTO.getCountry() != null) existingSchool.setCountry(updateDTO.getCountry());
+        if (updateDTO.getCity() != null) existingSchool.setCity(updateDTO.getCity());
+        if (updateDTO.getPostalCode() != null) existingSchool.setPostalCode(updateDTO.getPostalCode());
+        if (updateDTO.getLatitude() != null) existingSchool.setLatitude(updateDTO.getLatitude());
+        if (updateDTO.getLongitude() != null) existingSchool.setLongitude(updateDTO.getLongitude());
+        if (updateDTO.getIsPublic() != null) existingSchool.setIsPublic(updateDTO.getIsPublic());
+        if (updateDTO.getTuitionRange() != null) existingSchool.setTuitionRange(updateDTO.getTuitionRange());
+        if (updateDTO.getAdmissionsEmail() != null) existingSchool.setAdmissionsEmail(updateDTO.getAdmissionsEmail());
+        if (updateDTO.getAdmissionsPhone() != null) existingSchool.setAdmissionsPhone(updateDTO.getAdmissionsPhone());
+        if (updateDTO.getContactPerson() != null) existingSchool.setContactPerson(updateDTO.getContactPerson());
+        if (updateDTO.getContactPosition() != null) existingSchool.setContactPosition(updateDTO.getContactPosition());
+        if (updateDTO.getFacebookUrl() != null) existingSchool.setFacebookUrl(updateDTO.getFacebookUrl());
+        if (updateDTO.getTwitterUrl() != null) existingSchool.setTwitterUrl(updateDTO.getTwitterUrl());
+        if (updateDTO.getLinkedinUrl() != null) existingSchool.setLinkedinUrl(updateDTO.getLinkedinUrl());
+        if (updateDTO.getInstagramUrl() != null) existingSchool.setInstagramUrl(updateDTO.getInstagramUrl());
+        if (updateDTO.getIsFeatured() != null) existingSchool.setIsFeatured(updateDTO.getIsFeatured());
+        if (updateDTO.getRanking() != null) existingSchool.setRanking(updateDTO.getRanking());
+        if (updateDTO.getAccreditationStatus() != null) existingSchool.setAccreditationStatus(updateDTO.getAccreditationStatus());
+        if (updateDTO.getAccreditationExpiryDate() != null) existingSchool.setAccreditationExpiryDate(updateDTO.getAccreditationExpiryDate());
+        if (updateDTO.getMotto() != null) existingSchool.setMotto(updateDTO.getMotto());
+        if (updateDTO.getVision() != null) existingSchool.setVision(updateDTO.getVision());
+        if (updateDTO.getMission() != null) existingSchool.setMission(updateDTO.getMission());
+        if (updateDTO.getIsActive() != null) existingSchool.setIsActive(updateDTO.getIsActive());
+        if (updateDTO.getVerified() != null) existingSchool.setVerified(updateDTO.getVerified());
+        if (updateDTO.getUpdatedBy() != null) existingSchool.setUpdatedBy(updateDTO.getUpdatedBy());
+
+        School updatedSchool = schoolRepository.save(existingSchool);
+        log.info("School updated successfully from DTO: {}", updatedSchool.getName());
 
         return updatedSchool;
     }

@@ -1,6 +1,7 @@
 package com.service.community.service;
 
 import com.service.community.dto.CommunityMinimalDTO;
+import com.service.community.dto.UpdateCommunityDTO;
 import com.service.community.entity.Community;
 import com.service.community.repository.CommunityRepository;
 import lombok.AllArgsConstructor;
@@ -76,6 +77,42 @@ public class ServiceCommunity implements IServiceCommunity {
         if (community.getMemberCount() != null) {
             existingCommunity.setMemberCount(community.getMemberCount());
         }
+
+        return communityRepository.save(existingCommunity);
+    }
+
+    @Override
+    public Community updateCommunityFromDTO(UUID id, UpdateCommunityDTO updateDTO) {
+        Community existingCommunity = communityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Community not found with id: " + id));
+
+        // Check if title changed and is still unique
+        if (updateDTO.getTitle() != null &&
+                !updateDTO.getTitle().equals(existingCommunity.getTitle()) &&
+                communityRepository.existsByTitle(updateDTO.getTitle())) {
+            throw new RuntimeException("Community with title '" + updateDTO.getTitle() + "' already exists");
+        }
+
+        // Check if slug changed and is still unique
+        if (updateDTO.getSlug() != null &&
+                !updateDTO.getSlug().equals(existingCommunity.getSlug()) &&
+                communityRepository.existsBySlug(updateDTO.getSlug())) {
+            throw new RuntimeException("Community with slug '" + updateDTO.getSlug() + "' already exists");
+        }
+
+        // Update only provided fields (partial update)
+        if (updateDTO.getTitle() != null) existingCommunity.setTitle(updateDTO.getTitle());
+        if (updateDTO.getDescription() != null) existingCommunity.setDescription(updateDTO.getDescription());
+        if (updateDTO.getSlug() != null) existingCommunity.setSlug(updateDTO.getSlug());
+        if (updateDTO.getWebsite() != null) existingCommunity.setWebsite(updateDTO.getWebsite());
+        if (updateDTO.getContactEmail() != null) existingCommunity.setContactEmail(updateDTO.getContactEmail());
+        if (updateDTO.getContactPhone() != null) existingCommunity.setContactPhone(updateDTO.getContactPhone());
+        if (updateDTO.getFoundingYear() != null) existingCommunity.setFoundingYear(updateDTO.getFoundingYear());
+        if (updateDTO.getLogoUrl() != null) existingCommunity.setLogoUrl(updateDTO.getLogoUrl());
+        if (updateDTO.getIsActive() != null) existingCommunity.setIsActive(updateDTO.getIsActive());
+        if (updateDTO.getMemberCount() != null) existingCommunity.setMemberCount(updateDTO.getMemberCount());
+        
+        existingCommunity.setUpdatedAt(LocalDateTime.now());
 
         return communityRepository.save(existingCommunity);
     }

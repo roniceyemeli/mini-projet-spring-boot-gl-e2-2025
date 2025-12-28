@@ -2,6 +2,7 @@ package com.service.community.controller;
 
 import com.service.community.dto.CommunityDTO;
 import com.service.community.dto.CommunityMinimalDTO;
+import com.service.community.dto.UpdateCommunityDTO;
 import com.service.community.entity.Community;
 import com.service.community.service.ServiceCommunity;
 import jakarta.validation.Valid;
@@ -74,9 +75,8 @@ public class CommunityRestController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CommunityDTO> updateCommunity(@PathVariable UUID id,
-                                                        @Valid @RequestBody CommunityDTO communityDTO) {
-        Community community = modelMapper.map(communityDTO, Community.class);
-        Community updatedCommunity = communityService.updateCommunity(id, community);
+                                                        @Valid @RequestBody UpdateCommunityDTO updateDTO) {
+        Community updatedCommunity = communityService.updateCommunityFromDTO(id, updateDTO);
         CommunityDTO responseDTO = modelMapper.map(updatedCommunity, CommunityDTO.class);
         return ResponseEntity.ok(responseDTO);
     }

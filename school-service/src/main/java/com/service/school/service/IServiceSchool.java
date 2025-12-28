@@ -16,6 +16,7 @@ public interface IServiceSchool {
 
     School createSchool(School school);
     School updateSchool(UUID id, School school);
+    School updateSchoolFromDTO(UUID id, com.service.school.dto.UpdateSchoolDTO updateDTO);
     void deleteSchool(UUID id);
     School getSchoolById(UUID id);
     Optional<School> getSchoolBySlug(String slug);

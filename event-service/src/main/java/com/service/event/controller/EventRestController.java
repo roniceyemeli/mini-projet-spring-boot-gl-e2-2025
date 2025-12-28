@@ -80,9 +80,8 @@ public class EventRestController {
     @PutMapping("/{id}")
     public ResponseEntity<EventResponseDTO> updateEvent(
             @PathVariable UUID id,
-            @Valid @RequestBody com.service.event.dto.event.EventDTO eventDTO) {
-        Event event = modelMapper.map(eventDTO, Event.class);
-        Event updatedEvent = serviceEvent.updateEvent(id, event);
+            @Valid @RequestBody com.service.event.dto.event.UpdateEventDTO updateDTO) {
+        Event updatedEvent = serviceEvent.updateEventFromDTO(id, updateDTO);
         EventResponseDTO responseDTO = modelMapper.map(updatedEvent, EventResponseDTO.class);
         return ResponseEntity.ok(responseDTO);
     }

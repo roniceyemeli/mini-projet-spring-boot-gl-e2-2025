@@ -1,0 +1,49 @@
+package com.service.event.dto.event;
+
+import com.service.event.enums.EventStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.UUID;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateEventDTO {
+    // All fields are optional for updates - no @NotBlank constraints
+    
+    private String title;
+    private String description;
+    private String slug;
+    private String location;
+    private String venueDetails;
+    private LocalDate startDate;
+    private LocalTime startTime;
+    private LocalDate endDate;
+    private LocalTime endTime;
+    private EventStatus status;
+    private Integer maxParticipants;
+    private BigDecimal registrationFee;
+    private UUID organizerId;
+    private String organizerType;
+    private String contactEmail;
+    private String contactPhone;
+    private String imageUrl;
+    private Boolean isOnline;
+    private String onlineLink;
+    private Boolean requiresApproval;
+    private LocalDateTime registrationDeadline;
+    private String category;
+    private String tags;
+    private Boolean isFeatured;
+    private String visibility;
+    private UUID updatedBy;
+}
+

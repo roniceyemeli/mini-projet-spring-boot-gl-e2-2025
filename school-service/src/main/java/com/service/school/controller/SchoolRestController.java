@@ -3,6 +3,7 @@ package com.service.school.controller;
 import com.service.school.dto.SchoolDTO;
 import com.service.school.dto.SchoolMinimalDTO;
 import com.service.school.dto.SchoolResponseDTO;
+import com.service.school.dto.UpdateSchoolDTO;
 import com.service.school.entity.School;
 import com.service.school.enums.SchoolStatus;
 import com.service.school.enums.SchoolType;
@@ -87,9 +88,8 @@ public class SchoolRestController {
     @PutMapping("/{id}")
     public ResponseEntity<SchoolResponseDTO> updateSchool(
             @PathVariable UUID id,
-            @Valid @RequestBody SchoolDTO schoolDTO) {
-        School school = modelMapper.map(schoolDTO, School.class);
-        School updatedSchool = schoolService.updateSchool(id, school);
+            @Valid @RequestBody UpdateSchoolDTO updateDTO) {
+        School updatedSchool = schoolService.updateSchoolFromDTO(id, updateDTO);
         SchoolResponseDTO responseDTO = modelMapper.map(updatedSchool, SchoolResponseDTO.class);
         return ResponseEntity.ok(responseDTO);
     }

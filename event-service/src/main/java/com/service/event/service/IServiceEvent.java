@@ -29,6 +29,14 @@ public interface IServiceEvent {
     Event updateEvent(UUID id, Event event);
 
     /**
+     * Update an existing event from DTO (partial update)
+     * @param id Event ID
+     * @param updateDTO Updated event DTO
+     * @return Updated event
+     */
+    Event updateEventFromDTO(UUID id, com.service.event.dto.event.UpdateEventDTO updateDTO);
+
+    /**
      * Delete an event by ID
      * @param id Event ID
      */

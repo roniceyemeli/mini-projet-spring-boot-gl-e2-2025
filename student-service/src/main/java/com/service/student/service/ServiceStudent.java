@@ -184,10 +184,60 @@ public class ServiceStudent implements IServiceStudent {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        modelMapper.map(dto, student);
-
+        // Update only provided fields (partial update)
+        if (dto.getFirstName() != null) student.setFirstName(dto.getFirstName());
+        if (dto.getLastName() != null) student.setLastName(dto.getLastName());
+        if (dto.getDateOfBirth() != null) student.setDateOfBirth(dto.getDateOfBirth());
+        if (dto.getGender() != null) student.setGender(dto.getGender());
+        if (dto.getNationality() != null) student.setNationality(dto.getNationality());
+        if (dto.getCitizenship() != null) student.setCitizenship(dto.getCitizenship());
+        if (dto.getIdCardNumber() != null) student.setIdCardNumber(dto.getIdCardNumber());
+        if (dto.getPassportNumber() != null) student.setPassportNumber(dto.getPassportNumber());
+        if (dto.getAddress() != null) student.setAddress(dto.getAddress());
+        if (dto.getCity() != null) student.setCity(dto.getCity());
+        if (dto.getState() != null) student.setState(dto.getState());
+        if (dto.getCountry() != null) student.setCountry(dto.getCountry());
+        if (dto.getPostalCode() != null) student.setPostalCode(dto.getPostalCode());
+        if (dto.getPhoneNumber() != null) student.setPhoneNumber(dto.getPhoneNumber());
+        if (dto.getEmergencyPhone() != null) student.setEmergencyPhone(dto.getEmergencyPhone());
+        if (dto.getPersonalEmail() != null) student.setPersonalEmail(dto.getPersonalEmail());
+        if (dto.getSchoolId() != null) student.setSchoolId(dto.getSchoolId());
+        if (dto.getProgram() != null) student.setProgram(dto.getProgram());
+        if (dto.getMajor() != null) student.setMajor(dto.getMajor());
+        if (dto.getMinor() != null) student.setMinor(dto.getMinor());
+        if (dto.getEnrollmentYear() != null) student.setEnrollmentYear(dto.getEnrollmentYear());
+        if (dto.getExpectedGraduationYear() != null) student.setExpectedGraduationYear(dto.getExpectedGraduationYear());
+        if (dto.getCommunityId() != null) student.setCommunityId(dto.getCommunityId());
+        if (dto.getClubId() != null) student.setClubId(dto.getClubId());
         if (dto.getAdvisorId() != null) {
+            student.setAdvisorId(dto.getAdvisorId());
             student.setAdvisorSyncStatus("PENDING");
+        }
+        if (dto.getProfilePicture() != null) student.setProfilePicture(dto.getProfilePicture());
+        if (dto.getResumeUrl() != null) student.setResumeUrl(dto.getResumeUrl());
+        if (dto.getLinkedinUrl() != null) student.setLinkedinUrl(dto.getLinkedinUrl());
+        if (dto.getGithubUrl() != null) student.setGithubUrl(dto.getGithubUrl());
+        if (dto.getPortfolioUrl() != null) student.setPortfolioUrl(dto.getPortfolioUrl());
+        if (dto.getIsInternational() != null) student.setIsInternational(dto.getIsInternational());
+        if (dto.getVisaStatus() != null) student.setVisaStatus(dto.getVisaStatus());
+        if (dto.getFinancialAidStatus() != null) student.setFinancialAidStatus(dto.getFinancialAidStatus());
+        if (dto.getScholarshipName() != null) student.setScholarshipName(dto.getScholarshipName());
+        if (dto.getDisabilities() != null) student.setDisabilities(dto.getDisabilities());
+        if (dto.getSpecialNeeds() != null) student.setSpecialNeeds(dto.getSpecialNeeds());
+        if (dto.getMedicalConditions() != null) student.setMedicalConditions(dto.getMedicalConditions());
+        if (dto.getEmergencyContactName() != null) student.setEmergencyContactName(dto.getEmergencyContactName());
+        if (dto.getEmergencyContactRelationship() != null) student.setEmergencyContactRelationship(dto.getEmergencyContactRelationship());
+        if (dto.getEmergencyContactAddress() != null) student.setEmergencyContactAddress(dto.getEmergencyContactAddress());
+        if (dto.getEmergencyContactEmail() != null) student.setEmergencyContactEmail(dto.getEmergencyContactEmail());
+        if (dto.getIsActive() != null) student.setIsActive(dto.getIsActive());
+        if (dto.getIsGraduated() != null) student.setIsGraduated(dto.getIsGraduated());
+        if (dto.getNotes() != null) student.setNotes(dto.getNotes());
+
+        // Update fullName if firstName or lastName changed
+        if (dto.getFirstName() != null || dto.getLastName() != null) {
+            String firstName = dto.getFirstName() != null ? dto.getFirstName() : student.getFirstName();
+            String lastName = dto.getLastName() != null ? dto.getLastName() : student.getLastName();
+            student.setFullName(firstName + " " + lastName);
         }
 
         return modelMapper.map(studentRepository.save(student), StudentDTO.class);

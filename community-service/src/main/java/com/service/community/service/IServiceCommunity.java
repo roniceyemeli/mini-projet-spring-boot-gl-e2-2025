@@ -2,6 +2,7 @@ package com.service.community.service;
 
 
 import com.service.community.dto.CommunityMinimalDTO;
+import com.service.community.dto.UpdateCommunityDTO;
 import com.service.community.entity.Community;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public interface IServiceCommunity {
     // CRUD Operations
     Community createCommunity(Community community);
     Community updateCommunity(UUID id, Community community);
+    Community updateCommunityFromDTO(UUID id, UpdateCommunityDTO updateDTO);
     void deleteCommunity(UUID id);
     Community getCommunityById(UUID id);
     Community getCommunityBySlug(String slug);
